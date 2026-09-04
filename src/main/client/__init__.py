@@ -6,6 +6,7 @@ from main.client.rest_client import (
     TARGET_PREFIX,
     MissingConfigurationError,
     RestClient,
+    use_system_certificates,
 )
 
 __all__ = [
@@ -14,4 +15,5 @@ __all__ = [
     "RestClient",
     "SOURCE_PREFIX",
     "TARGET_PREFIX",
+    "use_system_certificates",
 ]

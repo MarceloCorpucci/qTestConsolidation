@@ -26,6 +26,11 @@ from dotenv import dotenv_values
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 
+try:  # Optional: absent installs simply fall back to the certifi bundle.
+    import truststore
+except ModuleNotFoundError:  # pragma: no cover - depends on the environment
+    truststore = None
+
 logger = logging.getLogger(__name__)
 
 #: Default location of the connection settings file (project root: config/).
@@ -40,9 +45,40 @@ DEFAULT_TIMEOUT = 30
 DEFAULT_MAX_RETRIES = 3
 RETRY_STATUS_CODES = (429, 500, 502, 503, 504)
 
+_system_certificates_in_use = False
+
 
 class MissingConfigurationError(RuntimeError):
     """Raised when a required connection variable cannot be resolved."""
+
+
+def use_system_certificates() -> bool:
+    """Verify TLS against the operating system certificate store.
+
+    Corporate networks terminate TLS on a proxy and re-sign traffic with an
+    internal CA. That CA lives in the OS trust store, which Python ignores by
+    default -- hence `CERTIFICATE_VERIFY_FAILED: unable to get local issuer
+    certificate`. Delegating verification to the OS store fixes it *without*
+    turning verification off.
+
+    Returns:
+        True when the OS store is in effect, False when `truststore` is not
+        installed and verification stays on the bundled certifi CAs.
+    """
+    global _system_certificates_in_use
+
+    if truststore is None:
+        logger.debug(
+            "truststore is not installed: TLS verification uses the certifi bundle"
+        )
+        return False
+
+    if not _system_certificates_in_use:
+        truststore.inject_into_ssl()
+        _system_certificates_in_use = True
+        logger.info("TLS verification delegated to the operating system certificate store")
+
+    return True
 
 
 class RestClient:
@@ -63,6 +99,7 @@ class RestClient:
         api_token: str,
         timeout: int = DEFAULT_TIMEOUT,
         max_retries: int = DEFAULT_MAX_RETRIES,
+        ca_bundle: str | None = None,
         session: requests.Session | None = None,
     ) -> None:
         if not base_url:
@@ -77,6 +114,7 @@ class RestClient:
         self._api_token = api_token
         self._session = session if session is not None else self._build_session(max_retries)
         self._session.headers.update(self._default_headers(api_token))
+        self._apply_tls_settings(ca_bundle)
 
         logger.info(
             "REST client ready for %s (timeout=%ss, retries=%s)",
@@ -117,6 +155,9 @@ class RestClient:
         # Real environment variables win over the file, so CI can inject values.
         values = {**dotenv_values(env_file), **os.environ}
 
+        # Optional: only networks with their own TLS proxy need to point here.
+        overrides.setdefault("ca_bundle", cls._optional(values, f"{prefix}_QTEST_CA_BUNDLE"))
+
         return cls(
             base_url=cls._required(values, f"{prefix}_QTEST_BASE_URL", env_file),
             api_token=cls._required(values, f"{prefix}_QTEST_API_TOKEN", env_file),
@@ -146,6 +187,31 @@ class RestClient:
             )
         logger.debug("Resolved setting %s", name)
         return value
+
+    @staticmethod
+    def _optional(values: dict[str, str | None], name: str) -> str | None:
+        """Read a setting that may legitimately be absent."""
+        value = (values.get(name) or "").strip()
+        if not value:
+            logger.debug("Optional setting %s is not set", name)
+            return None
+        logger.debug("Resolved optional setting %s", name)
+        return value
+
+    def _apply_tls_settings(self, ca_bundle: str | None) -> None:
+        """Decide how the session verifies TLS certificates.
+
+        An explicit CA bundle wins; otherwise the OS certificate store is used
+        when available. Verification is never disabled: the API token travels
+        in every request, so an unverified channel would expose it.
+        """
+        if ca_bundle:
+            self._session.verify = ca_bundle
+            logger.info("TLS verification uses the CA bundle at %s", ca_bundle)
+            return
+
+        if not use_system_certificates():
+            logger.debug("TLS verification uses the default certifi bundle")
 
     @staticmethod
     def _default_headers(api_token: str) -> dict[str, str]:
