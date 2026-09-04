@@ -1,0 +1,17 @@
+# Environment and user configuration: sensitive data, never commit
+.env
+.env.*
+*.env
+!.env.example
+!*.example.env
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+
+# IDE
+.idea/
+.vscode/
