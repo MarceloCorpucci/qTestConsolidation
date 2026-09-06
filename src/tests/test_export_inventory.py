@@ -13,7 +13,7 @@ inventory has been taken.
 import pytest
 
 from main.exporter import DataExporter
-from main.exporter.data_exporter import INVENTORY_ENDPOINTS
+from main.exporter.data_exporter import INVENTORY_ENTITIES
 
 
 def count_entries(path):
@@ -27,7 +27,7 @@ def test_export_inventory_writes_every_entity(source_client, project_id):
     """Every inventory endpoint answers and lands in its own file."""
     written = DataExporter(source_client).export_inventory(project_id)
 
-    assert set(written) == set(INVENTORY_ENDPOINTS), "Some entity was not exported"
+    assert set(written) == set(INVENTORY_ENTITIES), "Some entity was not exported"
 
     print(f"\nInventory of project {project_id} in {source_client.base_url}")
     for entity, path in written.items():

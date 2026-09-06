@@ -10,9 +10,10 @@ target instance. The steps are kept as separate public methods so they can be
 moved into dedicated collaborator objects as the migration grows.
 
 The `export_inventory` family is temporary: it lists the ids and names of the
-project's test plans, test cases and test runs into text files at the project
-root, to size and track the migration. It is not part of the migration flow
-and should be removed once the inventory has been taken.
+project's modules (the Test Design folders), test plans, test cases and test
+runs into text files at the project root, to size and track the migration. It
+is not part of the migration flow and should be removed once the inventory has
+been taken.
 """
 
 from __future__ import annotations
@@ -37,13 +38,23 @@ SUCCESS_STATUS_CODES = (200,)
 #: Project root, where the one-off inventory files are written.
 PROJECT_ROOT = Path(__file__).resolve().parents[3]
 
-#: Endpoints backing the inventory, by entity. qTest Manager has no
-#: "test plans" endpoint: the Test Plan module is made of releases, so that is
-#: what this reads.
-INVENTORY_ENDPOINTS = {
-    "test_plans": PROJECTS_ENDPOINT + "/{project_id}/releases",
-    "test_cases": PROJECTS_ENDPOINT + "/{project_id}/test-cases",
-    "test_runs": PROJECTS_ENDPOINT + "/{project_id}/test-runs",
+#: Endpoints backing the inventory, by entity, with how each must be read.
+#: qTest Manager has no "test plans" endpoint: the Test Plan module is made of
+#: releases, so that is what this reads.
+INVENTORY_ENTITIES = {
+    # Modules are the folders of the Test Design tree, empty ones included.
+    # The endpoint returns only the root level unless descendants are expanded,
+    # and then the tree arrives nested under "children" -- so it is read in a
+    # single call and flattened into full paths.
+    "test_modules": {
+        "path": PROJECTS_ENDPOINT + "/{project_id}/modules",
+        "params": {"expand": "descendants"},
+        "paginated": False,
+        "tree": True,
+    },
+    "test_plans": {"path": PROJECTS_ENDPOINT + "/{project_id}/releases"},
+    "test_cases": {"path": PROJECTS_ENDPOINT + "/{project_id}/test-cases"},
+    "test_runs": {"path": PROJECTS_ENDPOINT + "/{project_id}/test-runs"},
 }
 
 #: Entities requested per page while walking a paginated endpoint.
@@ -165,11 +176,18 @@ class DataExporter:
         logger.info("Taking inventory of project %s in %s", project_id, self._client.base_url)
 
         written = {
-            entity: self.export_entity(entity, project_id) for entity in INVENTORY_ENDPOINTS
+            entity: self.export_entity(entity, project_id) for entity in INVENTORY_ENTITIES
         }
 
         logger.info("Inventory complete: %s files written", len(written))
         return written
+
+    def export_test_modules(self, project_id: int) -> Path:
+        """List the Test Design folders of a project into `test_modules.txt`.
+
+        Every folder is listed, empty ones included, by its full path.
+        """
+        return self.export_entity("test_modules", project_id)
 
     def export_test_plans(self, project_id: int) -> Path:
         """List the test plans (releases) of a project into `test_plans.txt`."""
@@ -186,29 +204,59 @@ class DataExporter:
     def export_entity(self, entity: str, project_id: int) -> Path:
         """Fetch every entity of a kind and write its ids and names to a file."""
         try:
-            endpoint = INVENTORY_ENDPOINTS[entity]
+            spec = INVENTORY_ENTITIES[entity]
         except KeyError:
             logger.error("Unknown inventory entity %r", entity)
             raise ProjectExportError(
-                f"Unknown entity {entity!r}, expected one of {sorted(INVENTORY_ENDPOINTS)}"
+                f"Unknown entity {entity!r}, expected one of {sorted(INVENTORY_ENTITIES)}"
             ) from None
 
-        entities = self.fetch_all(endpoint.format(project_id=project_id), entity)
+        path = spec["path"].format(project_id=project_id)
+        entities = self.fetch_all(
+            path,
+            entity,
+            params=spec.get("params"),
+            paginated=spec.get("paginated", True),
+        )
+
+        if spec.get("tree"):
+            entities = self.flatten_tree(entities)
+            logger.info("Flattened %s into %s entries", entity, len(entities))
+
         return self.write_inventory(entities, entity, project_id)
 
-    def fetch_all(self, path: str, subject: str) -> list[dict[str, Any]]:
-        """Walk a paginated endpoint and return every entity it yields.
+    def fetch_all(
+        self,
+        path: str,
+        subject: str,
+        params: dict[str, Any] | None = None,
+        paginated: bool = True,
+    ) -> list[dict[str, Any]]:
+        """Read an endpoint whole, walking its pages when it has them.
 
         The loop stops on an empty page, or when a page brings nothing new --
         which is what happens when an endpoint ignores the paging parameters
-        and keeps answering with the same block.
+        and keeps answering with the same block. It deliberately does NOT stop
+        on a page shorter than requested: qTest caps some endpoints at its own
+        page size and ignores ours, so a short page is not the last one.
         """
+        base_params = dict(params or {})
+
+        if not paginated:
+            logger.info("Fetching %s in a single call", subject)
+            response = self._client.get(path, params=base_params or None)
+            items = self._items_of(self._payload_of(response, subject), subject)
+            logger.info("Collected %s %s", len(items), subject)
+            return items
+
         collected: list[dict[str, Any]] = []
         seen: set[Any] = set()
 
         for page in range(1, MAX_PAGES + 1):
             logger.info("Fetching %s, page %s", subject, page)
-            response = self._client.get(path, params={"page": page, "pageSize": PAGE_SIZE})
+            response = self._client.get(
+                path, params={**base_params, "page": page, "pageSize": PAGE_SIZE}
+            )
             items = self._items_of(self._payload_of(response, subject), subject)
 
             if not items:
@@ -228,10 +276,6 @@ class DataExporter:
             seen.update(self._key_of(item) for item in fresh)
             collected.extend(fresh)
             logger.debug("%s entities collected so far for %s", len(collected), subject)
-
-            if len(items) < PAGE_SIZE:
-                logger.debug("Last page of %s reached", subject)
-                break
         else:
             logger.warning(
                 "Stopped after %s pages of %s: raise MAX_PAGES if more are expected",
@@ -241,6 +285,18 @@ class DataExporter:
 
         logger.info("Collected %s %s", len(collected), subject)
         return collected
+
+    def flatten_tree(self, entities: list[dict[str, Any]], prefix: str = "") -> list[dict[str, Any]]:
+        """Flatten a nested module tree, naming each entry by its full path."""
+        flattened: list[dict[str, Any]] = []
+
+        for entity in entities:
+            name = entity.get("name") or "<no name>"
+            full_path = f"{prefix} / {name}" if prefix else name
+            flattened.append({**entity, "name": full_path})
+            flattened.extend(self.flatten_tree(entity.get("children") or [], full_path))
+
+        return flattened
 
     def write_inventory(self, entities: list[dict[str, Any]], subject: str, project_id: int) -> Path:
         """Write the id and name of each entity to a text file in the project root."""
