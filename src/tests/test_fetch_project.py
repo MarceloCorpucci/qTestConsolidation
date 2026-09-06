@@ -2,44 +2,16 @@
 
 This test talks to the live source instance, so it only runs where
 `config/qtest.env` carries real credentials -- the client VDI. On a machine
-without access it is skipped, never failed.
+without access it is skipped, never failed. Fixtures live in `conftest.py`.
 
 Run it with the request log visible:
 
     pytest -m integration -s
 """
 
-import logging
-import os
-
 import pytest
-from dotenv import dotenv_values
 
-from main.client import DEFAULT_ENV_FILE, MissingConfigurationError, RestClient
 from main.exporter import DataExporter
-from main.logging_config import configure_logging
-
-PROJECT_ID_VAR = "SOURCE_QTEST_PROJECT_ID"
-
-
-@pytest.fixture(scope="module")
-def source_client():
-    """A client for the HS instance, or a skip when it is not configured."""
-    configure_logging(logging.INFO)
-    try:
-        return RestClient.for_source()
-    except MissingConfigurationError as error:
-        pytest.skip(f"Source instance not configured: {error}")
-
-
-@pytest.fixture(scope="module")
-def project_id():
-    """The HS project to read, taken from the `.env` settings."""
-    values = {**dotenv_values(DEFAULT_ENV_FILE), **os.environ}
-    configured = (values.get(PROJECT_ID_VAR) or "").strip()
-    if not configured:
-        pytest.skip(f"{PROJECT_ID_VAR} is not set in {DEFAULT_ENV_FILE}")
-    return int(configured)
 
 
 @pytest.mark.integration
