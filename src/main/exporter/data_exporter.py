@@ -57,6 +57,17 @@ INVENTORY_ENTITIES = {
     "test_runs": {"path": PROJECTS_ENDPOINT + "/{project_id}/test-runs"},
 }
 
+#: Entities the inventory writes on their own. Modules and test cases are left
+#: out: they are reported together in the Test Design tree, which is what tells
+#: apart a folder holding cases from an empty one.
+STANDALONE_ENTITIES = ("test_plans", "test_runs")
+
+#: File holding the modules and their test cases.
+TEST_DESIGN_FILE = "test_design"
+
+#: Keys under which a test case may carry the id of the module holding it.
+MODULE_ID_KEYS = ("parent_id", "parentId", "module_id", "moduleId")
+
 #: Entities requested per page while walking a paginated endpoint.
 PAGE_SIZE = 100
 
@@ -172,15 +183,33 @@ class DataExporter:
     # migration itself and is meant to be deleted once the inventory is taken.
 
     def export_inventory(self, project_id: int) -> dict[str, Path]:
-        """Write one text file per entity and return the files written."""
+        """Write the inventory files and return them.
+
+        The Test Design tree comes first -- modules with the test cases they
+        hold -- followed by one file per standalone entity.
+        """
         logger.info("Taking inventory of project %s in %s", project_id, self._client.base_url)
 
-        written = {
-            entity: self.export_entity(entity, project_id) for entity in INVENTORY_ENTITIES
-        }
+        written = {TEST_DESIGN_FILE: self.export_test_design(project_id)}
+        written.update(
+            {entity: self.export_entity(entity, project_id) for entity in STANDALONE_ENTITIES}
+        )
 
         logger.info("Inventory complete: %s files written", len(written))
         return written
+
+    def export_test_design(self, project_id: int) -> Path:
+        """Write the Test Design tree: every module with its test cases.
+
+        Modules with nothing inside are listed as empty, so the file shows both
+        where the cases live and which folders are unused.
+        """
+        logger.info("Building the Test Design tree of project %s", project_id)
+
+        modules = self.fetch_entities("test_modules", project_id)
+        test_cases = self.fetch_entities("test_cases", project_id)
+
+        return self.write_test_design(modules, test_cases, project_id)
 
     def export_test_modules(self, project_id: int) -> Path:
         """List the Test Design folders of a project into `test_modules.txt`.
@@ -203,6 +232,11 @@ class DataExporter:
 
     def export_entity(self, entity: str, project_id: int) -> Path:
         """Fetch every entity of a kind and write its ids and names to a file."""
+        entities = self.fetch_entities(entity, project_id)
+        return self.write_inventory(entities, entity, project_id)
+
+    def fetch_entities(self, entity: str, project_id: int) -> list[dict[str, Any]]:
+        """Fetch every entity of a kind, reading it the way its endpoint needs."""
         try:
             spec = INVENTORY_ENTITIES[entity]
         except KeyError:
@@ -211,9 +245,8 @@ class DataExporter:
                 f"Unknown entity {entity!r}, expected one of {sorted(INVENTORY_ENTITIES)}"
             ) from None
 
-        path = spec["path"].format(project_id=project_id)
         entities = self.fetch_all(
-            path,
+            spec["path"].format(project_id=project_id),
             entity,
             params=spec.get("params"),
             paginated=spec.get("paginated", True),
@@ -223,7 +256,7 @@ class DataExporter:
             entities = self.flatten_tree(entities)
             logger.info("Flattened %s into %s entries", entity, len(entities))
 
-        return self.write_inventory(entities, entity, project_id)
+        return entities
 
     def fetch_all(
         self,
@@ -321,6 +354,87 @@ class DataExporter:
         target.write_text("\n".join(lines) + "\n", encoding="utf-8")
         logger.info("Wrote %s (%s bytes)", target.name, target.stat().st_size)
         return target
+
+    def write_test_design(
+        self,
+        modules: list[dict[str, Any]],
+        test_cases: list[dict[str, Any]],
+        project_id: int,
+    ) -> Path:
+        """Write each module with the test cases it holds, empty ones included."""
+        target = PROJECT_ROOT / f"{TEST_DESIGN_FILE}.txt"
+
+        by_module: dict[Any, list[dict[str, Any]]] = {}
+        for test_case in test_cases:
+            by_module.setdefault(self._module_id_of(test_case), []).append(test_case)
+
+        empty = [module for module in modules if not by_module.get(self._key_of(module))]
+        logger.info(
+            "Test Design tree: %s modules (%s empty), %s test cases",
+            len(modules),
+            len(empty),
+            len(test_cases),
+        )
+
+        lines = [
+            f"# Test Design tree of project {project_id} in {self._client.base_url}",
+            f"# {len(modules)} modules, {len(empty)} of them empty, {len(test_cases)} test cases",
+            "# Each module lists the test cases directly inside it, indented.",
+            "",
+        ]
+        for module in modules:
+            held = by_module.get(self._key_of(module), [])
+            summary = f"{len(held)} test cases" if held else "empty"
+            lines.append(f"{self._key_of(module)} | {module.get('name')}  ({summary})")
+            lines.extend(
+                f"    {self._key_of(case)} | {case.get('name') or '<no name>'}" for case in held
+            )
+            lines.append("")
+
+        lines.extend(self._orphan_lines(modules, by_module))
+
+        target.write_text("\n".join(lines) + "\n", encoding="utf-8")
+        logger.info("Wrote %s (%s bytes)", target.name, target.stat().st_size)
+        return target
+
+    def _orphan_lines(
+        self,
+        modules: list[dict[str, Any]],
+        by_module: dict[Any, list[dict[str, Any]]],
+    ) -> list[str]:
+        """Report test cases whose module is not in the tree, if there are any."""
+        known = {self._key_of(module) for module in modules}
+        orphans = [
+            test_case
+            for module_id, held in by_module.items()
+            if module_id not in known
+            for test_case in held
+        ]
+        if not orphans:
+            return []
+
+        logger.warning(
+            "%s test cases point at a module missing from the tree", len(orphans)
+        )
+        return [
+            f"# {len(orphans)} test cases whose module is not in the tree above",
+            "",
+            *(
+                f"    {self._key_of(case)} | {case.get('name') or '<no name>'}"
+                f"  (module {self._module_id_of(case)})"
+                for case in orphans
+            ),
+            "",
+        ]
+
+    @staticmethod
+    def _module_id_of(test_case: dict[str, Any]) -> Any:
+        """Id of the module holding a test case, whatever key carries it."""
+        for key in MODULE_ID_KEYS:
+            module_id = test_case.get(key)
+            if module_id is not None:
+                return module_id
+        return None
 
     @staticmethod
     def _key_of(entity: Any) -> Any:
