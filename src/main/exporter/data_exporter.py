@@ -54,8 +54,18 @@ INVENTORY_ENTITIES = {
     },
     "test_plans": {"path": PROJECTS_ENDPOINT + "/{project_id}/releases"},
     "test_cases": {"path": PROJECTS_ENDPOINT + "/{project_id}/test-cases"},
-    "test_runs": {"path": PROJECTS_ENDPOINT + "/{project_id}/test-runs"},
+    # Test runs hang from the containers of the Test Execution tree, never from
+    # the project itself: asking without a parent yields nothing. They are
+    # collected by walking that tree instead of reading one endpoint.
+    "test_runs": {"path": PROJECTS_ENDPOINT + "/{project_id}/test-runs", "walk": True},
 }
+
+#: Endpoints of the Test Execution tree, walked to reach every test run.
+TEST_CYCLES_PATH = PROJECTS_ENDPOINT + "/{project_id}/test-cycles"
+TEST_SUITES_PATH = PROJECTS_ENDPOINT + "/{project_id}/test-suites"
+
+#: Containers that may hold cycles and suites. A suite only holds runs.
+BRANCHING_CONTAINERS = ("root", "release", "test-cycle")
 
 #: Entities the inventory writes on their own. Modules and test cases are left
 #: out: they are reported together in the Test Design tree, which is what tells
@@ -245,6 +255,9 @@ class DataExporter:
                 f"Unknown entity {entity!r}, expected one of {sorted(INVENTORY_ENTITIES)}"
             ) from None
 
+        if spec.get("walk"):
+            return self.fetch_test_runs(project_id)
+
         entities = self.fetch_all(
             spec["path"].format(project_id=project_id),
             entity,
@@ -318,6 +331,87 @@ class DataExporter:
 
         logger.info("Collected %s %s", len(collected), subject)
         return collected
+
+    def fetch_test_runs(self, project_id: int) -> list[dict[str, Any]]:
+        """Walk the Test Execution tree and collect every test run in it.
+
+        Runs hang from test cycles and test suites, which in turn hang from the
+        project root or from a release, and cycles can nest. Each run is named
+        by the path of containers leading to it, and reported once even when
+        its container is reachable by more than one route.
+        """
+        logger.info("Walking the Test Execution tree of project %s", project_id)
+
+        pending: list[tuple[str, Any, str]] = [("root", 0, "")]
+        for release in self.fetch_entities("test_plans", project_id):
+            pending.append(("release", self._key_of(release), release.get("name") or "release"))
+
+        collected: dict[Any, dict[str, Any]] = {}
+        visited: set[tuple[str, Any]] = set()
+
+        while pending:
+            parent_type, parent_id, path = pending.pop()
+            if (parent_type, parent_id) in visited:
+                continue
+            visited.add((parent_type, parent_id))
+
+            for run in self._children(project_id, "test-runs", parent_type, parent_id):
+                key = self._key_of(run)
+                if key not in collected:
+                    collected[key] = {**run, "name": self._path_join(path, run.get("name"))}
+
+            for suite in self._children(project_id, "test-suites", parent_type, parent_id):
+                pending.append(
+                    ("test-suite", self._key_of(suite), self._path_join(path, suite.get("name")))
+                )
+
+            if parent_type in BRANCHING_CONTAINERS:
+                for cycle in self._children(project_id, "test-cycles", parent_type, parent_id):
+                    pending.append(
+                        ("test-cycle", self._key_of(cycle), self._path_join(path, cycle.get("name")))
+                    )
+
+        logger.info(
+            "Collected %s test runs across %s containers", len(collected), len(visited)
+        )
+        # Sorted by path, so runs of the same cycle or suite read together.
+        return sorted(collected.values(), key=lambda run: str(run.get("name")))
+
+    def _children(
+        self,
+        project_id: int,
+        child: str,
+        parent_type: str,
+        parent_id: Any,
+    ) -> list[dict[str, Any]]:
+        """Entities of a kind hanging from one container of the execution tree.
+
+        A container that rejects the query is reported and skipped: not every
+        combination of parent and child is valid, and one refusal must not stop
+        the walk.
+        """
+        paths = {
+            "test-runs": INVENTORY_ENTITIES["test_runs"]["path"],
+            "test-suites": TEST_SUITES_PATH,
+            "test-cycles": TEST_CYCLES_PATH,
+        }
+        subject = f"{child} under {parent_type} {parent_id}"
+
+        try:
+            return self.fetch_all(
+                paths[child].format(project_id=project_id),
+                subject,
+                params={"parentId": parent_id, "parentType": parent_type},
+            )
+        except ProjectExportError as error:
+            logger.warning("Skipping %s: %s", subject, error)
+            return []
+
+    @staticmethod
+    def _path_join(prefix: str, name: str | None) -> str:
+        """Append a container or entity name to a path."""
+        name = name or "<no name>"
+        return f"{prefix} / {name}" if prefix else name
 
     def flatten_tree(self, entities: list[dict[str, Any]], prefix: str = "") -> list[dict[str, Any]]:
         """Flatten a nested module tree, naming each entry by its full path."""
