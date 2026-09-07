@@ -1,0 +1,513 @@
+# requirements of project 24901 in https://healthspring.qtestnet.com:443
+# 510 entries, 34 with Jira integration
+
+8196920 | About page
+8196927 | Agile Testing page
+8196924 | Become A Partner page
+8196921 | Blog pages
+8196925 | Case Studies page
+8196919 | Customers page
+8196928 | Exploratory Testing page
+8196922 | Find A Partner page
+8196933 | Footer menu
+8196932 | Free Trial
+8196935 | Header menu
+11437751 | MSTQ-4299
+11437750 | MSTQ-4651
+11437749 | MSTQ-5663
+11437748 | MSTQ-6597
+11437747 | MSTQ-7309
+11437746 | MSTQ-7406  [jira: Description=https://jira.healthspring-jira-prod.aws.zilverton.com/browse/MSTQ-7405]
+11437745 | MSTQ-7407  [jira: Description=https://jira.healthspring-jira-prod.aws.zilverton.com/browse/MSTQ-7405]
+11437744 | MSTQ-7408
+11437743 | MSTQ-7711
+11437742 | MSTQ-7741
+11437741 | MSTQ-7748
+11437740 | MSTQ-7852
+11437739 | MSTQ-7895
+11437738 | MSTQ-7917
+11437737 | MSTQ-7919
+11437736 | MSTQ-7921
+11437735 | MSTQ-7929
+11437734 | MSTQ-7931
+11437733 | MSTQ-7950
+11437732 | MSTQ-7956
+11437731 | MSTQ-7960
+11437730 | MSTQ-7961
+11437729 | MSTQ-7962
+11437728 | MSTQ-7963
+11437727 | MSTQ-7964
+11437726 | MSTQ-7969
+11437725 | MSTQ-7970
+11437724 | MSTQ-7971
+11437723 | MSTQ-7975
+11437722 | MSTQ-7981
+11437721 | MSTQ-7982
+11437720 | MSTQ-7983
+11437719 | MSTQ-7985
+11437718 | MSTQ-7988
+11437717 | MSTQ-7989
+11437716 | MSTQ-7990
+11437715 | MSTQ-7991
+11437714 | MSTQ-7994
+11437713 | MSTQ-8003
+11437712 | MSTQ-8006
+11437711 | MSTQ-8007
+11437710 | MSTQ-8008
+8196936 | Our Solutions section
+8196930 | qTest Platform page
+8196931 | Request a demo
+8196926 | Resources page
+8740444 | RG PQEP123
+8770863 | sessions
+8196934 | Subscribe to newsletter
+8196923 | Technology Alliances page
+8664976 | test
+8196929 | Test Case Management page
+8770452 | TP-1010 Ghost Recon: Contracts
+8912206 | TP-1010 Ghost Recon: Contracts
+8770450 | TP-1018 Action Plan Deployment
+8912202 | TP-1018 Action Plan Deployment
+8770448 | TP-1029 Reg Rptg - item R1.73 - update Universe Table 1IA part 4 (High Priority)
+8912199 | TP-1029 Reg Rptg - item R1.73 - update Universe Table 1IA part 4 (High Priority)
+8770446 | TP-1030 Reg Rptg - item R1.74 - Update ICP Late and Missing Summary report (Medium Q2-Q3)
+8912196 | TP-1030 Reg Rptg - item R1.74 - Update ICP Late and Missing Summary report (Medium Q2-Q3)
+8770444 | TP-1031 Reg Rptg - item R1.75 - Update Subscriptions for Aging Correspondence and other reports
+8912192 | TP-1031 Reg Rptg - item R1.75 - Update Subscriptions for Aging Correspondence and other reports
+8770442 | TP-1032 New ET Subject and Secondary Subjects
+8912189 | TP-1032 New ET Subject and Secondary Subjects
+8770440 | TP-1042 Hide Termination Details from the Provider Account Layout
+8912185 | TP-1042 Hide Termination Details from the Provider Account Layout
+8770438 | TP-1053 ICP Automation - Create new tables, SQL jobs, AB jobs for maintenance of all xRef tables
+8912183 | TP-1053 ICP Automation - Create new tables, SQL jobs, AB jobs for maintenance of all xRef tables
+8770436 | TP-1055 New Contact Bulk Upload
+8912178 | TP-1055 New Contact Bulk Upload
+8770434 | TP-1061 Parent Application Bulk Uploads
+8912175 | TP-1061 Parent Application Bulk Uploads
+8770432 | TP-1074 Sandbox Refresh Post Hyperforce Migration 3/31 or 4/1
+8912172 | TP-1074 Sandbox Refresh Post Hyperforce Migration 3/31 or 4/1
+8770430 | TP-1077 Provider Contact: Cigna MA HMO Panel Status Field
+8912169 | TP-1077 Provider Contact: Cigna MA HMO Panel Status Field
+8770428 | TP-1193 RITM8042078 - Move ACO Quality Metrics and Pop Health to Zscaler
+8912166 | TP-1193 RITM8042078 - Move ACO Quality Metrics and Pop Health to Zscaler
+8770427 | TP-1219 Update POD Account Status to "Terminated" when POD is part of an Entity Account termination.
+8912163 | TP-1219 Update POD Account Status to "Terminated" when POD is part of an Entity Account termination.
+8770425 | TP-1238 Create New Contact - New Custom Button and Flow
+8912161 | TP-1238 Create New Contact - New Custom Button and Flow
+8770423 | TP-1239 Remove the "New" and "New Contact" buttons for OOTB Contact creation
+8912158 | TP-1239 Remove the "New" and "New Contact" buttons for OOTB Contact creation
+8770421 | TP-1241 Account Name Field - Make Read Only on Provider Layout
+8912155 | TP-1241 Account Name Field - Make Read Only on Provider Layout
+8770419 | TP-1242 Add Account Contact Relationship - Start Date Validation Rule
+8912152 | TP-1242 Add Account Contact Relationship - Start Date Validation Rule
+8770417 | TP-1273 User Request: Enhancement record type Flow update
+8912149 | TP-1273 User Request: Enhancement record type Flow update
+8770415 | TP-1274 Enhancement + Report record type on User Request for Owner field
+8912146 | TP-1274 Enhancement + Report record type on User Request for Owner field
+8770413 | TP-1275 User Request: Report record type Flow update
+8912145 | TP-1275 User Request: Report record type Flow update
+8770412 | TP-1314 Training Data Upload
+8912142 | TP-1314 Training Data Upload
+8770410 | TP-1323 Home Page Dashboard Consolidation
+8912139 | TP-1323 Home Page Dashboard Consolidation
+8770408 | TP-1324 CareAllies App: Revamp Utility Bar
+8912137 | TP-1324 CareAllies App: Revamp Utility Bar
+8770406 | TP-1326 Data Load: Address Clean Up (Account & Contact)
+8912134 | TP-1326 Data Load: Address Clean Up (Account & Contact)
+8770404 | TP-1327 Update Product Names
+8912133 | TP-1327 Update Product Names
+8770401 | TP-1329 Payer Account Page Layout Redesign
+8912130 | TP-1329 Payer Account Page Layout Redesign
+8770399 | TP-1336 ActOnIt App Enablement
+8912128 | TP-1336 ActOnIt App Enablement
+8770397 | TP-1337 ActOnIt User Access and Admin Permissions
+8912126 | TP-1337 ActOnIt User Access and Admin Permissions
+8770395 | TP-1338 ActOnIt Utility Setup in Care Allies App
+8912124 | TP-1338 ActOnIt Utility Setup in Care Allies App
+8770394 | TP-1339 ActOnIt Message Type and Notification Configuration
+8912120 | TP-1339 ActOnIt Message Type and Notification Configuration
+8770489 | TP-133 [CareAllies Accessibility] Interactable role issue
+8912266 | TP-133 [CareAllies Accessibility] Interactable role issue
+8770391 | TP-1340 Case Object: Remove "Create" permission from selected User Profiles
+8871123 | TP-1340 Case Object: Remove "Create" permission from selected User Profiles
+8770389 | TP-1345 8 | a1.0 | PHS | Arcadia Provider file to VHAN | Analysis & Manual File deliver
+8912117 | TP-1345 8 | a1.0 | PHS | Arcadia Provider file to VHAN | Analysis & Manual File deliver
+8770387 | TP-1379 ICP: Incorporate Claims data beyond HRA-like conditions (2.10) (Medium)
+8912114 | TP-1379 ICP: Incorporate Claims data beyond HRA-like conditions (2.10) (Medium)
+8770385 | TP-1387 SNP Reg Reporting: Qual Apps Ticket - RITM9016436 - Requesting ~4,500 HRA surveys to be removed as deemed permanently non-payable. (Medium- needed after audit)
+8912111 | TP-1387 SNP Reg Reporting: Qual Apps Ticket - RITM9016436 - Requesting ~4,500 HRA surveys to be removed as deemed permanently non-payable. (Medium- needed after audit)
+8770383 | TP-1407 Reg Rptg - Update Part C code to count MY activities for Elements G and H  (Needs to go in 02/26) - Top Priority
+8912108 | TP-1407 Reg Rptg - Update Part C code to count MY activities for Elements G and H  (Needs to go in 02/26) - Top Priority
+8770381 | TP-1437 Reg Rptg - Update MHK Notes pull to capture more SPOC verbiage combinations for 1IA reporting - Prioritize #1
+8912105 | TP-1437 Reg Rptg - Update MHK Notes pull to capture more SPOC verbiage combinations for 1IA reporting - Prioritize #1
+8770487 | TP-148 [CareAllies] Deprecated dynamic property
+8912263 | TP-148 [CareAllies] Deprecated dynamic property
+8770379 | TP-1518 6 | b1.0 | CareAllies | Arcadia | RUSH | Analysis
+8912102 | TP-1518 6 | b1.0 | CareAllies | Arcadia | RUSH | Analysis
+8770377 | TP-1519 6 | b1.1 | CareAllies | Arcadia | RUSH | Development and Testing
+8912100 | TP-1519 6 | b1.1 | CareAllies | Arcadia | RUSH | Development and Testing
+8770375 | TP-1583 7 | a1.0 | Clinical | SNPMOC QUALITY APPS | Wellmed | Data ingestion for 2 new tables | Analysis, Development and Testing
+8912098 | TP-1583 7 | a1.0 | Clinical | SNPMOC QUALITY APPS | Wellmed | Data ingestion for 2 new tables | Analysis, Development and Testing
+8770372 | TP-1584 7 | a1.1 | Clinical | SNPMOC QUALITY APPS | Wellmed | Data ingestion for 2 new tables | Non-Prod deployment and Testing
+8912095 | TP-1584 7 | a1.1 | Clinical | SNPMOC QUALITY APPS | Wellmed | Data ingestion for 2 new tables | Non-Prod deployment and Testing
+8770370 | TP-1585 7 | a1.2 | Clinical | SNPMOC QUALITY APPS | Wellmed | Data ingestion for 2 new tables | Prod deployment and Validation
+8912093 | TP-1585 7 | a1.2 | Clinical | SNPMOC QUALITY APPS | Wellmed | Data ingestion for 2 new tables | Prod deployment and Validation
+8770368 | TP-1593 HRA: Illumicare 360
+8912090 | TP-1593 HRA: Illumicare 360
+8770366 | TP-1601 Counting 360's as HRA: Signify 360
+8912087 | TP-1601 Counting 360's as HRA: Signify 360
+8770364 | TP-1622 7 | b1.0 | Clinical | SNPMOC QUALITY APPS | Correspondence | Analysis, Development and Testing
+8912085 | TP-1622 7 | b1.0 | Clinical | SNPMOC QUALITY APPS | Correspondence | Analysis, Development and Testing
+8770362 | TP-1624 7 | b1.1 | Clinical | SNPMOC QUALITY APPS | Correspondence | Non-prod deployment and Testing
+8912083 | TP-1624 7 | b1.1 | Clinical | SNPMOC QUALITY APPS | Correspondence | Non-prod deployment and Testing
+8770360 | TP-1625 7 | b1.2 | Clinical | SNPMOC QUALITY APPS | Correspondence | Production deployment and Validation
+8912081 | TP-1625 7 | b1.2 | Clinical | SNPMOC QUALITY APPS | Correspondence | Production deployment and Validation
+8770485 | TP-163 [CareAllies] Vulnerability Issues
+8912260 | TP-163 [CareAllies] Vulnerability Issues
+8770358 | TP-1663 ICP: Enhancing Medical Claims Pull into DataMart
+8912078 | TP-1663 ICP: Enhancing Medical Claims Pull into DataMart
+8770356 | TP-1716 7 | c1.0 | Clinical | SNPMOC QUALITY APPS | Member ENROLLMENT| Analysis, Development and Testing
+8912075 | TP-1716 7 | c1.0 | Clinical | SNPMOC QUALITY APPS | Member ENROLLMENT| Analysis, Development and Testing
+8770354 | TP-1717 7 | c1.1 | Clinical | SNPMOC QUALITY APPS | Member ENROLLMENT| Non Prod deployment and Testing
+8912073 | TP-1717 7 | c1.1 | Clinical | SNPMOC QUALITY APPS | Member ENROLLMENT| Non Prod deployment and Testing
+8770351 | TP-1718 7 | c1.2 | Clinical | SNPMOC QUALITY APPS | Member ENROLLMENT| Prod deployment and Validation
+8912070 | TP-1718 7 | c1.2 | Clinical | SNPMOC QUALITY APPS | Member ENROLLMENT| Prod deployment and Validation
+8770349 | TP-1742 SNP: Omnibus Risk Trend Score -outreach within 90 days of a risk level increase
+8912069 | TP-1742 SNP: Omnibus Risk Trend Score -outreach within 90 days of a risk level increase
+8770347 | TP-1771 5 | a1.1 | OSCR Enhancement | 4 Tables | Development and Testing  [jira: Description=In order to support OSCR Changes , create/update below listed MDQO tables on core to support Compliance and regulatory requirements. Table name: Column(s): JIRA Ticket: dbo.Common_Member MedicareID (New) MIMP-686. This is going to QA tomorrow and we haven&rsquo;t chosen a new prod date yet. Please let us know how much time you need so we can arrange our SNOW date accordingly. dbo.Common_EventType ParentEventTypeID (New) - Integer CIProgramPymtEligible (New) - varchar(50) ChangeControl (New) - varchar(100) MIMP-778 to add it to PET, have not created ticket to bring it into MDQOLib yet dbo.CMCR_Results OriginalReceiptDate (New) - Date CI_UniqueIdentifier (New) This is already in production in PET but not in MDQOLib. Need ticket to copy it to MDQOLib. dbo.Common_FinanceStatus ReviewType (New) &ndash; VARCHAR (50) MIMP-757 to add it to PET, have not created ticket to bring it into MDQOLib yet dbo.Common_POS (New) TBD MIMP-755 &ndash; Not sure if the business needs this new table in OSS or not. dbo.CMCR_DOSResults TBD MIMP-755 to add a new POS column in PET, but need a ticket to copy it to MDQOLib &zwnj;]
+8912066 | TP-1771 5 | a1.1 | OSCR Enhancement | 4 Tables | Development and Testing  [jira: Description=In order to support OSCR Changes , create/update below listed MDQO tables on core to support Compliance and regulatory requirements. Table name: Column(s): JIRA Ticket: dbo.Common_Member MedicareID (New) MIMP-686. This is going to QA tomorrow and we haven&rsquo;t chosen a new prod date yet. Please let us know how much time you need so we can arrange our SNOW date accordingly. dbo.Common_EventType ParentEventTypeID (New) - Integer CIProgramPymtEligible (New) - varchar(50) ChangeControl (New) - varchar(100) MIMP-778 to add it to PET, have not created ticket to bring it into MDQOLib yet dbo.CMCR_Results OriginalReceiptDate (New) - Date CI_UniqueIdentifier (New) This is already in production in PET but not in MDQOLib. Need ticket to copy it to MDQOLib. dbo.Common_FinanceStatus ReviewType (New) &ndash; VARCHAR (50) MIMP-757 to add it to PET, have not created ticket to bring it into MDQOLib yet dbo.Common_POS (New) TBD MIMP-755 &ndash; Not sure if the business needs this new table in OSS or not. dbo.CMCR_DOSResults TBD MIMP-755 to add a new POS column in PET, but need a ticket to copy it to MDQOLib &zwnj;]
+8770345 | TP-1772 5 | a1.2 | OSCR Enhancement | 6 tables | Non- prod Deployment  [jira: Description=In order to support OSCR Changes , create/update below listed MDQO tables on core to support Compliance and regulatory requirements. Table name: Column(s): JIRA Ticket: dbo.Common_Member MedicareID (New) MIMP-686. This is going to QA tomorrow and we haven&rsquo;t chosen a new prod date yet. Please let us know how much time you need so we can arrange our SNOW date accordingly. dbo.Common_EventType ParentEventTypeID (New) - Integer CIProgramPymtEligible (New) - varchar(50) ChangeControl (New) - varchar(100) MIMP-778 to add it to PET, have not created ticket to bring it into MDQOLib yet dbo.CMCR_Results OriginalReceiptDate (New) - Date CI_UniqueIdentifier (New) This is already in production in PET but not in MDQOLib. Need ticket to copy it to MDQOLib. dbo.Common_FinanceStatus ReviewType (New) &ndash; VARCHAR (50) MIMP-757 to add it to PET, have not created ticket to bring it into MDQOLib yet dbo.Common_POS (New) TBD MIMP-755 &ndash; Not sure if the business needs this new table in OSS or not. dbo.CMCR_DOSResults TBD MIMP-755 to add a new POS column in PET, but need a ticket to copy it to MDQOLib &zwnj;]
+8912062 | TP-1772 5 | a1.2 | OSCR Enhancement | 6 tables | Non- prod Deployment  [jira: Description=In order to support OSCR Changes , create/update below listed MDQO tables on core to support Compliance and regulatory requirements. Table name: Column(s): JIRA Ticket: dbo.Common_Member MedicareID (New) MIMP-686. This is going to QA tomorrow and we haven&rsquo;t chosen a new prod date yet. Please let us know how much time you need so we can arrange our SNOW date accordingly. dbo.Common_EventType ParentEventTypeID (New) - Integer CIProgramPymtEligible (New) - varchar(50) ChangeControl (New) - varchar(100) MIMP-778 to add it to PET, have not created ticket to bring it into MDQOLib yet dbo.CMCR_Results OriginalReceiptDate (New) - Date CI_UniqueIdentifier (New) This is already in production in PET but not in MDQOLib. Need ticket to copy it to MDQOLib. dbo.Common_FinanceStatus ReviewType (New) &ndash; VARCHAR (50) MIMP-757 to add it to PET, have not created ticket to bring it into MDQOLib yet dbo.Common_POS (New) TBD MIMP-755 &ndash; Not sure if the business needs this new table in OSS or not. dbo.CMCR_DOSResults TBD MIMP-755 to add a new POS column in PET, but need a ticket to copy it to MDQOLib &zwnj;]
+8770343 | TP-1773 5 | a1.3 | OSCR Enhancement | Peer Review  [jira: Description=In order to support OSCR Changes , create/update below listed MDQO tables on core to support Compliance and regulatory requirements. Table name: Column(s): JIRA Ticket: dbo.Common_Member MedicareID (New) MIMP-686. This is going to QA tomorrow and we haven&rsquo;t chosen a new prod date yet. Please let us know how much time you need so we can arrange our SNOW date accordingly. dbo.Common_EventType ParentEventTypeID (New) - Integer CIProgramPymtEligible (New) - varchar(50) ChangeControl (New) - varchar(100) MIMP-778 to add it to PET, have not created ticket to bring it into MDQOLib yet dbo.CMCR_Results OriginalReceiptDate (New) - Date CI_UniqueIdentifier (New) This is already in production in PET but not in MDQOLib. Need ticket to copy it to MDQOLib. dbo.Common_FinanceStatus ReviewType (New) &ndash; VARCHAR (50) MIMP-757 to add it to PET, have not created ticket to bring it into MDQOLib yet dbo.Common_POS (New) TBD MIMP-755 &ndash; Not sure if the business needs this new table in OSS or not. dbo.CMCR_DOSResults TBD MIMP-755 to add a new POS column in PET, but need a ticket to copy it to MDQOLib &zwnj;]
+8912059 | TP-1773 5 | a1.3 | OSCR Enhancement | Peer Review  [jira: Description=In order to support OSCR Changes , create/update below listed MDQO tables on core to support Compliance and regulatory requirements. Table name: Column(s): JIRA Ticket: dbo.Common_Member MedicareID (New) MIMP-686. This is going to QA tomorrow and we haven&rsquo;t chosen a new prod date yet. Please let us know how much time you need so we can arrange our SNOW date accordingly. dbo.Common_EventType ParentEventTypeID (New) - Integer CIProgramPymtEligible (New) - varchar(50) ChangeControl (New) - varchar(100) MIMP-778 to add it to PET, have not created ticket to bring it into MDQOLib yet dbo.CMCR_Results OriginalReceiptDate (New) - Date CI_UniqueIdentifier (New) This is already in production in PET but not in MDQOLib. Need ticket to copy it to MDQOLib. dbo.Common_FinanceStatus ReviewType (New) &ndash; VARCHAR (50) MIMP-757 to add it to PET, have not created ticket to bring it into MDQOLib yet dbo.Common_POS (New) TBD MIMP-755 &ndash; Not sure if the business needs this new table in OSS or not. dbo.CMCR_DOSResults TBD MIMP-755 to add a new POS column in PET, but need a ticket to copy it to MDQOLib &zwnj;]
+8770341 | TP-1774 5 | a1.5 | OSCR Enhancement | Production Deployment and Validation  [jira: Description=In order to support OSCR Changes , create/update below listed MDQO tables on core to support Compliance and regulatory requirements. Table name: Column(s): JIRA Ticket: dbo.Common_Member MedicareID (New) MIMP-686. This is going to QA tomorrow and we haven&rsquo;t chosen a new prod date yet. Please let us know how much time you need so we can arrange our SNOW date accordingly. dbo.Common_EventType ParentEventTypeID (New) - Integer CIProgramPymtEligible (New) - varchar(50) ChangeControl (New) - varchar(100) MIMP-778 to add it to PET, have not created ticket to bring it into MDQOLib yet dbo.CMCR_Results OriginalReceiptDate (New) - Date CI_UniqueIdentifier (New) This is already in production in PET but not in MDQOLib. Need ticket to copy it to MDQOLib. dbo.Common_FinanceStatus ReviewType (New) &ndash; VARCHAR (50) MIMP-757 to add it to PET, have not created ticket to bring it into MDQOLib yet dbo.Common_POS (New) TBD MIMP-755 &ndash; Not sure if the business needs this new table in OSS or not. dbo.CMCR_DOSResults TBD MIMP-755 to add a new POS column in PET, but need a ticket to copy it to MDQOLib &zwnj;]
+8912057 | TP-1774 5 | a1.5 | OSCR Enhancement | Production Deployment and Validation  [jira: Description=In order to support OSCR Changes , create/update below listed MDQO tables on core to support Compliance and regulatory requirements. Table name: Column(s): JIRA Ticket: dbo.Common_Member MedicareID (New) MIMP-686. This is going to QA tomorrow and we haven&rsquo;t chosen a new prod date yet. Please let us know how much time you need so we can arrange our SNOW date accordingly. dbo.Common_EventType ParentEventTypeID (New) - Integer CIProgramPymtEligible (New) - varchar(50) ChangeControl (New) - varchar(100) MIMP-778 to add it to PET, have not created ticket to bring it into MDQOLib yet dbo.CMCR_Results OriginalReceiptDate (New) - Date CI_UniqueIdentifier (New) This is already in production in PET but not in MDQOLib. Need ticket to copy it to MDQOLib. dbo.Common_FinanceStatus ReviewType (New) &ndash; VARCHAR (50) MIMP-757 to add it to PET, have not created ticket to bring it into MDQOLib yet dbo.Common_POS (New) TBD MIMP-755 &ndash; Not sure if the business needs this new table in OSS or not. dbo.CMCR_DOSResults TBD MIMP-755 to add a new POS column in PET, but need a ticket to copy it to MDQOLib &zwnj;]
+8770339 | TP-1775 5 | a1.4 | OSCR Enhancement | Business Sign off  [jira: Description=In order to support OSCR Changes , create/update below listed MDQO tables on core to support Compliance and regulatory requirements. Table name: Column(s): JIRA Ticket: dbo.Common_Member MedicareID (New) MIMP-686. This is going to QA tomorrow and we haven&rsquo;t chosen a new prod date yet. Please let us know how much time you need so we can arrange our SNOW date accordingly. dbo.Common_EventType ParentEventTypeID (New) - Integer CIProgramPymtEligible (New) - varchar(50) ChangeControl (New) - varchar(100) MIMP-778 to add it to PET, have not created ticket to bring it into MDQOLib yet dbo.CMCR_Results OriginalReceiptDate (New) - Date CI_UniqueIdentifier (New) This is already in production in PET but not in MDQOLib. Need ticket to copy it to MDQOLib. dbo.Common_FinanceStatus ReviewType (New) &ndash; VARCHAR (50) MIMP-757 to add it to PET, have not created ticket to bring it into MDQOLib yet dbo.Common_POS (New) TBD MIMP-755 &ndash; Not sure if the business needs this new table in OSS or not. dbo.CMCR_DOSResults TBD MIMP-755 to add a new POS column in PET, but need a ticket to copy it to MDQOLib &zwnj;]
+8912054 | TP-1775 5 | a1.4 | OSCR Enhancement | Business Sign off  [jira: Description=In order to support OSCR Changes , create/update below listed MDQO tables on core to support Compliance and regulatory requirements. Table name: Column(s): JIRA Ticket: dbo.Common_Member MedicareID (New) MIMP-686. This is going to QA tomorrow and we haven&rsquo;t chosen a new prod date yet. Please let us know how much time you need so we can arrange our SNOW date accordingly. dbo.Common_EventType ParentEventTypeID (New) - Integer CIProgramPymtEligible (New) - varchar(50) ChangeControl (New) - varchar(100) MIMP-778 to add it to PET, have not created ticket to bring it into MDQOLib yet dbo.CMCR_Results OriginalReceiptDate (New) - Date CI_UniqueIdentifier (New) This is already in production in PET but not in MDQOLib. Need ticket to copy it to MDQOLib. dbo.Common_FinanceStatus ReviewType (New) &ndash; VARCHAR (50) MIMP-757 to add it to PET, have not created ticket to bring it into MDQOLib yet dbo.Common_POS (New) TBD MIMP-755 &ndash; Not sure if the business needs this new table in OSS or not. dbo.CMCR_DOSResults TBD MIMP-755 to add a new POS column in PET, but need a ticket to copy it to MDQOLib &zwnj;]
+8770337 | TP-1780 6 | b1.12 | CareAllies | Arcadia | RUSH | DEE Historical Queries | Development and Testing
+8912052 | TP-1780 6 | b1.12 | CareAllies | Arcadia | RUSH | DEE Historical Queries | Development and Testing
+8770334 | TP-1781 6 | b1.13 | CareAllies | Arcadia | RUSH | Create STTM Documents
+8912049 | TP-1781 6 | b1.13 | CareAllies | Arcadia | RUSH | Create STTM Documents
+8770332 | TP-1799 5 | a1.0 | OSCR Enhancement | Analysis  [jira: Description=In order to support OSCR Changes , create/update below listed MDQO tables on core to support Compliance and regulatory requirements. Table name: Column(s): JIRA Ticket: dbo.Common_Member MedicareID (New) MIMP-686. This is going to QA tomorrow and we haven&rsquo;t chosen a new prod date yet. Please let us know how much time you need so we can arrange our SNOW date accordingly. dbo.Common_EventType ParentEventTypeID (New) - Integer CIProgramPymtEligible (New) - varchar(50) ChangeControl (New) - varchar(100) MIMP-778 to add it to PET, have not created ticket to bring it into MDQOLib yet dbo.CMCR_Results OriginalReceiptDate (New) - Date CI_UniqueIdentifier (New) This is already in production in PET but not in MDQOLib. Need ticket to copy it to MDQOLib. dbo.Common_FinanceStatus ReviewType (New) &ndash; VARCHAR (50) MIMP-757 to add it to PET, have not created ticket to bring it into MDQOLib yet dbo.Common_POS (New) TBD MIMP-755 &ndash; Not sure if the business needs this new table in OSS or not. dbo.CMCR_DOSResults TBD MIMP-755 to add a new POS column in PET, but need a ticket to copy it to MDQOLib &zwnj;]
+8912048 | TP-1799 5 | a1.0 | OSCR Enhancement | Analysis  [jira: Description=In order to support OSCR Changes , create/update below listed MDQO tables on core to support Compliance and regulatory requirements. Table name: Column(s): JIRA Ticket: dbo.Common_Member MedicareID (New) MIMP-686. This is going to QA tomorrow and we haven&rsquo;t chosen a new prod date yet. Please let us know how much time you need so we can arrange our SNOW date accordingly. dbo.Common_EventType ParentEventTypeID (New) - Integer CIProgramPymtEligible (New) - varchar(50) ChangeControl (New) - varchar(100) MIMP-778 to add it to PET, have not created ticket to bring it into MDQOLib yet dbo.CMCR_Results OriginalReceiptDate (New) - Date CI_UniqueIdentifier (New) This is already in production in PET but not in MDQOLib. Need ticket to copy it to MDQOLib. dbo.Common_FinanceStatus ReviewType (New) &ndash; VARCHAR (50) MIMP-757 to add it to PET, have not created ticket to bring it into MDQOLib yet dbo.Common_POS (New) TBD MIMP-755 &ndash; Not sure if the business needs this new table in OSS or not. dbo.CMCR_DOSResults TBD MIMP-755 to add a new POS column in PET, but need a ticket to copy it to MDQOLib &zwnj;]
+8770330 | TP-1818 4 | a1.0 | SNPMOC | HRA | Add column | Analysis
+8912045 | TP-1818 4 | a1.0 | SNPMOC | HRA | Add column | Analysis
+8770328 | TP-1819 4 | a1.1 | SNPMOC | HRA | Add column | Development and Testing
+8912042 | TP-1819 4 | a1.1 | SNPMOC | HRA | Add column | Development and Testing
+8770483 | TP-181 [CareAllies] Enable and Configure Rabbit Hole module
+8912257 | TP-181 [CareAllies] Enable and Configure Rabbit Hole module
+8770326 | TP-1820 4 | a1.2 | SNPMOC | HRA | Add column | Non-Prod deployment
+8912039 | TP-1820 4 | a1.2 | SNPMOC | HRA | Add column | Non-Prod deployment
+8770324 | TP-1830 5 | a1.12  | OSCR Enhancement | 2 Tables | Development and Testing  [jira: Description=In order to support OSCR Changes , create/update below listed MDQO tables on core to support Compliance and regulatory requirements. Table name: Column(s): JIRA Ticket: dbo.Common_Member MedicareID (New) MIMP-686. This is going to QA tomorrow and we haven&rsquo;t chosen a new prod date yet. Please let us know how much time you need so we can arrange our SNOW date accordingly. dbo.Common_EventType ParentEventTypeID (New) - Integer CIProgramPymtEligible (New) - varchar(50) ChangeControl (New) - varchar(100) MIMP-778 to add it to PET, have not created ticket to bring it into MDQOLib yet dbo.CMCR_Results OriginalReceiptDate (New) - Date CI_UniqueIdentifier (New) This is already in production in PET but not in MDQOLib. Need ticket to copy it to MDQOLib. dbo.Common_FinanceStatus ReviewType (New) &ndash; VARCHAR (50) MIMP-757 to add it to PET, have not created ticket to bring it into MDQOLib yet dbo.Common_POS (New) TBD MIMP-755 &ndash; Not sure if the business needs this new table in OSS or not. dbo.CMCR_DOSResults TBD MIMP-755 to add a new POS column in PET, but need a ticket to copy it to MDQOLib &zwnj;]
+8912036 | TP-1830 5 | a1.12  | OSCR Enhancement | 2 Tables | Development and Testing  [jira: Description=In order to support OSCR Changes , create/update below listed MDQO tables on core to support Compliance and regulatory requirements. Table name: Column(s): JIRA Ticket: dbo.Common_Member MedicareID (New) MIMP-686. This is going to QA tomorrow and we haven&rsquo;t chosen a new prod date yet. Please let us know how much time you need so we can arrange our SNOW date accordingly. dbo.Common_EventType ParentEventTypeID (New) - Integer CIProgramPymtEligible (New) - varchar(50) ChangeControl (New) - varchar(100) MIMP-778 to add it to PET, have not created ticket to bring it into MDQOLib yet dbo.CMCR_Results OriginalReceiptDate (New) - Date CI_UniqueIdentifier (New) This is already in production in PET but not in MDQOLib. Need ticket to copy it to MDQOLib. dbo.Common_FinanceStatus ReviewType (New) &ndash; VARCHAR (50) MIMP-757 to add it to PET, have not created ticket to bring it into MDQOLib yet dbo.Common_POS (New) TBD MIMP-755 &ndash; Not sure if the business needs this new table in OSS or not. dbo.CMCR_DOSResults TBD MIMP-755 to add a new POS column in PET, but need a ticket to copy it to MDQOLib &zwnj;]
+8770322 | TP-1853 5 | a1.21 | OSCR Enhancement | 6 tables | Non- prod Testing  [jira: Description=In order to support OSCR Changes , create/update below listed MDQO tables on core to support Compliance and regulatory requirements. Table name: Column(s): JIRA Ticket: dbo.Common_Member MedicareID (New) MIMP-686. This is going to QA tomorrow and we haven&rsquo;t chosen a new prod date yet. Please let us know how much time you need so we can arrange our SNOW date accordingly. dbo.Common_EventType ParentEventTypeID (New) - Integer CIProgramPymtEligible (New) - varchar(50) ChangeControl (New) - varchar(100) MIMP-778 to add it to PET, have not created ticket to bring it into MDQOLib yet dbo.CMCR_Results OriginalReceiptDate (New) - Date CI_UniqueIdentifier (New) This is already in production in PET but not in MDQOLib. Need ticket to copy it to MDQOLib. dbo.Common_FinanceStatus ReviewType (New) &ndash; VARCHAR (50) MIMP-757 to add it to PET, have not created ticket to bring it into MDQOLib yet dbo.Common_POS (New) TBD MIMP-755 &ndash; Not sure if the business needs this new table in OSS or not. dbo.CMCR_DOSResults TBD MIMP-755 to add a new POS column in PET, but need a ticket to copy it to MDQOLib &zwnj;]
+8912034 | TP-1853 5 | a1.21 | OSCR Enhancement | 6 tables | Non- prod Testing  [jira: Description=In order to support OSCR Changes , create/update below listed MDQO tables on core to support Compliance and regulatory requirements. Table name: Column(s): JIRA Ticket: dbo.Common_Member MedicareID (New) MIMP-686. This is going to QA tomorrow and we haven&rsquo;t chosen a new prod date yet. Please let us know how much time you need so we can arrange our SNOW date accordingly. dbo.Common_EventType ParentEventTypeID (New) - Integer CIProgramPymtEligible (New) - varchar(50) ChangeControl (New) - varchar(100) MIMP-778 to add it to PET, have not created ticket to bring it into MDQOLib yet dbo.CMCR_Results OriginalReceiptDate (New) - Date CI_UniqueIdentifier (New) This is already in production in PET but not in MDQOLib. Need ticket to copy it to MDQOLib. dbo.Common_FinanceStatus ReviewType (New) &ndash; VARCHAR (50) MIMP-757 to add it to PET, have not created ticket to bring it into MDQOLib yet dbo.Common_POS (New) TBD MIMP-755 &ndash; Not sure if the business needs this new table in OSS or not. dbo.CMCR_DOSResults TBD MIMP-755 to add a new POS column in PET, but need a ticket to copy it to MDQOLib &zwnj;]
+8770320 | TP-1865 SNP: LOINC Mapping for HRA’4s - 2026
+8912031 | TP-1865 SNP: LOINC Mapping for HRA’4s - 2026
+8770318 | TP-1887 6 | c1.7 | CareAllies | INC22772904 | Onetime update to BIDI History tables with Asterisk in MBR_ID | Teradata Deployment
+8912029 | TP-1887 6 | c1.7 | CareAllies | INC22772904 | Onetime update to BIDI History tables with Asterisk in MBR_ID | Teradata Deployment
+8770315 | TP-1888 6 | c1.4 | CareAllies | INC22772904 | Resending files to Arcadia with Asterisk in MBR_ID |  Analysis and Development
+8912026 | TP-1888 6 | c1.4 | CareAllies | INC22772904 | Resending files to Arcadia with Asterisk in MBR_ID |  Analysis and Development
+8770313 | TP-1908 ICP: Update Triggering Logic to generate ICPs when there is status of "confirmation needed" - RITM0019531  [jira: Description=Estimation: Analysis: 1-2 days DEV: 1-2 days QA: 4-5 Update to logic in place to generate templates for ICPs even when there is a status of &quot;confirmation needed&quot; for ICPs in the MHK system. This was discussed during review of QASTM-1832. Lisa Boldin is business contact for this request as well. Thank you! User Story - Ticket - 10/31/25 - Priority High [QASTM-1908] ICP: Update Triggering Logic to generate ICPs when there is status of &quot;confirmation needed&quot; - RITM0019531 - Express Scripts Jira Lead: Lisa Boldin / English Distefano Need By: NA Bus Reqt&rsquo;s: 1/28/26 Final Reqt's: Qual Apps Inital Review: 1/28/26 Business Request (What): Update to logic in place to generate templates for ICPs even when there is a status of &quot;confirmation needed&quot; for ICPs in the MHK system Problem Statement (Why): ICPs were not triggering when there were ICPs in the MHK system with a status of &ldquo;Confirmation needed&rdquo;. A lot of times these ICPs are never mailed and stay in a confirmation needed status, as a back up we would still want a quality ICP to trigger. Future State/Description (How): Update logic for quality ICPs to still trigger even if there is a manual ICP in the system with the status of confirmation needed in MHK. Additional Information This was mostly during the Conduent outage but in the event, there is a system failed with our mailing vendor again or other system failure within MHK, we would like as a fail safe a quality ICP to trigger so that we can remain compliance with timeliness ICP mailing to the member. MHK Impact: Assumption is no as it is in addition to current logic in place - to confirm Acceptance Criteria: A: Member is due for a ICP per current logic B: If there is no ICP, then trigger quality ICP C: Additionally, if there is an ICP in the MHK system with a correspondence status of confirmation needed, then trigger a quality ICP. kc &zwnj;]
+8912023 | TP-1908 ICP: Update Triggering Logic to generate ICPs when there is status of "confirmation needed" - RITM0019531  [jira: Description=Estimation: Analysis: 1-2 days DEV: 1-2 days QA: 4-5 Update to logic in place to generate templates for ICPs even when there is a status of &quot;confirmation needed&quot; for ICPs in the MHK system. This was discussed during review of QASTM-1832. Lisa Boldin is business contact for this request as well. Thank you! User Story - Ticket - 10/31/25 - Priority High [QASTM-1908] ICP: Update Triggering Logic to generate ICPs when there is status of &quot;confirmation needed&quot; - RITM0019531 - Express Scripts Jira Lead: Lisa Boldin / English Distefano Need By: NA Bus Reqt&rsquo;s: 1/28/26 Final Reqt's: Qual Apps Inital Review: 1/28/26 Business Request (What): Update to logic in place to generate templates for ICPs even when there is a status of &quot;confirmation needed&quot; for ICPs in the MHK system Problem Statement (Why): ICPs were not triggering when there were ICPs in the MHK system with a status of &ldquo;Confirmation needed&rdquo;. A lot of times these ICPs are never mailed and stay in a confirmation needed status, as a back up we would still want a quality ICP to trigger. Future State/Description (How): Update logic for quality ICPs to still trigger even if there is a manual ICP in the system with the status of confirmation needed in MHK. Additional Information This was mostly during the Conduent outage but in the event, there is a system failed with our mailing vendor again or other system failure within MHK, we would like as a fail safe a quality ICP to trigger so that we can remain compliance with timeliness ICP mailing to the member. MHK Impact: Assumption is no as it is in addition to current logic in place - to confirm Acceptance Criteria: A: Member is due for a ICP per current logic B: If there is no ICP, then trigger quality ICP C: Additionally, if there is an ICP in the MHK system with a correspondence status of confirmation needed, then trigger a quality ICP. kc &zwnj;]
+8770312 | TP-1963 SNP: Advantmed- 360 as HRA's (Claims, other (TBD) to DM)
+8912021 | TP-1963 SNP: Advantmed- 360 as HRA's (Claims, other (TBD) to DM)
+8770309 | TP-1980 SNP: Between an HRA and subsequent ICP
+8912018 | TP-1980 SNP: Between an HRA and subsequent ICP
+8770501 | TP-1985 SNP: Arcadia - HRA V4 Updates
+8912015 | TP-1985 SNP: Arcadia - HRA V4 Updates
+8770500 | TP-1988 SNP: Part C Tableau and SSRS Updates
+8912013 | TP-1988 SNP: Part C Tableau and SSRS Updates
+8770499 | TP-1997 SNP: 360's as HRA's:  Claims data to SNP Datamart
+8912010 | TP-1997 SNP: 360's as HRA's:  Claims data to SNP Datamart
+8770493 | TP-1 Data Fix Story - MHK  Special Program Data Maintenance
+8912273 | TP-1 Data Fix Story - MHK  Special Program Data Maintenance
+8770498 | TP-2002 SNP: Add New Column for Referral Assigned To in HRA Part C Report
+8912007 | TP-2002 SNP: Add New Column for Referral Assigned To in HRA Part C Report
+8770497 | TP-2007 Research Ticket - (Critical) QICP mailed to both member and provider without care plan cover letter nor care plan content - RITM10710056
+8912004 | TP-2007 Research Ticket - (Critical) QICP mailed to both member and provider without care plan cover letter nor care plan content - RITM10710056
+8770496 | TP-2010 Research Ticket: SCTASK0030508 Member is showing a completed HRA in MHK  dated 02/07/2024 but, member research is showing the last completion as 06/21/2023.
+8912001 | TP-2010 Research Ticket: SCTASK0030508 Member is showing a completed HRA in MHK  dated 02/07/2024 but, member research is showing the last completion as 06/21/2023.
+8770495 | TP-2014 Data Ticket:  SCTASK0031203 One-time data pull RITM0030663
+8911999 | TP-2014 Data Ticket:  SCTASK0031203 One-time data pull RITM0030663
+8770494 | TP-2015 Data Ticket: SCTASK0031204 One-time data pull - RITM0030664
+8911996 | TP-2015 Data Ticket: SCTASK0031204 One-time data pull - RITM0030664
+8770492 | TP-2018 SNP: Update Table 1 to align with operational outreach (Blue).
+8912285 | TP-2018 SNP: Update Table 1 to align with operational outreach (Blue).
+8770490 | TP-2019 Research Ticket: member showing  and HRA due on 02/19/2026 in Part C but there is a completed HRA on 05/03/2018 which is showing completed in MHK but in member research it is showing not valid for SNP - RITM0032333
+8912283 | TP-2019 Research Ticket: member showing  and HRA due on 02/19/2026 in Part C but there is a completed HRA on 05/03/2018 which is showing completed in MHK but in member research it is showing not valid for SNP - RITM0032333
+8770488 | TP-2020 Research Ticket: There is a member showing in part C due on 02/24/2026 but per member research last HRA completed was 07/19/2017.  - RITM0032347
+8912281 | TP-2020 Research Ticket: There is a member showing in part C due on 02/24/2026 but per member research last HRA completed was 07/19/2017.  - RITM0032347
+8770486 | TP-2021 SNP: Fusion - 360 as HRA's – At Home Vendor - SDOH Onboarding
+8912280 | TP-2021 SNP: Fusion - 360 as HRA's – At Home Vendor - SDOH Onboarding
+8770484 | TP-2024 ICP:  Impact Analysis / User Notification Reports for Missing and Blank ICPS for 1976 and 1965
+8912278 | TP-2024 ICP:  Impact Analysis / User Notification Reports for Missing and Blank ICPS for 1976 and 1965
+8770482 | TP-2522 Test Analysis: for DIP-441 feature
+8912276 | TP-2522 Test Analysis: for DIP-441 feature
+8770480 | TP-2523 Test Preparation: for DIP-441 feature
+8912272 | TP-2523 Test Preparation: for DIP-441 feature
+8770478 | TP-2524 Test Data: for DIP-441 feature
+8912269 | TP-2524 Test Data: for DIP-441 feature
+8770476 | TP-2525 Test Execution: for DIP-441 feature
+8912267 | TP-2525 Test Execution: for DIP-441 feature
+8770481 | TP-284 [CareAllies] Drupal Security Release
+8912253 | TP-284 [CareAllies] Drupal Security Release
+8770491 | TP-2 Data Fix Story - MHK CM Module Data Discrepancies
+8912270 | TP-2 Data Fix Story - MHK CM Module Data Discrepancies
+8770474 | TP-3172 7 | d1.0 | MHK Response Files - Provider | Move Outbound job from Quarterly to Daily | Specialty file
+8912264 | TP-3172 7 | d1.0 | MHK Response Files - Provider | Move Outbound job from Quarterly to Daily | Specialty file
+8770472 | TP-3177 7 | a1.0 | Special Program Terminations & Value Updates | Special Program file | MCO, Monogram, Chronic PET & Groc
+8912261 | TP-3177 7 | a1.0 | Special Program Terminations & Value Updates | Special Program file | MCO, Monogram, Chronic PET & Groc
+8770469 | TP-3318 7 | a1.0 | Data Mart | Centralize Specialty Data in OSS
+8912256 | TP-3318 7 | a1.0 | Data Mart | Centralize Specialty Data in OSS
+8770467 | TP-3358 7 | a1.4 | MHK | Specialty Code & Provider Specialty files | remove Taxonomy ID from 'EXT_ID' & 'Specialty_EXT_ID' | Development
+8912254 | TP-3358 7 | a1.4 | MHK | Specialty Code & Provider Specialty files | remove Taxonomy ID from 'EXT_ID' & 'Specialty_EXT_ID' | Development
+8770465 | TP-3407 7 | a1.1 | Data Mart | Centralize Specialty Codes in OSS | Dev Testing
+8912250 | TP-3407 7 | a1.1 | Data Mart | Centralize Specialty Codes in OSS | Dev Testing
+8770463 | TP-3408 7 | a1.6 | Centralize Specialty Codes in OSS & Taxonomy Id Removal | Non-Prod Deployment & Testing
+8912248 | TP-3408 7 | a1.6 | Centralize Specialty Codes in OSS & Taxonomy Id Removal | Non-Prod Deployment & Testing
+8770461 | TP-3409 7 | a1.2 | Centralize Specialty Codes in OSS | SPROC Updates MHK
+8912245 | TP-3409 7 | a1.2 | Centralize Specialty Codes in OSS | SPROC Updates MHK
+8770459 | TP-3410 7 | a1.3 | Centralize Specialty Codes in OSS | SPROC Updates eviCore
+8912242 | TP-3410 7 | a1.3 | Centralize Specialty Codes in OSS | SPROC Updates eviCore
+8770457 | TP-3411 SNPMOC To OSS Data Copy - Enhance existing ICP Objects - Path to Production
+8912238 | TP-3411 SNPMOC To OSS Data Copy - Enhance existing ICP Objects - Path to Production
+8770455 | TP-3419 7 | a1.1b | Data Mart | Centralize Specialty Codes in OSS | UAT Deployment & Testing
+8912233 | TP-3419 7 | a1.1b | Data Mart | Centralize Specialty Codes in OSS | UAT Deployment & Testing
+8770453 | TP-3448 7 | a1.2b | Centralize Specialty Codes in OSS | Code Review & Non Prod Deployment of SPROC
+8912229 | TP-3448 7 | a1.2b | Centralize Specialty Codes in OSS | Code Review & Non Prod Deployment of SPROC
+8770451 | TP-3449 7 | a1.3b | Centralize Specialty Codes in OSS | Code Review
+8912225 | TP-3449 7 | a1.3b | Centralize Specialty Codes in OSS | Code Review
+8770449 | TP-3451 7 | a1.1 | Special Program Terminations | Special Programs file to MHK | Alegis
+8912222 | TP-3451 7 | a1.1 | Special Program Terminations | Special Programs file to MHK | Alegis
+8770447 | TP-3457 7 | b1.1 | Special Program Revisions | Member Condition DIM Changes
+8912218 | TP-3457 7 | b1.1 | Special Program Revisions | Member Condition DIM Changes
+8770445 | TP-3482 7 | c1.0 | Special Program Terminations | Special Programs file to MHK | Non-Prod Deployment & Testing
+8912213 | TP-3482 7 | c1.0 | Special Program Terminations | Special Programs file to MHK | Non-Prod Deployment & Testing
+8770443 | TP-3483 7 | b1.0 | Special Program Revisions | Member Condition DIM Analysis
+8912209 | TP-3483 7 | b1.0 | Special Program Revisions | Member Condition DIM Analysis
+8770441 | TP-3484 7 | d1.0 | Special Program Terminations | Special Programs file to MHK | Prod Deployment
+8912205 | TP-3484 7 | d1.0 | Special Program Terminations | Special Programs file to MHK | Prod Deployment
+8770439 | TP-3557 7 | a1.8 | Provider Specialty File Full Load | Deliver Full Provider Specialty File to MHK by 8/22
+8912203 | TP-3557 7 | a1.8 | Provider Specialty File Full Load | Deliver Full Provider Specialty File to MHK by 8/22
+8770437 | TP-3570 7 | a1.9 | Provider Specialty File Full Load | Revisit Specialty Code Set Logic | Part 1 of 2
+8912200 | TP-3570 7 | a1.9 | Provider Specialty File Full Load | Revisit Specialty Code Set Logic | Part 1 of 2
+8770435 | TP-3571 7 | a1.9b | Provider Specialty File Full Load | Revisit Specialty Code Set Logic | Part 2 of 2
+8912195 | TP-3571 7 | a1.9b | Provider Specialty File Full Load | Revisit Specialty Code Set Logic | Part 2 of 2
+8770433 | TP-3573 7 | d2.0 | Special Program Name Changes | Special Programs file to MHK | Non-Prod Deployment & Testing
+8912193 | TP-3573 7 | d2.0 | Special Program Name Changes | Special Programs file to MHK | Non-Prod Deployment & Testing
+8770431 | TP-3606 7 | a1.9c | Provider Specialty File | Load crosswalk in Prod
+8912190 | TP-3606 7 | a1.9c | Provider Specialty File | Load crosswalk in Prod
+8770429 | TP-3610 7 | a1.0 | Provider Specialty File Full Load | Revisit Specialty Code Set Logic | Deploy to Non-Prod & Testing Part 2
+8912186 | TP-3610 7 | a1.0 | Provider Specialty File Full Load | Revisit Specialty Code Set Logic | Deploy to Non-Prod & Testing Part 2
+8770426 | TP-3611 7 | a1.1 | Provider Specialty File Full Load | Revisit Specialty Code Set Logic | Deploy to Prod
+8912182 | TP-3611 7 | a1.1 | Provider Specialty File Full Load | Revisit Specialty Code Set Logic | Deploy to Prod
+8770424 | TP-3612 7 | a1.2 | MHK Provider Specialty Files | Revisit Specialty Code Set Logic | Prod Deployment & Validation
+8912179 | TP-3612 7 | a1.2 | MHK Provider Specialty Files | Revisit Specialty Code Set Logic | Prod Deployment & Validation
+8770422 | TP-3613 7 | a2.0 | Provider Specialty File Full Load | Revisit Specialty Code Set Logic | Deploy to Non-Prod & Testing Part 1
+8912176 | TP-3613 7 | a2.0 | Provider Specialty File Full Load | Revisit Specialty Code Set Logic | Deploy to Non-Prod & Testing Part 1
+8770420 | TP-3634 7 | b1.0 | eviCore Bravo File | Revisit Specialty Code Set Logic | Development & Testing Part 1
+8912173 | TP-3634 7 | b1.0 | eviCore Bravo File | Revisit Specialty Code Set Logic | Development & Testing Part 1
+8770418 | TP-3663 7 | b1.0 | eviCore Bravo File | Revisit Specialty Code Set Logic | Development & Testing Part 2
+8912170 | TP-3663 7 | b1.0 | eviCore Bravo File | Revisit Specialty Code Set Logic | Development & Testing Part 2
+8770416 | TP-3667 7 | a1.0b | Provider Specialty File Full Load | Revisit Specialty Code Set Logic | Deploy xWalk to Prod
+8912168 | TP-3667 7 | a1.0b | Provider Specialty File Full Load | Revisit Specialty Code Set Logic | Deploy xWalk to Prod
+8770414 | TP-3684 7 | a1.1b | MHK Provider Specialty Files | Revisit Specialty Code Set Logic | Peer Review (Mari)
+8912164 | TP-3684 7 | a1.1b | MHK Provider Specialty Files | Revisit Specialty Code Set Logic | Peer Review (Mari)
+8770411 | TP-3685 7 | b1.1 | eviCore Bravo File | Revisit Specialty Code Set Logic | Non-Prod Deployment & Testing
+8912162 | TP-3685 7 | b1.1 | eviCore Bravo File | Revisit Specialty Code Set Logic | Non-Prod Deployment & Testing
+8770409 | TP-3686 7 | b1.2 | eviCore Bravo File | Revisit Specialty Code Set Logic | Prod Deployment
+8912159 | TP-3686 7 | b1.2 | eviCore Bravo File | Revisit Specialty Code Set Logic | Prod Deployment
+8770407 | TP-3698 10 | a1.0 | Clinical Health Data Exchange - HS PDF / Manifest File Ingestion | Development Part 1
+8912156 | TP-3698 10 | a1.0 | Clinical Health Data Exchange - HS PDF / Manifest File Ingestion | Development Part 1
+8770405 | TP-3699 10 | a1.1 | Clinical Health Data Exchange - HS PDF / Manifest File Ingestion | Development Part 2 & Production Deployment
+8912153 | TP-3699 10 | a1.1 | Clinical Health Data Exchange - HS PDF / Manifest File Ingestion | Development Part 2 & Production Deployment
+8770402 | TP-3705 7 | d1.1 | MHK Response Files - Provider | Move Outbound job from Quarterly to Daily | Specialty file | Non-Prod Deployment
+8912150 | TP-3705 7 | d1.1 | MHK Response Files - Provider | Move Outbound job from Quarterly to Daily | Specialty file | Non-Prod Deployment
+8770400 | TP-3707 7 | d1.2 | MHK Response Files - Provider | Move Outbound job from Quarterly to Daily | Specialty file | Prod Deployment
+8912147 | TP-3707 7 | d1.2 | MHK Response Files - Provider | Move Outbound job from Quarterly to Daily | Specialty file | Prod Deployment
+8770398 | TP-3794 3 | a1.0 | Clinical Health Data Exchange | Dev | Modifications to existing solution
+8912144 | TP-3794 3 | a1.0 | Clinical Health Data Exchange | Dev | Modifications to existing solution
+8770396 | TP-3856 3 | g1.0 | Clinical Health Data Exchange | EPP Coding Vendors | SFTP Analysis
+8912141 | TP-3856 3 | g1.0 | Clinical Health Data Exchange | EPP Coding Vendors | SFTP Analysis
+8770393 | TP-3863 3 | h1.0 | Clinical Health Data Exchange | EPP | modifying the previous run to not unzip the files and include CSV files in transmission to the NAS drive | Deploy to Prod
+8912138 | TP-3863 3 | h1.0 | Clinical Health Data Exchange | EPP | modifying the previous run to not unzip the files and include CSV files in transmission to the NAS drive | Deploy to Prod
+8770392 | TP-4376 Initial Login to the Healthsprint Instance
+8912135 | TP-4376 Initial Login to the Healthsprint Instance
+8770390 | TP-4377 Test Story
+8912132 | TP-4377 Test Story
+8770388 | TP-4378 RK Demo 1
+8912129 | TP-4378 RK Demo 1
+8770386 | TP-4379 RK Demo 2
+8912125 | TP-4379 RK Demo 2
+8770384 | TP-4380 RK Demo 3
+8912122 | TP-4380 RK Demo 3
+8770382 | TP-4383 Test Story Flow
+8912118 | TP-4383 Test Story Flow
+8770380 | TP-4398 Test Story
+8912115 | TP-4398 Test Story
+8770378 | TP-4620 CRQC Testing Complete
+8912113 | TP-4620 CRQC Testing Complete
+8770376 | TP-4621 Training Provided to MCQT Affordability Ops (P. Freeby)
+8912110 | TP-4621 Training Provided to MCQT Affordability Ops (P. Freeby)
+8770374 | TP-4622 UAT Testing Completed
+8912107 | TP-4622 UAT Testing Completed
+8770373 | TP-4623 Business Demo Completed
+8912106 | TP-4623 Business Demo Completed
+8770479 | TP-493 Reg Rptg - reqt 1.79 - Incorporate Do Not Call list into SNP DataMart (High Q1) Testing needs to be completed by 03/21/2025
+8912251 | TP-493 Reg Rptg - reqt 1.79 - Incorporate Do Not Call list into SNP DataMart (High Q1) Testing needs to be completed by 03/21/2025
+8770477 | TP-503 VBE - Phase 4 - Implement process for brokers to complete surveys for continuous members (Phase 3 reqt 6.8) - 2026 Work
+8912247 | TP-503 VBE - Phase 4 - Implement process for brokers to complete surveys for continuous members (Phase 3 reqt 6.8) - 2026 Work
+8770371 | TP-5783 Cupid testing
+8912103 | TP-5783 Cupid testing
+8770369 | TP-5788 Test Story JS
+8912101 | TP-5788 Test Story JS
+8770367 | TP-5790 Test story
+8912097 | TP-5790 Test story
+8770365 | TP-5795 test
+8912094 | TP-5795 test
+8770363 | TP-5800 "Test"
+8912092 | TP-5800 "Test"
+8770361 | TP-5802 Test Story 2
+8912089 | TP-5802 Test Story 2
+8770359 | TP-5803 Test Story 2
+8912086 | TP-5803 Test Story 2
+8770357 | TP-5804 Test Story 3
+8912084 | TP-5804 Test Story 3
+8770355 | TP-5805 Test Story 4
+8912082 | TP-5805 Test Story 4
+8770353 | TP-5812 Joe Test story
+8912079 | TP-5812 Joe Test story
+8770352 | TP-5816 Test Story_TM
+8912076 | TP-5816 Test Story_TM
+8770350 | TP-5817 Test Story BLP
+8912074 | TP-5817 Test Story BLP
+8770348 | TP-5818 Test Link Issues Type Section Missing  [jira: Description=# [CAETM-1647|https://jira.express-scripts.com/browse/CAETM-1647]]
+8912071 | TP-5818 Test Link Issues Type Section Missing  [jira: Description=# [CAETM-1647|https://jira.express-scripts.com/browse/CAETM-1647]]
+8770346 | TP-5819 testing Stories JS
+8912068 | TP-5819 testing Stories JS
+8770344 | TP-5820 test
+8912065 | TP-5820 test
+8770342 | TP-5821 test
+8912063 | TP-5821 test
+8770340 | TP-5827 Test Story
+8912061 | TP-5827 Test Story
+8770338 | TP-5828 Testing functionality form 
+8912058 | TP-5828 Testing functionality form 
+8770336 | TP-5844 Story issue should move to final state based on role assignment
+8912055 | TP-5844 Story issue should move to final state based on role assignment
+8770335 | TP-5896 Test Story
+8912053 | TP-5896 Test Story
+8770333 | TP-5945 Test Story New
+8912050 | TP-5945 Test Story New
+8770331 | TP-5951 Test Story
+8912047 | TP-5951 Test Story
+8770329 | TP-6032 Unable to go to ToDo from Triage
+8912044 | TP-6032 Unable to go to ToDo from Triage
+8770327 | TP-6046 Missing Stories FNTCP-2711, FNTCP-4135  [jira: Description=As a FeeNom PO<br /><br />I need these stories: <br /><br />https://jira.healthspring-jira-prod.aws.zilverton.com/browse/FNTCP-2711 <br />https://jira.healthspring-jira-prod.aws.zilverton.com/browse/FNTCP-4135<br /><br />to be brought in to the new instance as it should have migrated as is needed for work in flight<br /><br />&nbsp;]
+8912040 | TP-6046 Missing Stories FNTCP-2711, FNTCP-4135  [jira: Description=As a FeeNom PO<br /><br />I need these stories: <br /><br />https://jira.healthspring-jira-prod.aws.zilverton.com/browse/FNTCP-2711 <br />https://jira.healthspring-jira-prod.aws.zilverton.com/browse/FNTCP-4135<br /><br />to be brought in to the new instance as it should have migrated as is needed for work in flight<br /><br />&nbsp;]
+8770325 | TP-6049 RSS Story for workflow validation
+8912038 | TP-6049 RSS Story for workflow validation
+8770323 | TP-6056 Test Story
+8912035 | TP-6056 Test Story
+8770321 | TP-6061 TP-6020 test
+8912033 | TP-6061 TP-6020 test
+8770319 | TP-6062 TP-6020 test 2
+8912030 | TP-6062 TP-6020 test 2
+8770317 | TP-6063 missing story needed: FNTCP-3217   [jira: Description=https://jira.healthspring-jira-prod.aws.zilverton.com/browse/FNTCP-3217<br /><br />FNTCP-3217<br /><br />I need FNTCP-3217 migrated to new instance.  It is tied to a production incident and has eyes looking at it way up the chain.]
+8912027 | TP-6063 missing story needed: FNTCP-3217   [jira: Description=https://jira.healthspring-jira-prod.aws.zilverton.com/browse/FNTCP-3217<br /><br />FNTCP-3217<br /><br />I need FNTCP-3217 migrated to new instance.  It is tied to a production incident and has eyes looking at it way up the chain.]
+8770316 | TP-6069 Test TP-5836
+8912025 | TP-6069 Test TP-5836
+8770314 | TP-6077 test
+8912022 | TP-6077 test
+8770311 | TP-6082 TP Test Issues in Feature
+8912019 | TP-6082 TP Test Issues in Feature
+8770310 | TP-6104 Story Point Test
+8912017 | TP-6104 Story Point Test
+8771277 | TP-6108 Test101
+8912014 | TP-6108 Test101
+8771279 | TP-6109 CLONE - Test101
+8912011 | TP-6109 CLONE - Test101
+8853987 | TP-6110 Story Workflow Update
+8853990 | TP-6111 Defect Workflow Update
+8853995 | TP-6112 Sub-task Workflow Update
+8776381 | TP-6122 Change ENV for PFIX to PFX
+8912008 | TP-6122 Change ENV for PFIX to PFX
+8787138 | TP-6137 Story to test creating from Issues in Feature matrix
+8912005 | TP-6137 Story to test creating from Issues in Feature matrix
+8863331 | TP-6146 Test Story
+8770475 | TP-614 SNPMOC - Redesign Part C stored proc and Details table (originally needed for Broker HRA reqt 8.1 but also needed for )
+8912244 | TP-614 SNPMOC - Redesign Part C stored proc and Details table (originally needed for Broker HRA reqt 8.1 but also needed for )
+8912002 | TP-6150 Create Jira Service Desk Form for CEA Payment Integrity Scrum Team (Pit Crew)  [jira: Description=The Payment Integrity Scrum Team had a Jira Service Desk available on the Cigna side. The purpose of the Jira Service Desk was for the business users to submit a request or a defect that they're experiencing on the tools that we support. The Service Desk contained different types of forms (see attached screen shots). Whenever a business user would submit a ticket, the product owner would get alerted, view the ticket and upon changing the status of the issue, the issue would get converted to a story and would be placed in the Pit Crew Jira dashboard.<br /><br />This did not migrate over due to this Service Desk being customized. There was a dedicated team over on the Cigna side that created these types of service desks; it is understandable if this is outside of the team's expertise. Please reach out to me if you need assistance or need a walkthrough.<br /><br />Two of the screenshots attached show the 'Project,' which shows you what goes on behind the scenes and gives you an idea of how these Service Desks can be created. One of the screenshots shows how the product owner can view the open tickets.<br /><br />I used Copilot to look up instructions on how to create a Service Desk on Jira. Here's what was provided to me -<br /><br />&nbsp;<br />Creating a *Jira Service Desk* (now officially called {*}Jira Service Management{*}) is a fairly straightforward process, but the _right_ setup depends on what you want to support (IT, HR, internal requests, customers, etc.). Below is a clear, practical, step-by-step guide, including best practices so you don&rsquo;t end up reworking it later.<br />----<br />h2. 1. Decide What Type of Service Desk You Need<br /><br />Before touching Jira, be clear on {*}purpose and scope{*}.<br /><br />Common examples:<br /> * *IT Service Desk* &ndash; incidents, access requests, hardware/software<br /> * *Internal Services* &ndash; HR, finance, facilities, onboarding<br /> * *Customer Support* &ndash; external users, tickets via email or portal<br /><br />Key questions:<br /> * Who will *submit requests* (employees, customers, both)?<br /> * Who will *work tickets* (agents, SMEs, third parties)?<br /> * Do you need {*}SLAs{*}, approvals, or compliance tracking?<br /><br />{quote}✅ Tip: Start with *one service desk* and expand later&mdash;Jira scales well.<br />{quote}<br />----<br />h2. 2. Get Access and Licensing Sorted<br /><br />You&rsquo;ll need:<br /> * *Jira Service Management license*<br /> * *Admin permissions* (Global Admin or Site Admin)<br /><br />Roles to understand:<br /> * *Agents* &ndash; licensed users who work tickets<br /> * *Customers* &ndash; free users who submit requests<br /> * *Admins* &ndash; configure workflows, fields, SLAs<br /><br />{quote}✅ Customers are {*}unlimited and free{*}&mdash;no license impact.<br />{quote}<br />----<br />h2. 3. Create the Service Desk Project<br /><br />In Jira:<br /> # Go to *Projects &rarr; Create project*<br /> # Select *Jira Service Management*<br /> # Choose a template (common ones):<br /> ** IT Service Management<br /> ** General Service Management<br /> ** HR Service Management<br /> # Name the project and choose a key (e.g., ITSD, HELP, HR)<br /><br />This creates:<br /> * Default workflows (Incident, Request, Change)<br /> * A customer portal<br /> * Basic SLAs<br /> * Standard request types<br /><br />----<br />h2. 4. Configure Request Types (Very Important)<br /><br />Request types are what users see on the {*}portal{*}.<br /><br />Examples:<br /> * &ldquo;Request New Laptop&rdquo;<br /> * &ldquo;Report a System Outage&rdquo;<br /> * &ldquo;Access to Application&rdquo;<br /><br />Steps:<br /> # Go to *Project settings &rarr; Request types*<br /> # Create or edit request types<br /> # Map each request type to an *issue type*<br /> # Customize the form fields:<br /> ** Keep it short<br /> ** Only ask what&rsquo;s needed to triage<br /> ** Use dropdowns where possible<br /><br />{quote}✅ Best practice: Aim for *5&ndash;15 request types* max initially.<br />{quote}<br />----<br />h2. 5. Customize Workflows<br /><br />Workflows control ticket states.<br /><br />Typical flow:<br /><br />{{Open &rarr; In Progress &rarr; Waiting for Customer &rarr; Resolved &rarr; Closed}}<br />Where to configure:<br /> * *Project settings &rarr; Workflows*<br /> * Clone default workflows before editing<br /><br />Add statuses for:<br /> * Approvals<br /> * Vendor waiting<br /> * On hold<br /> * Escalated issues<br /><br />{quote}✅ Keep workflows simple. Over-engineering is the #1 Jira mistake.<br />{quote}<br />----<br />h2. 6. Set Up SLAs (Service Level Agreements)<br /><br />SLAs measure response and resolution time.<br /><br />Common SLAs:<br /> * Time to First Response<br /> * Time to Resolution<br /><br />Steps:<br /> # Go to *Project settings &rarr; SLAs*<br /> # Define goals by:<br /> ** Priority<br /> ** Request type<br /> ** Business hours<br /> # Add pause conditions (e.g., &ldquo;Waiting for Customer&rdquo;)<br /><br />Example:<br /> * High priority incident: 1h response, 4h resolution<br /> * Low priority request: 1 business day response<br /><br />----<br />h2. 7. Configure the Customer Portal<br /><br />The portal is what customers interact with.<br /><br />Customize:<br /> * Portal name &amp; welcome message<br /> * Categories (Hardware, Software, Access)<br /> * Knowledge base integration (Confluence)<br /><br />Where:<br /> * *Project settings &rarr; Portal settings*<br /><br />{quote}✅ Clear language &gt; Jira terminology. Avoid internal jargon.<br />{quote}<br />----<br />h2. 8. Set Notifications &amp; Automation<br /><br />Make the system work for you.<br /><br />Notifications:<br /> * Customer auto-replies<br /> * Status change updates<br /> * Resolution emails<br /><br />Automation rules (examples):<br /> * Auto-assign tickets by request type<br /> * Escalate priority if SLA is close to breach<br /> * Auto-close after X days resolved<br /><br />Location:<br /> * *Project settings &rarr; Automation*<br /><br />----<br />h2. 9. Reporting &amp; Dashboards<br /><br />Track performance and bottlenecks.<br /><br />Useful reports:<br /> * SLA success rate<br /> * Requests by type<br /> * Agent workload<br /> * Time to resolution<br /><br />You can:<br /> * Use built-in reports<br /> * Create dashboards with gadgets<br /> * Export data if needed<br /><br />----<br />h2. 10. Test Before Launch<br /><br />Before going live:<br /> * Submit test tickets as a *customer*<br /> * Validate SLAs trigger correctly<br /> * Ensure emails/firewalls allow Jira emails<br /> * Get feedback from agents and users<br /><br />{quote}✅ Pilot with a small group first (1&ndash;2 weeks).<br />{quote}<br />----<br />h2. 11. Go Live &amp; Improve<br /><br />After launch:<br /> * Watch request volume trends<br /> * Monitor unused request types<br /> * Adjust SLAs and workflows quarterly<br /> * Add a knowledge base to reduce tickets<br /><br />----<br />h2. Want Help Designing Yours?<br /><br />If you want, I can:<br /> * Help choose the *right template* for your use case<br /> * Design *request types* and workflows<br /> * Recommend *SLAs* based on industry norms<br /> * Create a *starter configuration checklist*<br /><br />Just tell me: 👉 _Who is the service desk for and what problems it should solve first?_]
+8876105 | TP-6155 Rebranding ExpressApp - Vermont  - Choice Accident
+8876106 | TP-6156 Rebranding ExpressApp - Vermont  - Lump Sum Cancer (FCC)
+8876107 | TP-6157 Rebranding ExpressApp - Vermont  - Flexible Choice Heart Attack (FCHS)
+8876108 | TP-6158 Rebranding ExpressApp - Vermont  - Individual Whole Life (IWL)
+8876109 | TP-6159 Rebranding Express Enroll - Vermont  - Flexible Choice Cancer (FCC)
+8876111 | TP-6160 Rebranding Express Enroll - Vermont  - Flexible Choice Heart Attack & Stroke (FCHS)
+8876110 | TP-6161 Rebranding Express Enroll - Arkansas  - Flexible Choice Cancer (FCC)
+8876112 | TP-6162 Rebranding Express Enroll - Arkansas  - Flexible Choice Heart Attack & Stroke (FCHS)
+8876113 | TP-6163 Rebranding ExpressApp - Arkansas - Choice Accident
+8876114 | TP-6164 Rebranding ExpressApp - Arkansas  - Lump Sum Cancer (FCC)
+8876115 | TP-6165 Rebranding ExpressApp - Arkansas  - Lump Sum Heart (FCHS)
+8876118 | TP-6166 Rebranding ExpressApp - Arkansas  - Individual Whole Life (IWL)
+8876117 | TP-6167 Rebranding Express App - Arkansas  - Short Term Care (STC)
+8876116 | TP-6168 Rebranding Express App - Kentucky  - Choice Accident
+8876119 | TP-6169 Rebranding ExpressApp - Kentucky  - Lump Sum Cancer (FCC)
+8876120 | TP-6170 Rebranding ExpressApp - Kentucky  - Lump Sum Heart (FCHS)
+8876121 | TP-6171 Rebranding ExpressApp - Kentucky  - Individual Whole Life (IWL)
+8876122 | TP-6172 Rebranding Express Enroll - Kentucky  - Flexible Choice Cancer (FCC)
+8876125 | TP-6173 Rebranding Express Enroll - Kentucky  - Flexible Choice Heart Attack & Stroke (FCHS)
+8876123 | TP-6174 Rebranding ExpressApp - Michigan  - Choice Accident
+8876124 | TP-6175 Rebranding ExpressApp - Michigan - Lump Sum Cancer (FCC)
+8876126 | TP-6176 Rebranding ExpressApp - Michigan - Lump Sum Heart (FCHS)
+8876127 | TP-6177 Rebranding ExpressApp - Michigan  - Individual Whole Life (IWL)
+8876128 | TP-6178 Rebranding Express App - Michigan  - Short Term Care (STC)
+8876130 | TP-6179 Rebranding Express Enroll - Michigan  - Flexible Choice Cancer (FCC)
+8876129 | TP-6180 Rebranding Express Enroll - Michigan  - Flexible Choice Heart Attack & Stroke (FCHS)
+8876131 | TP-6181 Rebranding ExpressApp - South Carolina - Choice Accident
+8876133 | TP-6182 Rebranding ExpressApp - South Carolina  - Lump Sum Cancer (FCC)
+8876135 | TP-6183 Rebranding ExpressApp - South Carolina  - Lump Sum Heart (FCHS)
+8876134 | TP-6184 Rebranding ExpressApp - South Carolina  - Individual Whole Life (IWL)
+8876132 | TP-6185 Rebranding Express App - South Carolina  - Short Term Care (STC)
+8877399 | TP-6187 Test story to hold inused sub-tasks
+8877954 | TP-6188 Updating Feautre / Objective & receiving errors when saving
+8911998 | TP-6190 Unable to integrate updates from JIRA to SNOW  [jira: Description=In the previous ESI instance of JIRA, this functionality worked.&nbsp;<br /><br />In the ESI instance, there is a field in the defect issue to link the corresponding INC# from SNOW. As the Jira ticket is updated, the SNOW ticket is also updated automatically. I am able to add the field to my defect in healthspring Jira, but the updates are not automatically reflecting in the SNOW ticket as it did in the ESI version.&nbsp;<br /><br />I will also open a ticket with the SNOW team for this: INC0116429<br /><br />&nbsp;<br /><br />!image-2026-04-03-12-07-27-142.png!]
+8923069 | TP-6198 Another Story for Workflow validation 
+8923423 | TP-6200 CLONE - test
+8939050 | TP-6205 Integrate GitHub, ServiceNow, and Teams In Jira / Confluence  [jira: Description=*Request Type:*<br />_&lt;either &quot;New Functionality&quot;, &quot;Change to Exiting Functionality&quot;, or &quot;Integration or Interface&quot;&gt;_<br /><br />Please activate / enable&nbsp;integrations with common programs that we utilize daily to get better organized and become more confident in our tooling<br /><br />*Timing Considerations / Desired &quot;need by date&quot;:*<br />_&lt;specification of the desired delivery date and/or key milestones applicable to the enhancements request&gt;_<br /><br />There is not a time consideration on this, but I do believe the sooner, the better as these are tools that most development teams utilize.<br /><br />*Collaborators:*<br />_&lt;who are&nbsp;the additional&nbsp;sponsors or champions of this request?&gt;_<br /><br />*Summary/Description:*<br />_&lt;current state: explanation of the existing limitation or process. | Proposed Enhancement: What functionality or improvement is requested?&gt;_<br /><br />We would like to enable these integrations in order to allow our team(s) to be able to connect to their tooling or create automations for our workflow. Enabling this feature will allow teams to be able to do a host of functionalities and have greater detail of information and connection without the time sink and potentially misconfiguration.<br /><br />*Benefit Statement &amp; Usage Scenario(s):*<br />_&lt;business justification: why is this needed? | expected outcome: what will success look like? | specification by example: what are the usage or adoption scenarios for this request?&gt;_<br /><br />This isn't needed, but this will reduce A LOT of overhead when it comes to referencing a GitHub Pull Request (the fix), the initial SNOW issue, all in the story, cleanly, in Jira. This would enable cross-communication between developers, business stakeholders, analysts, and leadership.<br /><br />*Attachment(s):*<br />_&lt;please add supporting artifacts as applicable to the &quot;attachments&quot; section of this request&gt;_<br />[https://support.atlassian.com/jira-service-management-cloud/docs/integrate-it-applications-and-tools/]&nbsp;]
+8939070 | TP-6206 ITEC Integration with Jira  [jira: Description=&lt;p dir=&quot;auto&quot;&gt;&lt;b&gt;Request Type:&lt;/b&gt;&lt;br&gt;<br />&lt;i&gt;Integration&amp;nbsp;&lt;/i&gt;&lt;/p&gt;<br /><br />&lt;p dir=&quot;auto&quot;&gt;&lt;b&gt;Timing Considerations / Desired &quot;need by date&quot;:&lt;/b&gt;&lt;br&gt;<br />&lt;i&gt;TBD&lt;/i&gt;&lt;/p&gt;<br /><br />&lt;p dir=&quot;auto&quot;&gt;&lt;b&gt;Collaborators:&lt;/b&gt;&lt;/p&gt;<br /><br />&lt;p dir=&quot;auto&quot;&gt;&lt;i style=&quot;-webkit-text-stroke-width:0px; background-color:#ffffff; color:#172b4d; font-family:-apple-system,BlinkMacSystemFont,&amp;quot;Segoe UI&amp;quot;,Roboto,&amp;quot;Noto Sans&amp;quot;,Ubuntu,&amp;quot;Droid Sans&amp;quot;,&amp;quot;Helvetica Neue&amp;quot;,sans-serif; font-size:14px; font-variant-caps:normal; font-variant-ligatures:normal; font-weight:400; letter-spacing:normal; orphans:2; text-align:start; text-decoration-color:initial; text-decoration-style:initial; text-decoration-thickness:initial; text-indent:0px; text-transform:none; white-space:normal; widows:2; word-spacing:0px&quot;&gt;Srini Ramani Ramanujam, Nayar Ajay,&amp;nbsp;Dave Lucente, Rashidat Majekodunmi,&lt;/i&gt;&lt;/p&gt;<br /><br />&lt;p dir=&quot;auto&quot;&gt;&lt;b&gt;Summary/Description:&lt;/b&gt;&lt;/p&gt;<br /><br />&lt;p dir=&quot;auto&quot;&gt;&lt;i&gt;&lt;span style=&quot;font-size:10.5pt; letter-spacing:0px&quot;&gt;HCSC enterprise reporting is performed at Product Line/ Product Teams and there are standard fields that are configured to help with the reporting.&lt;/span&gt;&lt;/i&gt;&lt;/p&gt;<br /><br />&lt;p dir=&quot;auto&quot;&gt;&lt;i&gt;Need JIRA team to explore the possibility of adding equivalent / same fields - so there would be a seamless integration into the HCSC reporting structure&lt;/i&gt;&lt;/p&gt;<br /><br />&lt;p dir=&quot;auto&quot;&gt;&amp;nbsp;&lt;/p&gt;<br /><br />&lt;p dir=&quot;auto&quot;&gt;&lt;i&gt;current state: No integration with Jira&amp;nbsp;&lt;/i&gt;&lt;/p&gt;<br /><br />&lt;p dir=&quot;auto&quot;&gt;&lt;i&gt;Proposed Enhancement:&amp;nbsp; To follow HCSC process, we&amp;nbsp;need integration in order to enable reporting and IDP- Delia,&amp;nbsp;&lt;span data-teams=&quot;true&quot;&gt;an AI-powered chatbot tool designed to help streamline delivery processes, quickly retrieve information, and better support&amp;nbsp;day-to-day work&amp;nbsp;&lt;/span&gt;&lt;/i&gt;&lt;/p&gt;<br /><br />&lt;p dir=&quot;auto&quot;&gt;&amp;nbsp;&lt;/p&gt;<br /><br />&lt;p dir=&quot;auto&quot;&gt;&lt;b&gt;Benefit Statement &amp;amp; Usage Scenario(s):&lt;/b&gt;&lt;br&gt;<br />&lt;i&gt;Need Jira data into ITEC database for leadership reporting and usability with IDP-Delia Delivery Assistant&amp;nbsp;&lt;/i&gt;&lt;/p&gt;<br /><br />&lt;p dir=&quot;auto&quot;&gt;&amp;nbsp;&lt;/p&gt;<br /><br />&lt;p dir=&quot;auto&quot;&gt;&lt;b&gt;Attachment(s):&lt;/b&gt;&lt;br&gt;<br />&lt;i&gt;Jira Fields spreadsheet attached&amp;nbsp;&lt;/i&gt;&lt;/p&gt;<br /><br />&lt;p dir=&quot;auto&quot;&gt;&amp;nbsp;&lt;/p&gt;]
+8939081 | TP-6207 Medicare Salesforce Copado Integration with Jira  [jira: Description=We would like to integrate our Copado DevOps tool which is installed in our salesforce org with Jira. This will help us to pull Jira information to our Copado org which will help us to create, monitor the Jira stories end to end and stream line our DevOps process and release cycle.<br /><br />Benefit Statement &amp; Usage Scenario:<br /><br />Currently our developers will create a user stories in copado and enter Jira values manually. Once they promote user stories to target environments they need to manually update the Jira story. Also Release Team has to manually crosscheck the stories which are part of release. By integrating Jira with Copado DevOps tool we can avoid this manual updates and copado automatically updates the values both Jira and Copado.<br /><br />links: [https://docs.copado.com/articles/#!copado-ci-cd-publication/copado-connect-jira]<br /><br />&nbsp;]
+8939126 | TP-6208 Integrate GitHub  [jira: Description=*Request Type:*<br />_&lt;either &quot;New Functionality&quot;, &quot;Change to Exiting Functionality&quot;, or &quot;Integration or Interface&quot;&gt;_<br /><br />Please activate / enable&nbsp;integrations with common programs that we utilize daily to get better organized and become more confident in our tooling<br /><br />*Timing Considerations / Desired &quot;need by date&quot;:*<br />_&lt;specification of the desired delivery date and/or key milestones applicable to the enhancements request&gt;_<br /><br />There is not a time consideration on this, but I do believe the sooner, the better as these are tools that most development teams utilize.<br /><br />*Collaborators:*<br />_&lt;who are&nbsp;the additional&nbsp;sponsors or champions of this request?&gt;_<br /><br />*Summary/Description:*<br />_&lt;current state: explanation of the existing limitation or process. | Proposed Enhancement: What functionality or improvement is requested?&gt;_<br /><br />We would like to enable these integrations in order to allow our team(s) to be able to connect to their tooling or create automations for our workflow. Enabling this feature will allow teams to be able to do a host of functionalities and have greater detail of information and connection without the time sink and potentially misconfiguration.<br /><br />*Benefit Statement &amp; Usage Scenario(s):*<br />_&lt;business justification: why is this needed? | expected outcome: what will success look like? | specification by example: what are the usage or adoption scenarios for this request?&gt;_<br /><br />This isn't needed, but this will reduce A LOT of overhead when it comes to referencing a GitHub Pull Request (the fix), the initial SNOW issue, all in the story, cleanly, in Jira. This would enable cross-communication between developers, business stakeholders, analysts, and leadership.<br /><br />*Attachment(s):*<br />_&lt;please add supporting artifacts as applicable to the &quot;attachments&quot; section of this request&gt;_<br />[https://support.atlassian.com/jira-service-management-cloud/docs/integrate-it-applications-and-tools/]&nbsp;]
+8978509 | TP-6211 Test Closed Feature
+8770473 | TP-673 SNPMOC CM Rewrite 2023 - CR693 Recon Reports - Update Invalid Records report (bug fix and to serve as a baseline for voids & Recon rpts)
+8912241 | TP-673 SNPMOC CM Rewrite 2023 - CR693 Recon Reports - Update Invalid Records report (bug fix and to serve as a baseline for voids & Recon rpts)
+8770471 | TP-698 SNPMOC CM Rewrite 2023 R2 - One-Time Recon of HRA Due Dates (reqt 4.2.8 to MHK)
+8912237 | TP-698 SNPMOC CM Rewrite 2023 R2 - One-Time Recon of HRA Due Dates (reqt 4.2.8 to MHK)
+8770470 | TP-780 Reg Rptg - item R1.35 / business priority 06 - update BH HRA response report to be limited to members without certain BH referrals.  (Medium)
+8912234 | TP-780 Reg Rptg - item R1.35 / business priority 06 - update BH HRA response report to be limited to members without certain BH referrals.  (Medium)
+8770468 | TP-788 Reg Rptg - item R1.50 / business priority 10 - update Enrollment Change Summary and Detail Report to add CM Elements
+8912231 | TP-788 Reg Rptg - item R1.50 / business priority 10 - update Enrollment Change Summary and Detail Report to add CM Elements
+8770466 | TP-790 Reg Rptg - item R1.54 - update datamart definitions of PrimaryCM and SecondaryCM
+8912227 | TP-790 Reg Rptg - item R1.54 - update datamart definitions of PrimaryCM and SecondaryCM
+8770464 | TP-816 Reg Rptg - item R2.6 - Quality Apps to onboard Optum 360 data into datamart (Low Q3)
+8912224 | TP-816 Reg Rptg - item R2.6 - Quality Apps to onboard Optum 360 data into datamart (Low Q3)
+8770462 | TP-844 Reg Rptg - item r1.19 - Quality Apps to onboard Wellmed auth data into appropriate reporting -long term solution  [jira: Description=Requested a extension. This is ok to push, if needed, but needed no later than Q3. Let's start the work Estimation: Analyses 32, Dev 40 , QA 32, BUAT ------------------------------ This is the long term solution: QASTM-NEW: Background: Wellmed is a fully delegated Physician group in Texas; Delegated UM functions we do not process Auths WellMed data is needed for Table 1IA to capture their TOC data because we don&rsquo;t have their auth data in MHK. WellMed is a delegated IPA that manages their own UM, CM, claims, but not SNP TOC or BH. SNP TOC falls back to the SNP. UM auths are completed in their system and the data doesn&rsquo;t flow into MHK. Because we use auth data, in Table 1IA, we need a solution. Last year we looked at using encounter data and ruled it out because it&rsquo;s not real time nor did it include all data points we need. Therefore, we made the decision to use their daily census files in lieu of auth data We now need a User Story for Long Term Solution: Goal: Have WellMed data flow into MHK to support downstream processes Goal is to be like Evicore where auth data is sent to MHK and triggers downstream processes Additional requirements to be provided Quality Apps to incorporate into Universe Table 1IA and other applicable reporting. --------------------------------------------------------------------------------------------- This is a leftover deliveTable from TOC/EOC project from a couple of years back, with Tadd Ellsworth being the POC and Marsha Hunt being business SME. Wellmed auth data (and any other delegated Inpatient auth data) has to be onboarded into one of Cigna systems, in order to be pulled into datamart and be used in any reporting, including in Universe Table 1IA per MHK SNPMOC Rewrite R2 2022 ask. Currently, auth data is only loaded per specific Universe or Part C CMS specs and not as a standard dataset. Wellmed data also has to end up in appropriate auth/EOC tables in OSS. 1. Wellmed to stand up new file(s) to OSS - see Tadd for original design 2. OSS to ingest them into appropriate Auth Fact and Episode of Care objects. 3. Quality Apps to incorporate into 1IA and other existing auth-based reporting. OSS work: We are going to stand up 2 well med historical and daily data into OSS. This was from way back and need to reassess if it is needed. Application Deliverable Response Status / Next Steps Face to Face Reporting Bring New Data Into datamart to enable reporting Generic &ndash; Not a tangible deliverable Closed Wellmed auth Data (and any other delegated Inpatient auth data) has to be onboarded into one of Cigna systems, in order to be pulled into datamart and be used in any reporting, including in Universe Table 11A per MNK SNPMOC rewrite R2 2022 ask. Currently, auth data is only loaded per specific Universe or Part C CMS specs and not a standard dataset. Wellmed data also has to end up in appropriate auth/EOC tables in OSS. 1. Wellmed to stand up new file(s) to OSS - see Tadd for original design. 2. OSS to ingest them into appropriate Auth Facet and Episode of Care objects. This Report is Documented in JIRA: US 844 This Report is also on the QA Master Spreadsheet as deferred to 2025 Scope The last update was 8/27/24 as follows: 8/27/2024 JK: See Notes in Operational Reporting BRD Next Steps by: Dave Wheeler 12/12/24: This is Part of Portfolio T-015047 and is in Program Epic 024803 Open - is it Due Q1 - email sent to Kellsi Per Kellsi this needs to be Done &ndash; this is going to big and will Involve contract --- Target Q3 12/11/24 question from Dave Wheeler to Cynthia: @Lopez, Cynthia This is the requirement R1.19 that we&rsquo;ve discussed with Wellmed. I believe that we are waiting on the ETA from Wellmed for their updated file. Correct?? &zwnj;]
+8912221 | TP-844 Reg Rptg - item r1.19 - Quality Apps to onboard Wellmed auth data into appropriate reporting -long term solution  [jira: Description=Requested a extension. This is ok to push, if needed, but needed no later than Q3. Let's start the work Estimation: Analyses 32, Dev 40 , QA 32, BUAT ------------------------------ This is the long term solution: QASTM-NEW: Background: Wellmed is a fully delegated Physician group in Texas; Delegated UM functions we do not process Auths WellMed data is needed for Table 1IA to capture their TOC data because we don&rsquo;t have their auth data in MHK. WellMed is a delegated IPA that manages their own UM, CM, claims, but not SNP TOC or BH. SNP TOC falls back to the SNP. UM auths are completed in their system and the data doesn&rsquo;t flow into MHK. Because we use auth data, in Table 1IA, we need a solution. Last year we looked at using encounter data and ruled it out because it&rsquo;s not real time nor did it include all data points we need. Therefore, we made the decision to use their daily census files in lieu of auth data We now need a User Story for Long Term Solution: Goal: Have WellMed data flow into MHK to support downstream processes Goal is to be like Evicore where auth data is sent to MHK and triggers downstream processes Additional requirements to be provided Quality Apps to incorporate into Universe Table 1IA and other applicable reporting. --------------------------------------------------------------------------------------------- This is a leftover deliveTable from TOC/EOC project from a couple of years back, with Tadd Ellsworth being the POC and Marsha Hunt being business SME. Wellmed auth data (and any other delegated Inpatient auth data) has to be onboarded into one of Cigna systems, in order to be pulled into datamart and be used in any reporting, including in Universe Table 1IA per MHK SNPMOC Rewrite R2 2022 ask. Currently, auth data is only loaded per specific Universe or Part C CMS specs and not as a standard dataset. Wellmed data also has to end up in appropriate auth/EOC tables in OSS. 1. Wellmed to stand up new file(s) to OSS - see Tadd for original design 2. OSS to ingest them into appropriate Auth Fact and Episode of Care objects. 3. Quality Apps to incorporate into 1IA and other existing auth-based reporting. OSS work: We are going to stand up 2 well med historical and daily data into OSS. This was from way back and need to reassess if it is needed. Application Deliverable Response Status / Next Steps Face to Face Reporting Bring New Data Into datamart to enable reporting Generic &ndash; Not a tangible deliverable Closed Wellmed auth Data (and any other delegated Inpatient auth data) has to be onboarded into one of Cigna systems, in order to be pulled into datamart and be used in any reporting, including in Universe Table 11A per MNK SNPMOC rewrite R2 2022 ask. Currently, auth data is only loaded per specific Universe or Part C CMS specs and not a standard dataset. Wellmed data also has to end up in appropriate auth/EOC tables in OSS. 1. Wellmed to stand up new file(s) to OSS - see Tadd for original design. 2. OSS to ingest them into appropriate Auth Facet and Episode of Care objects. This Report is Documented in JIRA: US 844 This Report is also on the QA Master Spreadsheet as deferred to 2025 Scope The last update was 8/27/24 as follows: 8/27/2024 JK: See Notes in Operational Reporting BRD Next Steps by: Dave Wheeler 12/12/24: This is Part of Portfolio T-015047 and is in Program Epic 024803 Open - is it Due Q1 - email sent to Kellsi Per Kellsi this needs to be Done &ndash; this is going to big and will Involve contract --- Target Q3 12/11/24 question from Dave Wheeler to Cynthia: @Lopez, Cynthia This is the requirement R1.19 that we&rsquo;ve discussed with Wellmed. I believe that we are waiting on the ETA from Wellmed for their updated file. Correct?? &zwnj;]
+8770460 | TP-911 User Request: Enhancement Email Notification Flow Update
+8912217 | TP-911 User Request: Enhancement Email Notification Flow Update
+8770458 | TP-982 Reg Rptg - item R1.58 - Update 2IA per working session, updates to SSRS Reports (Universe reports, Member Research)
+8912215 | TP-982 Reg Rptg - item R1.58 - Update 2IA per working session, updates to SSRS Reports (Universe reports, Member Research)
+8770456 | TP-987 'Executive Team' Profile Creation
+8912211 | TP-987 'Executive Team' Profile Creation
+8770454 | TP-996 Reg Rptg - item R1.62 / Urgent - From Program Audit Lessons Learned, update Universe Table 1IA part 2
+8912208 | TP-996 Reg Rptg - item R1.62 / Urgent - From Program Audit Lessons Learned, update Universe Table 1IA part 2
+8740455 | Untitled
+8872256 | Untitled
+8872361 | Untitled
+8872800 | Untitled
+8876179 | Untitled
+10472405 | Untitled
+8549493 | User Login
+8196938 | Video sections
+8196937 | What's New section
