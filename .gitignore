@@ -1,9 +1,4 @@
-# One-off inventory of the source instance: customer data, keep it local
-/test_design.txt
-/test_modules.txt
-/test_plans.txt
-/test_cases.txt
-/test_runs.txt
+
 
 # Environment and user configuration: sensitive data, never commit
 .env

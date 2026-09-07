@@ -1,0 +1,523 @@
+# Test Design tree of project 24901 in https://healthspring.qtestnet.com:443
+# 126 modules, 84 of them empty, 265 test cases
+# Each module lists the test cases directly inside it, indented.
+
+5534290 | test1  (18 test cases)
+    11642627 | TC2_Validate the created date and time in D0 table for New broker
+    11642626 | TC1_Creating the New Broker Through API
+    11642629 | TC4_Validate the created date and time in D0 table for updated broker
+    11642628 | TC3_Updating the Broker Through API with All update event
+    11642631 | TC6_Validate the created date and time in D0 table for Migrated broker
+
+
+    11642630 | TC5_Updating the Broker Through API with Migration Event
+    11642633 | TC8_Validate the created date and time in D0 table for Extrenal Broker
+    11642632 | TC7_Verify the Created datetime not updated for the External Broker
+    11642635 | TC10_Validate the created date and time in D0 table for  Agency(MA/PDP)
+    11642634 | TC9_Verify the Created datetime not updated for the Agency(MA/PDP)
+    11642637 | TC12_Validate the created date and time in D0 table for  Agency(MA/PDP/CSB)
+    11642636 | TC11_Verify the Created datetime not updated for the Agency(MA/PDP/CSB)
+    11642641 | TC16_Validate the created date and time in D0 table for  Internal Telesales Agent(PDP)
+    11642640 | TC15_Verify the Created datetime not updated for the Internal Telesales Agent(PDP)
+    11642643 | TC18_Validate the created date and time in D0 table for  Servicing Agent (MA/PDP)
+    11642642 | TC17_Verify the Created datetime not updated for the Servicing Agent (MA/PDP)
+    11642639 | TC14_Validate the created date and time in D0 table for  Internal Telesales Agent(MA/PDP/CSB)
+    11642638 | TC13_Verify the Created datetime not updated for the Internal Telesales Agent(MA/PDP/CSB)
+
+5508290 | Provider  (empty)
+
+5508291 | Provider / ART  (1 test cases)
+    11533705 | sample test case
+
+5509323 | Availity  (empty)
+
+5509324 | Availity / MHK  (1 test cases)
+    11538313 | TC_1
+
+5299090 | MD-6 Company page  (2 test cases)
+    9974414 | Customers page
+    9974415 | About page
+
+5299091 | MD-5 Blog  (1 test cases)
+    9974416 | Blog page
+
+5299092 | MD-11 Partners pages  (3 test cases)
+    9974417 | Technology Alliances page
+    9974418 | Become a partner page
+    9974419 | Find a Partner page
+
+5299093 | MD-4 Resources pages  (2 test cases)
+    9974420 | Resources page
+    9974421 | Case Studies page
+
+5299094 | MD-3 Solutions pages  (4 test cases)
+    9974424 | Exploratory Testing page
+    9974425 | Agile Testing page
+    9974422 | Test case Management page ABCD
+    9974423 | qTest Platform page
+
+5299096 | MD-7 Common  (3 test cases)
+    9974428 | Header menu
+    9974429 | Subscribe to newsletter
+    9974430 | Footer menu
+
+5299095 | MD-7 Common / MD-10 Free Trial  (2 test cases)
+    9974426 | Get Free Trial
+    9974427 | Request demo
+
+5299097 | MD-2 Homepage  (3 test cases)
+    9974431 | What's New section
+    9974432 | Our Solutions section
+    9974433 | Video section
+
+5453392 | Test TC Upload  (empty)
+
+5503423 | Test TC Upload / External Submissions  (empty)
+
+5503422 | Test TC Upload / Import Claims  (empty)
+
+5503424 | Test TC Upload / Internal Outreach  (empty)
+
+5500276 | Test TC Upload / Multi Provider  (empty)
+
+5534219 | Test TC Upload / Untitled  (empty)
+
+5524042 | Imported from JIRA  (empty)
+
+5558845 | Imported from JIRA / CEA-3461  (empty)
+
+5579399 | Imported from JIRA / GOVLPM2-263  (empty)
+
+5558864 | Imported from JIRA / GOVLPM2-283  (empty)
+
+5558869 | Imported from JIRA / TPP-4631  (empty)
+
+5558870 | Imported from JIRA / TPP-4631 / TP Sprint 26.1.1  (empty)
+
+5558872 | Imported from JIRA / TPP-4634  (empty)
+
+5558839 | Imported from JIRA / TPP-4635  (empty)
+
+5558855 | Imported from JIRA / TPP-4635 / TP Sprint 26.1.1  (empty)
+
+5558875 | Imported from JIRA / TPP-4636  (empty)
+
+5558858 | Imported from JIRA / TPP-4641  (empty)
+
+5558859 | Imported from JIRA / TPP-4641 / TP Sprint 26.1.1  (empty)
+
+5558866 | Imported from JIRA / TPP-4643  (empty)
+
+5558867 | Imported from JIRA / TPP-4643 / TP Sprint 26.1.1  (empty)
+
+5558861 | Imported from JIRA / TPP-4647  (empty)
+
+5558851 | Imported from JIRA / TPP-4648  (empty)
+
+5565032 | Imported from JIRA / TPP-4653  (empty)
+
+5558841 | Imported from JIRA / TPP-4656  (empty)
+
+5558842 | Imported from JIRA / TPP-4656 / TP Sprint 26.1.1  (empty)
+
+5558853 | Imported from JIRA / TPP-4657  (empty)
+
+5558836 | Imported from JIRA / TPP-4671  (empty)
+
+5585672 | Imported from JIRA / TPP-4677  (empty)
+
+5558908 | Imported from JIRA / TPP-69  (empty)
+
+5558862 | Imported from JIRA / TPP-85  (empty)
+
+5558885 | Imported from JIRA / TP Sprint 26.1.1  (empty)
+
+5410747 | Project Test Repository  (1 test cases)
+    11533708 | Test Case Covers Untitled ABCDEFG
+
+5410748 | Project Test Repository / FinScan to Verysis  (1 test cases)
+    11450227 | Test
+
+5410753 | Project Test Repository / FinScan to Verysis / CSB Verisys Cases  (empty)
+
+5410754 | Project Test Repository / FinScan to Verysis / Member  (empty)
+
+5410755 | Project Test Repository / FinScan to Verysis / Provider  (empty)
+
+5410750 | Project Test Repository / Medicare Id  (empty)
+
+5410752 | Project Test Repository / MRR  (empty)
+
+5524128 | Data  (empty)
+
+5496105 | Test_01  (1 test cases)
+    11451684 | Test Case Description
+
+5524233 | Untitled  (1 test cases)
+    12775194 | test
+
+5541974 | Untitled / dataloader test  (empty)
+
+5524237 | export dataloader  (31 test cases)
+    11571703 | Verify the user is able to see the PDM capability
+    11571704 | Verify the upload pages for all source categories when we change the guidelines config of document
+    11571705 | Verify PDM source functionality is updated when we do changes in document configuration
+    11571706 | Verify the user is able to open the Data Remediation Page
+    11571707 | Verify the user is able to upload a file for Data Remediation flows
+    11571708 | Verify the user is able to see the uploaded file in download page for data remediation
+    11571709 | Verify the admin is able to approve the uploaded file
+    11571710 | Verify the admin user is able to reject the uploaded file with comments
+    11571711 | Verify the admin user is able to add a new template for the any PDM category or process
+    11571712 | Verify the admin user is able to reject the uploaded file without comments
+    11571713 | Verify the admin is able to search the file record with status: All on Review page
+    11571714 | Verify the admin is able to search the file record with status: Processed on Review page
+    11571715 | Verify the admin is able to search the file record with status: Pending on Review page
+    11571716 | Verify the admin is able to search the file record with status: Rejected on Review page
+    11571717 | Verify the admin is able to search the file record with status:Queued on Review page
+    11571718 | Verify the admin is able to search the file record with tracking number
+    11571719 | Verify the user is able to upload same file for Data Remediation flows multiple times
+    11571728 | Verify the admin is able to search the file record with status: Processed on Review page For PCP Panel Closure
+    11571729 | Verify the admin is able to search the file record with status: Pending on Review page for PCP Panel Closure
+    11571730 | Verify the admin is able to search the file record with status: Rejected on Review page for PCP Panel Closure
+    11571731 | Verify the admin is able to search the file record with status:Queued on Review page for PCP Panel Closure
+    11571732 | Verify the admin is able to search the file record with tracking number for PCP Panel Closure
+    11571733 | Verify the user is able to upload same file for PCP Panel Closure Flow multiple times
+    11571720 | Verify the user is able to open the PCP Panel Closure Page
+    11571721 | Verify the user is able to upload a file for PCP Panel Closure Flow
+    11571722 | Verify the user is able to see the uploaded file in download page for PCP Panel Closure
+    11571723 | Verify the admin is able to approve the uploaded file for PCP panel closure
+    11571724 | Verify the admin user is able to reject the uploaded file with comments
+    11571725 | Verify the admin user is able to add a new template for the PCP Panel Closure
+    11571726 | Verify the admin user is able to reject the uploaded file without comments for PCP Panel Closure
+    11571727 | Verify the admin is able to search the file record with status: All on Review page For PCP Panel Closure
+
+5524363 | export  (31 test cases)
+    11572357 | Verify the user is able to see the PDM capability
+    11572358 | Verify the upload pages for all source categories when we change the guidelines config of document
+    11572359 | Verify PDM source functionality is updated when we do changes in document configuration
+    11572360 | Verify the user is able to open the Data Remediation Page
+    11572361 | Verify the user is able to upload a file for Data Remediation flows
+    11572362 | Verify the user is able to see the uploaded file in download page for data remediation
+    11572368 | Verify the admin is able to search the file record with status: Processed on Review page
+    11572369 | Verify the admin is able to search the file record with status: Pending on Review page
+    11572370 | Verify the admin is able to search the file record with status: Rejected on Review page
+    11572371 | Verify the admin is able to search the file record with status:Queued on Review page
+    11572372 | Verify the admin is able to search the file record with tracking number
+    11572373 | Verify the user is able to upload same file for Data Remediation flows multiple times
+    11572374 | Verify the user is able to open the PCP Panel Closure Page
+    11572375 | Verify the user is able to upload a file for PCP Panel Closure Flow
+    11572376 | Verify the user is able to see the uploaded file in download page for PCP Panel Closure
+    11572377 | Verify the admin is able to approve the uploaded file for PCP panel closure
+    11572378 | Verify the admin user is able to reject the uploaded file with comments
+    11572379 | Verify the admin user is able to add a new template for the PCP Panel Closure
+    11572380 | Verify the admin user is able to reject the uploaded file without comments for PCP Panel Closure
+    11572381 | Verify the admin is able to search the file record with status: All on Review page For PCP Panel Closure
+    11572382 | Verify the admin is able to search the file record with status: Processed on Review page For PCP Panel Closure
+    11572363 | Verify the admin is able to approve the uploaded file
+    11572364 | Verify the admin user is able to reject the uploaded file with comments
+    11572365 | Verify the admin user is able to add a new template for the any PDM category or process
+    11572366 | Verify the admin user is able to reject the uploaded file without comments
+    11572367 | Verify the admin is able to search the file record with status: All on Review page
+    11572383 | Verify the admin is able to search the file record with status: Pending on Review page for PCP Panel Closure
+    11572384 | Verify the admin is able to search the file record with status: Rejected on Review page for PCP Panel Closure
+    11572385 | Verify the admin is able to search the file record with status:Queued on Review page for PCP Panel Closure
+    11572386 | Verify the admin is able to search the file record with tracking number for PCP Panel Closure
+    11572387 | Verify the user is able to upload same file for PCP Panel Closure Flow multiple times
+
+5420960 | test  (2 test cases)
+    10949379 | un
+    11835896 | Untitled
+
+5420961 | test / Untitled  (empty)
+
+5503370 | test / Untitled  (empty)
+
+5511464 | Untitled  (1 test cases)
+    11542170 | Untitled
+
+5526724 | export  (3 test cases)
+    11579203 | Verify whether the API throw an error when there is mismatch of rec id and npi id
+    11579204 | Verify whether the API throw an error while not providing language recid
+    11579205 | Verify whether the API throws an error while providing the payload without authorization
+
+5402814 | Account  (2 test cases)
+    10853162 | Untitled
+    10801234 | Test Case Covers User Login
+
+5402911 | same  (16 test cases)
+    11528533 | TC006
+    11528532 | TC005
+    11528531 | TC004
+    11528530 | TC003
+    11528529 | TC002
+    11528528 | Athena Validation Test
+    11528543 | TC016
+    11528542 | TC015
+    11528541 | TC014
+    11528540 | TC013
+    11528539 | TC012
+    11528538 | TC011
+    11528537 | TC010
+    11528536 | TC009
+    11528535 | TC008
+    11528534 | TC007
+
+5503477 | Config Prod Tickets  (empty)
+
+5503434 | Config Prod Tickets / UACT-1234_Config Ticket  (empty)
+
+5503440 | Config Prod Tickets / UACT-1234_Config Ticket / Sample Folder1  (1 test cases)
+    11504885 | Test1
+
+5503438 | Config Prod Tickets / UACT-1234_Config Ticket / Sample Folder2  (4 test cases)
+    11504709 | Process a medical claim with procedure code G0105, place of service 24 and diagnosis code C7A026 from a Surgical Facility. Facets should adjudicate the claim with Service ID DCP9-HMO POS
+    11504704 | Process a medical claim with procedure code G0105, place of service 24 and diagnosis code C7A026 from a Surgical Facility. Facets should adjudicate the claim with Service ID DCP9-HMO
+    11504703 | Process a facility claim with procedure code 0537U, Revenue code 0310 and any diagnosis code not listed on the BRD  Facets should adjudicate the claim with Service ID T1PV-PPO_HC
+    11504702 | Process a medical claim with procedure code 0537U, place of service 22 and any diagnosis code not listed on the BRD.  Facets should adjudicate the claim with Service ID DCP7-HMO_HC
+
+5503580 | Internal Outreach  (13 test cases)
+    11505134 | TC010_Internal Outreach_.zip
+    11505133 | TC009_Internal Outreach_.msg
+    11505132 | TC008_Internal Outreach_.rtf
+    11505131 | TC007_Internal Outreach_.txt
+    11505130 | TC006_Internal Outreach_.PDF
+    11505129 | TC005_Internal Outreach_.pdf
+    11505128 | TC004_Internal Outreach_.xlsx
+    11505127 | TC003_Internal Outreach_.xls
+    11505126 | TC002_Internal Outreach_.docx
+    11505125 | TC001_Internal Outreach_.doc
+    11505135 | TC011_Internal Outreach_.zipx
+    11505137 | TC011_Internal Outreach_Over 5MB
+    11505136 | TC012_Internal Outreach_.xlsb
+
+5503581 | Import Claims  (13 test cases)
+    11505150 | TC011_Import Claims_Over 5MB
+    11505149 | TC012_Import Claims_.xlsb
+    11505148 | TC011_Import Claims_.zipx
+    11505147 | TC010_Import Claims_.zip
+    11505146 | TC009_Import Claims_.msg
+    11505145 | TC008_Import Claims_.rtf
+    11505144 | TC007_Import Claims_.txt
+    11505143 | TC006_Import Claims_.PDF
+    11505142 | TC005_Import Claims_.pdf
+    11505141 | TC004_Import Claims_.xlsx
+    11505140 | TC003_Import Claims_.xls
+    11505139 | TC002_Import Claims_.docx
+    11505138 | TC001_Import Claims_.doc
+
+5503582 | External Submissions  (13 test cases)
+    11505154 | TC004_External Submissions_.xlsx
+    11505153 | TC003_External Submissions_.xls
+    11505152 | TC002_External Submissions_.docx
+    11505151 | TC001_External Submissions_.doc
+    11505163 | TC011_External Submissions_Over 5MB
+    11505162 | TC012_External Submissions_.xlsb
+    11505161 | TC011_External Submissions_.zipx
+    11505160 | TC010_External Submissions_.zip
+    11505159 | TC009_External Submissions_.msg
+    11505158 | TC008_External Submissions_.rtf
+    11505157 | TC007_External Submissions_.txt
+    11505156 | TC006_External Submissions_.PDF
+    11505155 | TC005_External Submissions_.pdf
+
+5514585 | VerintCategoryTrend Call Reason  (29 test cases)
+    11553008 | TC06
+    11553003 | TC01
+    11553004 | TC02
+    11553005 | TC03
+    11553006 | TC04
+    11553007 | TC05
+    11553009 | TC07
+    11553010 | TC08
+    11553011 | TC09
+    11553012 | TC10
+    11553013 | TC11
+    11553014 | TC12
+    11553015 | TC13
+    11553016 | TC14
+    11553017 | TC15
+    11553018 | TC16
+    11553019 | TC17
+    11553020 | TC18
+    11553021 | TC19
+    11553022 | TC20
+    11553023 | TC21
+    11553024 | TC22
+    11553025 | TC23
+    11553026 | TC24
+    11553027 | TC25
+    11553028 | TC26
+    11553029 | TC27
+    11553030 | TC28
+    11553031 | TC29
+
+5558353 | TestUpload Project  (1 test cases)
+    11748052 | Sample Test Case name 1
+
+5558793 | Recycle Bin  (empty)
+
+5541943 | Recycle Bin / CSBRB-285  (empty)
+
+5541944 | Recycle Bin / CSBRB-286  (empty)
+
+5541947 | Recycle Bin / CSBRB-301  (empty)
+
+5541949 | Recycle Bin / CSBRB-307  (empty)
+
+5541939 | Recycle Bin / CSBRB-325  (empty)
+
+5541941 | Recycle Bin / CSBRB-326  (empty)
+
+5541942 | Recycle Bin / CSBRB-331  (empty)
+
+5541946 | Recycle Bin / CSBRB-359  (empty)
+
+5541945 | Recycle Bin / CSBRB-365  (empty)
+
+5541952 | Recycle Bin / CSBRB-366  (empty)
+
+5541948 | Recycle Bin / CSBRB-375  (empty)
+
+5541953 | Recycle Bin / CSBRB-376  (empty)
+
+5541950 | Recycle Bin / CSBRB-378  (empty)
+
+5541955 | Recycle Bin / CSBRB-379  (empty)
+
+5541956 | Recycle Bin / CSBRB-381  (empty)
+
+5541951 | Recycle Bin / CSBRB-404  (empty)
+
+5541958 | Recycle Bin / CSBRB-405  (empty)
+
+5541954 | Recycle Bin / CSBRB-410  (empty)
+
+5541957 | Recycle Bin / CSBRB-411  (empty)
+
+5541934 | Recycle Bin / CSBRB-475  (empty)
+
+5541935 | Recycle Bin / CSBRB-477  (empty)
+
+5541936 | Recycle Bin / CSBRB-478  (empty)
+
+5541937 | Recycle Bin / CSBRB-480  (empty)
+
+5541959 | Recycle Bin / CSBRB-485  (empty)
+
+5541960 | Recycle Bin / CSBRB-490  (empty)
+
+5541963 | Recycle Bin / CSBRB-492  (empty)
+
+5541961 | Recycle Bin / CSBRB-496  (empty)
+
+5541938 | Recycle Bin / CSBRB-511  (empty)
+
+5541940 | Recycle Bin / CSBRB-515  (empty)
+
+5541962 | Recycle Bin / CSBRB-520  (empty)
+
+5504958 | TCST-1433  (5 test cases)
+    11510278 | TC005
+    11510277 | TC004
+    11510276 | TC003
+    11510275 | TC002
+    11510274 | TC001
+
+5547313 | Untitled  (empty)
+
+5542794 | Untitled / TPP-4650  (empty)
+
+5522225 | Dataloader testcases add test  (empty)
+
+5541468 | Untitled  (empty)
+
+5503418 | TEST  (empty)
+
+5935740 | Untitled  (empty)
+
+5668723 | DAR_Test  (3 test cases)
+    12286830 | Athena Validation Test
+    12413895 | Untitled
+    12413894 | Untitled
+
+6169137 | Untitled  (empty)
+
+5879600 | Untitled  (empty)
+
+5879608 | Enterprise  (5 test cases)
+    13358287 | TC01 
+    13358291 | TC05
+    13358290 | TC04
+    13358289 | TC03 
+    13358288 | TC02 
+
+5879609 | LOB Detail  (5 test cases)
+    13358294 | TC03 
+    13358293 | TC02 
+    13358292 | TC01 
+    13358296 | TC05
+    13358295 | TC04
+
+5879610 | INTERNAL Agents  (5 test cases)
+    13358299 | TC03 
+    13358298 | TC02 
+    13358297 | TC01 
+    13358301 | TC05
+    13358300 | TC04
+
+5879612 | GSP Agents  (5 test cases)
+    13358307 | TC01 
+    13358311 | TC05
+    13358310 | TC04
+    13358309 | TC03 
+    13358308 | TC02 
+
+5879611 | INTERNAL Offshore Agents  (5 test cases)
+    13358306 | TC05
+    13358305 | TC04
+    13358304 | TC03 
+    13358303 | TC02 
+    13358302 | TC01 
+
+5879617 | About  (2 test cases)
+    13358333 | TC02
+    13358332 | TC01 
+
+5879613 | Agent Tenure  (5 test cases)
+    13358314 | TC03 
+    13358313 | TC02 
+    13358312 | TC01 
+    13358315 | TC04
+    13358316 | TC05
+
+5879614 | LOB % Trend  (5 test cases)
+    13358319 | TC03 
+    13358318 | TC02 
+    13358317 | TC01 
+    13358321 | TC05
+    13358320 | TC04
+
+5879615 | H  (5 test cases)
+    13358323 | TC02 
+    13358322 | TC01 
+    13358326 | TC05
+    13358325 | TC04
+    13358324 | TC03 
+
+5879616 | Enterprise CHAT Transfers  (5 test cases)
+    13358331 | TC05
+    13358330 | TC04
+    13358329 | TC03 
+    13358328 | TC02 
+    13358327 | TC01 
+
+5880419 | Sheet1  (6 test cases)
+    13362863 | TC01_Verify Product segment field is added in the Enrollment script of 2026 MA/PDP English Enrollment -MA application
+    13362867 | TC05_Verify Product segment field is added in the Enrollment script of 2026 MA/PDP Spanish Enrollment - PDP Application
+    13362866 | TC04_Verify Product segment field is added in the Enrollment script of 2026 MA/PDP English Enrollment - PDP Application
+    13362865 | TC03_Verify Product segment field is added in the Enrollment script of 2026 MA/PDP English Enrollment - MA Application Log in as Broker Community User
+    13362864 | TC02_Verify Product segment field is added in the Enrollment script of 2026 MA/PDP Spanish Enrollment-MA Application
+    13362868 | TC06_Verify Product segment field is added in the Enrollment script of 2026 MA/PDP English Enrollment - PDP Application  Log in as Broker Community User
+
+8491965 | Jira 2026-08-31T12_06_42-0500  (empty)
+

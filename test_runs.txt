@@ -1,0 +1,58 @@
+# test_runs of project 24901 in https://healthspring.qtestnet.com:443
+# 55 entries
+
+18978427 | Automation Release123 - 2026 / Test Case Description
+14665261 | Automation Release1235 - 2026 / Test
+12496517 | C 26.1.5(03/12/26 - 03/25/26) / UACT-1234_Config Ticket / Process a facility claim with procedure code 0537U, Revenue code 0310 and any diagnosis code not listed on the BRD  Facets should adjudicate the claim with Service ID T1PV-PPO_HC
+12496518 | C 26.1.5(03/12/26 - 03/25/26) / UACT-1234_Config Ticket / Process a medical claim with procedure code 0537U, place of service 22 and any diagnosis code not listed on the BRD.  Facets should adjudicate the claim with Service ID DCP7-HMO_HC
+12496516 | C 26.1.5(03/12/26 - 03/25/26) / UACT-1234_Config Ticket / Process a medical claim with procedure code G0105, place of service 24 and diagnosis code C7A026 from a Surgical Facility. Facets should adjudicate the claim with Service ID DCP9-HMO
+12496515 | C 26.1.5(03/12/26 - 03/25/26) / UACT-1234_Config Ticket / Process a medical claim with procedure code G0105, place of service 24 and diagnosis code C7A026 from a Surgical Facility. Facets should adjudicate the claim with Service ID DCP9-HMO POS
+12548100 | Demo / current sprint / Story / Agile Testing page
+12548096 | Demo / current sprint / Story / Case Studies page
+12548099 | Demo / current sprint / Story / Exploratory Testing page
+12548095 | Demo / current sprint / Story / Resources page
+12548088 | Demo / current sprint / Story / Test Case Covers Untitled
+12548098 | Demo / current sprint / Story / Test case Management page
+12548089 | Demo / current sprint / Story / Untitled
+12548097 | Demo / current sprint / Story / qTest Platform page
+12944445 | End to End / Enrollment E2E / Become a partner page
+12944449 | End to End / Enrollment E2E / Case Studies page
+12944447 | End to End / Enrollment E2E / Find a Partner page
+12944448 | End to End / Enrollment E2E / Resources page
+12944446 | End to End / Enrollment E2E / Technology Alliances page
+10915355 | Fix Version / Jira Key - Feature Name / Get Free Trial
+10915356 | Fix Version / Jira Key - Feature Name / Request demo
+10947195 | Fix Version / Jira Key - Feature Name / Sprint - Execution Type / Get Free Trial
+10914350 | Fix Version / Jira Key - Feature Name / Sprint / Test Case Covers User Login
+10914351 | Fix Version / Jira Key - Feature Name / Sprint / Untitled
+10837092 | New Account / New test cycle / Test Case Covers User Login
+12539599 | Provider Facets Upgrade / Releas123 / TC_1
+12531279 | Provider Facets Upgrade / Releas123 / sample test case
+12531281 | Provider Facets Upgrade / Releas123 / sample test case
+10063504 | Release 2 / Cycle 2.1 / Functional test suite 1 / Agile Testing
+10063490 | Release 2 / Cycle 2.1 / Functional test suite 1 / Become a partner page
+10063496 | Release 2 / Cycle 2.1 / Functional test suite 1 / Case Studies page
+10063502 | Release 2 / Cycle 2.1 / Functional test suite 1 / Exploration Testing
+10063492 | Release 2 / Cycle 2.1 / Functional test suite 1 / Find a Partner
+10063494 | Release 2 / Cycle 2.1 / Functional test suite 1 / Resources page
+10063488 | Release 2 / Cycle 2.1 / Functional test suite 1 / Technology Alliances
+10063498 | Release 2 / Cycle 2.1 / Functional test suite 1 / Test case Management
+10063500 | Release 2 / Cycle 2.1 / Functional test suite 1 / qTest Platform page
+10063505 | Release 2 / Cycle 2.2 / Functional test suite 2 / Agile Testing
+10063491 | Release 2 / Cycle 2.2 / Functional test suite 2 / Become a partner page
+10063497 | Release 2 / Cycle 2.2 / Functional test suite 2 / Case Studies page
+10063503 | Release 2 / Cycle 2.2 / Functional test suite 2 / Exploration Testing
+10063493 | Release 2 / Cycle 2.2 / Functional test suite 2 / Find a Partner
+10063495 | Release 2 / Cycle 2.2 / Functional test suite 2 / Resources page
+10063489 | Release 2 / Cycle 2.2 / Functional test suite 2 / Technology Alliances
+10063499 | Release 2 / Cycle 2.2 / Functional test suite 2 / Test case Management
+10063501 | Release 2 / Cycle 2.2 / Functional test suite 2 / qTest Platform page
+10063485 | Release 2 / Functional test suite 2 / About
+10063487 | Release 2 / Functional test suite 2 / Blog page
+10063483 | Release 2 / Functional test suite 2 / Customers
+10063484 | Release 3 / Cycle 3.1 / Functional test suite 1 / About
+10063486 | Release 3 / Cycle 3.1 / Functional test suite 1 / Blog page
+10063482 | Release 3 / Cycle 3.1 / Functional test suite 1 / Customers
+13772578 | same / Athena Validation Test
+12505503 | same / TC001
+13895278 | test_plan / Athena Validation Test
