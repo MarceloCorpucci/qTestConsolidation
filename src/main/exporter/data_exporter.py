@@ -53,7 +53,18 @@ INVENTORY_ENTITIES = {
         "tree": True,
     },
     "test_plans": {"path": PROJECTS_ENDPOINT + "/{project_id}/releases"},
-    "test_cases": {"path": PROJECTS_ENDPOINT + "/{project_id}/test-cases"},
+    # Written as qtest_requirements.txt: "requirements.txt" at the project root
+    # is pip's dependency file and must not be overwritten.
+    "requirements": {
+        "path": PROJECTS_ENDPOINT + "/{project_id}/requirements",
+        "file": "qtest_requirements",
+    },
+    # expandProps brings the custom fields along, which is where an
+    # integration usually leaves its trace.
+    "test_cases": {
+        "path": PROJECTS_ENDPOINT + "/{project_id}/test-cases",
+        "params": {"expandProps": "true"},
+    },
     # Test runs hang from the containers of the Test Execution tree, never from
     # the project itself: asking without a parent yields nothing. They are
     # collected by walking that tree instead of reading one endpoint.
@@ -70,7 +81,22 @@ BRANCHING_CONTAINERS = ("root", "release", "test-cycle")
 #: Entities the inventory writes on their own. Modules and test cases are left
 #: out: they are reported together in the Test Design tree, which is what tells
 #: apart a folder holding cases from an empty one.
-STANDALONE_ENTITIES = ("test_plans", "test_runs")
+STANDALONE_ENTITIES = ("test_plans", "requirements", "test_runs")
+
+#: Top-level keys that betray an entity synced from an external tracker.
+INTEGRATION_KEYS = (
+    "external_id",
+    "external_system",
+    "external_system_id",
+    "jira_id",
+    "jira_key",
+)
+
+#: Substrings that mark a custom field or a link as belonging to Jira. Any
+#: field naming an external reference is reported too: which one an instance
+#: actually uses depends on how its integration was set up, so the evidence
+#: found is written next to the entity instead of being assumed.
+INTEGRATION_HINTS = ("jira", "external")
 
 #: File holding the modules and their test cases.
 TEST_DESIGN_FILE = "test_design"
@@ -232,6 +258,10 @@ class DataExporter:
         """List the test plans (releases) of a project into `test_plans.txt`."""
         return self.export_entity("test_plans", project_id)
 
+    def export_requirements(self, project_id: int) -> Path:
+        """List the requirements of a project into `requirements.txt`."""
+        return self.export_entity("requirements", project_id)
+
     def export_test_cases(self, project_id: int) -> Path:
         """List the test cases of a project into `test_cases.txt`."""
         return self.export_entity("test_cases", project_id)
@@ -243,7 +273,8 @@ class DataExporter:
     def export_entity(self, entity: str, project_id: int) -> Path:
         """Fetch every entity of a kind and write its ids and names to a file."""
         entities = self.fetch_entities(entity, project_id)
-        return self.write_inventory(entities, entity, project_id)
+        file_name = INVENTORY_ENTITIES[entity].get("file", entity)
+        return self.write_inventory(entities, entity, project_id, file_name)
 
     def fetch_entities(self, entity: str, project_id: int) -> list[dict[str, Any]]:
         """Fetch every entity of a kind, reading it the way its endpoint needs."""
@@ -425,23 +456,30 @@ class DataExporter:
 
         return flattened
 
-    def write_inventory(self, entities: list[dict[str, Any]], subject: str, project_id: int) -> Path:
+    def write_inventory(
+        self,
+        entities: list[dict[str, Any]],
+        subject: str,
+        project_id: int,
+        file_name: str | None = None,
+    ) -> Path:
         """Write the id and name of each entity to a text file in the project root."""
-        target = PROJECT_ROOT / f"{subject}.txt"
+        target = PROJECT_ROOT / f"{file_name or subject}.txt"
         logger.info("Writing %s %s to %s", len(entities), subject, target)
 
-        nameless = 0
+        integrated = self._integration_count(entities)
+        nameless = sum(
+            1 for entity in entities if not (isinstance(entity, dict) and entity.get("name"))
+        )
+
         lines = [
             f"# {subject} of project {project_id} in {self._client.base_url}",
-            f"# {len(entities)} entries",
+            f"# {len(entities)} entries, {integrated} with Jira integration",
             "",
+            *(self._entry_line(entity) for entity in entities),
         ]
-        for entity in entities:
-            name = entity.get("name") if isinstance(entity, dict) else None
-            if not name:
-                nameless += 1
-            lines.append(f"{self._key_of(entity)} | {name or '<no name>'}")
 
+        logger.info("%s of the %s show a Jira link", integrated, subject)
         if nameless:
             logger.warning("%s of the %s carry no name", nameless, subject)
 
@@ -463,26 +501,30 @@ class DataExporter:
             by_module.setdefault(self._module_id_of(test_case), []).append(test_case)
 
         empty = [module for module in modules if not by_module.get(self._key_of(module))]
+        integrated = self._integration_count(test_cases)
         logger.info(
-            "Test Design tree: %s modules (%s empty), %s test cases",
+            "Test Design tree: %s modules (%s empty), %s test cases, %s with a Jira link",
             len(modules),
             len(empty),
             len(test_cases),
+            integrated,
         )
 
         lines = [
             f"# Test Design tree of project {project_id} in {self._client.base_url}",
             f"# {len(modules)} modules, {len(empty)} of them empty, {len(test_cases)} test cases",
+            f"# {integrated} test cases integrated with Jira, marked [jira: <evidence>]",
             "# Each module lists the test cases directly inside it, indented.",
             "",
         ]
         for module in modules:
             held = by_module.get(self._key_of(module), [])
+            with_jira = self._integration_count(held)
             summary = f"{len(held)} test cases" if held else "empty"
+            if with_jira:
+                summary += f", {with_jira} with Jira"
             lines.append(f"{self._key_of(module)} | {module.get('name')}  ({summary})")
-            lines.extend(
-                f"    {self._key_of(case)} | {case.get('name') or '<no name>'}" for case in held
-            )
+            lines.extend(self._entry_line(case, indent="    ") for case in held)
             lines.append("")
 
         lines.extend(self._orphan_lines(modules, by_module))
@@ -514,12 +556,72 @@ class DataExporter:
             f"# {len(orphans)} test cases whose module is not in the tree above",
             "",
             *(
-                f"    {self._key_of(case)} | {case.get('name') or '<no name>'}"
-                f"  (module {self._module_id_of(case)})"
+                f"{self._entry_line(case, indent='    ')}  (module {self._module_id_of(case)})"
                 for case in orphans
             ),
             "",
         ]
+
+    # -- Jira integration ----------------------------------------------------
+
+    def integration_of(self, entity: dict[str, Any]) -> str | None:
+        """Evidence that an entity is tied to Jira, or None when there is none.
+
+        The field carrying the link differs between instances and integration
+        setups, so several places are checked and the one that matched is
+        returned verbatim -- the point is to be able to confirm it against the
+        qTest UI rather than to trust a guess.
+        """
+        if not isinstance(entity, dict):
+            return None
+
+        for key in INTEGRATION_KEYS:
+            value = entity.get(key)
+            if value:
+                return f"{key}={value}"
+
+        from_properties = self._integration_in_properties(entity)
+        if from_properties:
+            return from_properties
+
+        for key in ("web_url", "url", "link"):
+            value = entity.get(key)
+            if isinstance(value, str) and "jira" in value.lower():
+                return f"{key} points at Jira"
+
+        return None
+
+    @staticmethod
+    def _integration_in_properties(entity: dict[str, Any]) -> str | None:
+        """Look for an integration field among the custom properties."""
+        properties = entity.get("properties")
+        if not isinstance(properties, list):
+            return None
+
+        for prop in properties:
+            if not isinstance(prop, dict):
+                continue
+            field = str(prop.get("field_name") or prop.get("field_id") or "")
+            value = prop.get("field_value_name") or prop.get("field_value")
+            if not value:
+                continue
+            if any(hint in field.lower() for hint in INTEGRATION_HINTS):
+                return f"{field}={value}"
+            if isinstance(value, str) and "jira" in value.lower():
+                return f"{field}={value}"
+
+        return None
+
+    def _entry_line(self, entity: dict[str, Any], indent: str = "") -> str:
+        """One inventory line: id, name, and the Jira evidence when there is any."""
+        integration = self.integration_of(entity)
+        suffix = f"  [jira: {integration}]" if integration else ""
+        name = entity.get("name") if isinstance(entity, dict) else None
+        return f"{indent}{self._key_of(entity)} | {name or '<no name>'}{suffix}"
+
+    def _integration_count(self, entities: list[dict[str, Any]]) -> int:
+        """How many entities show a Jira link."""
+        return sum(1 for entity in entities if self.integration_of(entity))
 
     @staticmethod
     def _module_id_of(test_case: dict[str, Any]) -> Any:

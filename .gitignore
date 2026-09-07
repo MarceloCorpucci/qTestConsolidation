@@ -4,6 +4,7 @@
 /test_plans.txt
 /test_cases.txt
 /test_runs.txt
+/qtest_requirements.txt
 
 # Environment and user configuration: sensitive data, never commit
 .env

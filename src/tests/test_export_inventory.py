@@ -1,7 +1,9 @@
-"""One-shot inventory of the source project: test plans, test cases, test runs.
+"""One-shot inventory of the source project.
 
-Running this test is the simplest way to produce the three tracking files at
-the project root -- it exercises every inventory function in one go:
+Running this test is the simplest way to produce the tracking files at the
+project root -- it exercises every inventory function in one go: the Test
+Design tree (modules and their test cases), test plans, requirements and test
+runs, reporting how many of each carry a Jira link.
 
     pytest src/tests/test_export_inventory.py -s
 
@@ -15,11 +17,13 @@ import pytest
 from main.exporter import DataExporter
 from main.exporter.data_exporter import STANDALONE_ENTITIES, TEST_DESIGN_FILE
 
+JIRA_MARK = "[jira:"
 
-def count_entries(path):
-    """Entities listed in an inventory file, ignoring the header lines."""
+
+def read_entries(path):
+    """Inventory lines of a file, ignoring headers and blank lines."""
     lines = path.read_text(encoding="utf-8").splitlines()
-    return len([line for line in lines if line and not line.startswith("#")])
+    return [line for line in lines if line.strip() and not line.startswith("#")]
 
 
 @pytest.mark.integration
@@ -30,8 +34,18 @@ def test_export_inventory_writes_every_entity(source_client, project_id):
     assert set(written) == {TEST_DESIGN_FILE, *STANDALONE_ENTITIES}, "Some entity was not exported"
 
     print(f"\nInventory of project {project_id} in {source_client.base_url}")
+    print(f"  {'file':<14}{'entries':>9}{'with Jira':>11}")
+
     for entity, path in written.items():
         assert path.is_file(), f"{path} was not written"
-        entries = count_entries(path)
-        flag = "  <- empty, check the endpoint against the qTest UI" if not entries else ""
-        print(f"  {entity:<12} {entries:>6} entries  -> {path}{flag}")
+
+        entries = read_entries(path)
+        integrated = [line for line in entries if JIRA_MARK in line]
+        flag = "   <- empty, check the endpoint against the qTest UI" if not entries else ""
+        print(f"  {entity:<14}{len(entries):>9}{len(integrated):>11}{flag}")
+
+        for line in integrated[:3]:
+            print(f"      sample: {line.strip()}")
+
+    for entity, path in written.items():
+        print(f"  {entity:<14} -> {path}")
