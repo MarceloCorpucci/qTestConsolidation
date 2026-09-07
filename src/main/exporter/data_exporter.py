@@ -637,7 +637,9 @@ class DataExporter:
         module_paths = {self._key_of(module): module.get("name") for module in modules}
         requirement_index = {self._key_of(item): item for item in requirements}
         case_index = {self._key_of(case): case for case in test_cases}
-        links, links_available = self.fetch_requirement_links(project_id, list(case_index))
+        links, links_available = self.fetch_requirement_links(
+            project_id, list(case_index), list(requirement_index)
+        )
 
         rows = [
             self._traceability_row(located, case_index, module_paths, requirement_index, links)
@@ -645,13 +647,31 @@ class DataExporter:
         ]
         rows.sort(key=lambda row: (str(row["release"]), str(row["cycle"]), str(row["suite"])))
 
+        with_case = sum(1 for row in rows if row["case_id"] != "")
+        with_requirement = sum(1 for row in rows if row["requirement_ids"])
         logger.info(
-            "Traceability built: %s releases, %s requirements, %s test cases, %s rows",
+            "Traceability built: %s releases, %s requirements, %s test cases, %s rows "
+            "(%s resolved a test case, %s reached a requirement)",
             len(releases),
             len(requirements),
             len(test_cases),
             len(rows),
+            with_case,
+            with_requirement,
         )
+        if rows and not with_case:
+            logger.warning(
+                "No test run reported the test case it executes, so the chain to the "
+                "requirements cannot be built: the run payload carries none of %s",
+                list(TEST_CASE_KEYS + TEST_CASE_ID_KEYS),
+            )
+        elif with_case and not with_requirement:
+            logger.warning(
+                "%s runs resolved their test case but none of those cases is linked to a "
+                "requirement: either the project has no such links, or they are exposed "
+                "somewhere other than the linked-artifacts endpoint",
+                with_case,
+            )
         # Handed over already resolved -- Jira evidence and module path included
         # -- so whoever presents the report needs no knowledge of the API.
         return {
@@ -723,8 +743,14 @@ class DataExporter:
         self,
         project_id: int,
         test_case_ids: list[Any],
+        requirement_ids: list[Any] | None = None,
     ) -> tuple[dict[Any, list[Any]], bool]:
         """Requirement ids linked to each test case, read in batches.
+
+        Asked first from the test case side. When that yields nothing, the same
+        question is put from the requirement side before reporting no coverage:
+        an empty answer in one direction is not proof that no links exist, and
+        the requirements are far fewer to ask about.
 
         Returns the links and whether the endpoint could be read at all. A
         refusal is reported and treated as "no links known", because the rest
@@ -733,51 +759,91 @@ class DataExporter:
         if not test_case_ids:
             return {}, False
 
+        links, available = self._read_links(project_id, "test-cases", test_case_ids, "requirement")
+        if links:
+            logger.info("%s test cases carry a requirement link", len(links))
+            return links, available
+
+        if not requirement_ids:
+            return links, available
+
+        logger.info(
+            "No links found from the test case side: asking the %s requirements instead",
+            len(requirement_ids),
+        )
+        inverse, inverse_available = self._read_links(
+            project_id, "requirements", requirement_ids, "test-case"
+        )
+
+        for requirement_id, case_ids in inverse.items():
+            for case_id in case_ids:
+                links.setdefault(case_id, []).append(requirement_id)
+
+        logger.info(
+            "%s test cases carry a requirement link, seen from the requirement side", len(links)
+        )
+        return links, available or inverse_available
+
+    def _read_links(
+        self,
+        project_id: int,
+        artifact_type: str,
+        ids: list[Any],
+        linked_prefix: str,
+    ) -> tuple[dict[Any, list[Any]], bool]:
+        """Read the linked artifacts of a kind, keeping the links of one type."""
         path = LINKED_ARTIFACTS_PATH.format(project_id=project_id)
         links: dict[Any, list[Any]] = {}
 
-        for start in range(0, len(test_case_ids), LINK_BATCH_SIZE):
-            batch = test_case_ids[start:start + LINK_BATCH_SIZE]
+        for start in range(0, len(ids), LINK_BATCH_SIZE):
+            batch = ids[start:start + LINK_BATCH_SIZE]
             logger.info(
-                "Reading requirement links for test cases %s-%s of %s",
+                "Reading %s links of %s %s-%s of %s",
+                linked_prefix,
+                artifact_type,
                 start + 1,
                 start + len(batch),
-                len(test_case_ids),
+                len(ids),
             )
-            params = {"type": "test-cases", "ids": ",".join(str(item) for item in batch)}
+            params = {"type": artifact_type, "ids": ",".join(str(item) for item in batch)}
 
             try:
                 response = self._client.get(path, params=params)
                 entries = self._items_of(self._payload_of(response, "linked artifacts"), "links")
             except ProjectExportError as error:
                 logger.warning(
-                    "Requirement links unavailable, the requirement columns will be empty: %s",
+                    "Links of %s unavailable, the requirement columns may be empty: %s",
+                    artifact_type,
                     error,
                 )
-                return {}, False
+                return links, False
 
             for entry in entries:
-                self._collect_links(entry, links)
+                self._collect_links(entry, links, linked_prefix)
 
-        logger.info("%s test cases carry a requirement link", len(links))
         return links, True
 
-    def _collect_links(self, entry: Any, links: dict[Any, list[Any]]) -> None:
+    def _collect_links(
+        self,
+        entry: Any,
+        links: dict[Any, list[Any]],
+        linked_prefix: str,
+    ) -> None:
         """Read one linked-artifacts entry into the links map."""
         if not isinstance(entry, dict):
             return
 
-        case_id = entry.get("object_id") or entry.get("objectId") or entry.get("id")
+        source_id = entry.get("object_id") or entry.get("objectId") or entry.get("id")
         linked = entry.get("objects") or entry.get("linked_objects") or []
-        if case_id is None or not isinstance(linked, list):
+        if source_id is None or not isinstance(linked, list):
             return
 
         for item in linked:
             if not isinstance(item, dict):
                 continue
             kind = str(item.get("object_type") or item.get("objectType") or "").lower()
-            if kind.startswith("requirement"):
-                links.setdefault(case_id, []).append(self._key_of(item))
+            if kind.startswith(linked_prefix):
+                links.setdefault(source_id, []).append(self._key_of(item))
 
     @staticmethod
     def _test_case_of(run: dict[str, Any]) -> tuple[Any, str | None]:
