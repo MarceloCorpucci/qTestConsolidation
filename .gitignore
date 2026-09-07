@@ -5,7 +5,11 @@
 /test_cases.txt
 /test_runs.txt
 /qtest_requirements.txt
-/qtest_traceability.xlsx
+/qtest_traceability.csv
+/qtest_summary.csv
+/qtest_requirements_coverage.csv
+/qtest_test_design.csv
+/qtest_report_notes.txt
 
 # Environment and user configuration: sensitive data, never commit
 .env

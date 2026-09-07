@@ -12,15 +12,16 @@ credentials. Temporary, same as the code it drives: both go away once the
 inventory has been taken.
 """
 
+import csv
+
 import pytest
-from openpyxl import load_workbook
 
 from main.exporter import DataExporter
 from main.exporter.data_exporter import STANDALONE_ENTITIES, TEST_DESIGN_FILE
-from main.writer import ExcelWriter
+from main.writer import CsvWriter
 
 JIRA_MARK = "[jira:"
-EXPECTED_SHEETS = ["Summary", "Traceability", "Requirements", "Test Design"]
+EXPECTED_TABLES = {"traceability", "summary", "requirements", "test_design", "notes"}
 
 
 def read_entries(path):
@@ -56,19 +57,24 @@ def test_export_inventory_writes_every_entity(source_client, project_id):
 
 @pytest.mark.integration
 def test_export_consolidated_report(source_client, project_id):
-    """The Excel report ties releases to their requirements, cases and runs."""
+    """The CSV report ties releases to their requirements, cases and runs."""
     report = DataExporter(source_client).build_traceability(project_id)
-    path = ExcelWriter(report).write()
+    written = CsvWriter(report).write()
 
-    assert path.is_file(), f"{path} was not written"
+    assert set(written) == EXPECTED_TABLES, "Some table was not written"
+    for table, path in written.items():
+        assert path.is_file(), f"{path} was not written"
 
-    workbook = load_workbook(path)
-    assert workbook.sheetnames == EXPECTED_SHEETS
+    with written["traceability"].open(encoding="utf-8-sig", newline="") as csv_file:
+        traceability = list(csv.DictReader(csv_file))
+    assert len(traceability) == len(report["rows"]), "The CSV lost rows"
 
     releases = {row["release"] for row in report["rows"]}
     covered = {row["release"] for row in report["rows"] if row["requirement_ids"]}
 
-    print(f"\nConsolidated report of project {project_id} -> {path}")
+    print(f"\nConsolidated report of project {project_id}")
+    for table, path in written.items():
+        print(f"  {table:<14} -> {path}")
     print(f"  releases in the execution tree : {len(releases)}")
     print(f"  releases reaching requirements : {len(covered)}")
     print(f"  requirements in the project    : {len(report['requirements'])}")
