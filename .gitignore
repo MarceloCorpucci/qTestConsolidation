@@ -5,6 +5,7 @@
 /test_cases.txt
 /test_runs.txt
 /qtest_requirements.txt
+/qtest_traceability.xlsx
 
 # Environment and user configuration: sensitive data, never commit
 .env

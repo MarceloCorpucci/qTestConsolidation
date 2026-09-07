@@ -78,6 +78,18 @@ TEST_SUITES_PATH = PROJECTS_ENDPOINT + "/{project_id}/test-suites"
 #: Containers that may hold cycles and suites. A suite only holds runs.
 BRANCHING_CONTAINERS = ("root", "release", "test-cycle")
 
+#: Endpoint returning what an artifact is linked to. qTest has no direct
+#: release-to-requirement relation, so coverage is derived through the test
+#: cases a run executes and the requirements those cases are linked to.
+LINKED_ARTIFACTS_PATH = PROJECTS_ENDPOINT + "/{project_id}/linked-artifacts"
+
+#: Test case ids asked for per linked-artifacts call.
+LINK_BATCH_SIZE = 50
+
+#: Keys under which a test run may carry the test case it executes.
+TEST_CASE_KEYS = ("test_case", "testCase")
+TEST_CASE_ID_KEYS = ("test_case_id", "testCaseId", "test_case_version_id")
+
 #: Entities the inventory writes on their own. Modules and test cases are left
 #: out: they are reported together in the Test Design tree, which is what tells
 #: apart a folder holding cases from an empty one.
@@ -364,49 +376,87 @@ class DataExporter:
         return collected
 
     def fetch_test_runs(self, project_id: int) -> list[dict[str, Any]]:
-        """Walk the Test Execution tree and collect every test run in it.
+        """Every test run of the project, named by the path leading to it."""
+        located = self.walk_execution_tree(project_id)
+        runs = [{**item["run"], "name": self._run_path(item)} for item in located]
+        # Sorted by path, so runs of the same cycle or suite read together.
+        return sorted(runs, key=lambda run: str(run.get("name")))
+
+    def walk_execution_tree(
+        self,
+        project_id: int,
+        releases: list[dict[str, Any]] | None = None,
+    ) -> list[dict[str, Any]]:
+        """Walk the Test Execution tree, keeping where each run was found.
 
         Runs hang from test cycles and test suites, which in turn hang from the
-        project root or from a release, and cycles can nest. Each run is named
-        by the path of containers leading to it, and reported once even when
-        its container is reachable by more than one route.
+        project root or from a release, and cycles can nest. Each entry returned
+        carries the run plus its release, cycle and suite, which is what ties a
+        run back to a release. A run reachable by more than one route is
+        reported once.
         """
         logger.info("Walking the Test Execution tree of project %s", project_id)
 
-        pending: list[tuple[str, Any, str]] = [("root", 0, "")]
-        for release in self.fetch_entities("test_plans", project_id):
-            pending.append(("release", self._key_of(release), release.get("name") or "release"))
+        root_context = {"release_id": "", "release": "", "cycle": "", "suite": ""}
+        pending: list[tuple[str, Any, dict[str, Any]]] = [("root", 0, root_context)]
 
-        collected: dict[Any, dict[str, Any]] = {}
+        if releases is None:
+            releases = self.fetch_entities("test_plans", project_id)
+        for release in releases:
+            pending.append((
+                "release",
+                self._key_of(release),
+                {
+                    **root_context,
+                    "release_id": self._key_of(release),
+                    "release": release.get("name") or "<no name>",
+                },
+            ))
+
+        located: dict[Any, dict[str, Any]] = {}
         visited: set[tuple[str, Any]] = set()
 
         while pending:
-            parent_type, parent_id, path = pending.pop()
+            parent_type, parent_id, context = pending.pop()
             if (parent_type, parent_id) in visited:
                 continue
             visited.add((parent_type, parent_id))
 
             for run in self._children(project_id, "test-runs", parent_type, parent_id):
                 key = self._key_of(run)
-                if key not in collected:
-                    collected[key] = {**run, "name": self._path_join(path, run.get("name"))}
+                if key not in located:
+                    located[key] = {"run": run, **context}
 
             for suite in self._children(project_id, "test-suites", parent_type, parent_id):
-                pending.append(
-                    ("test-suite", self._key_of(suite), self._path_join(path, suite.get("name")))
-                )
+                pending.append((
+                    "test-suite",
+                    self._key_of(suite),
+                    {**context, "suite": suite.get("name") or "<no name>"},
+                ))
 
             if parent_type in BRANCHING_CONTAINERS:
                 for cycle in self._children(project_id, "test-cycles", parent_type, parent_id):
-                    pending.append(
-                        ("test-cycle", self._key_of(cycle), self._path_join(path, cycle.get("name")))
-                    )
+                    pending.append((
+                        "test-cycle",
+                        self._key_of(cycle),
+                        {**context, "cycle": self._path_join(context["cycle"], cycle.get("name"))},
+                    ))
 
-        logger.info(
-            "Collected %s test runs across %s containers", len(collected), len(visited)
-        )
-        # Sorted by path, so runs of the same cycle or suite read together.
-        return sorted(collected.values(), key=lambda run: str(run.get("name")))
+        logger.info("Reached %s test runs across %s containers", len(located), len(visited))
+        return list(located.values())
+
+    def _run_path(self, located: dict[str, Any]) -> str:
+        """Container path of a located run, ending in the run's own name."""
+        path = ""
+        for part in (
+            located["release"],
+            located["cycle"],
+            located["suite"],
+            located["run"].get("name"),
+        ):
+            if part:
+                path = self._path_join(path, part)
+        return path or "<no name>"
 
     def _children(
         self,
@@ -561,6 +611,188 @@ class DataExporter:
             ),
             "",
         ]
+
+    # -- consolidated traceability -------------------------------------------
+
+    def build_traceability(self, project_id: int) -> dict[str, Any]:
+        """Gather every artifact and tie them together, release by release.
+
+        The grain of `rows` is the test run: each row says which release holds
+        it, through which cycle and suite, which test case it executes, in which
+        module that case lives, and which requirements the case is linked to.
+
+        qTest has no release-to-requirement relation, so the requirements of a
+        release are *derived* along that chain. `links_available` says whether
+        the case-to-requirement links could be read at all: when they cannot,
+        the requirement columns stay empty and only the counts hold.
+        """
+        logger.info("Building the consolidated traceability of project %s", project_id)
+
+        releases = self.fetch_entities("test_plans", project_id)
+        requirements = self.fetch_entities("requirements", project_id)
+        modules = self.fetch_entities("test_modules", project_id)
+        test_cases = self.fetch_entities("test_cases", project_id)
+        located_runs = self.walk_execution_tree(project_id, releases=releases)
+
+        module_paths = {self._key_of(module): module.get("name") for module in modules}
+        requirement_index = {self._key_of(item): item for item in requirements}
+        case_index = {self._key_of(case): case for case in test_cases}
+        links, links_available = self.fetch_requirement_links(project_id, list(case_index))
+
+        rows = [
+            self._traceability_row(located, case_index, module_paths, requirement_index, links)
+            for located in located_runs
+        ]
+        rows.sort(key=lambda row: (str(row["release"]), str(row["cycle"]), str(row["suite"])))
+
+        logger.info(
+            "Traceability built: %s releases, %s requirements, %s test cases, %s rows",
+            len(releases),
+            len(requirements),
+            len(test_cases),
+            len(rows),
+        )
+        # Handed over already resolved -- Jira evidence and module path included
+        # -- so whoever presents the report needs no knowledge of the API.
+        return {
+            "project_id": project_id,
+            "base_url": self._client.base_url,
+            "releases": [
+                {"id": self._key_of(release), "name": release.get("name")}
+                for release in releases
+            ],
+            "requirements": [
+                {
+                    "id": self._key_of(item),
+                    "name": item.get("name"),
+                    "jira": self.integration_of(item) or "",
+                }
+                for item in requirements
+            ],
+            "modules": [
+                {"id": self._key_of(module), "name": module.get("name")} for module in modules
+            ],
+            "test_cases": [
+                {
+                    "id": self._key_of(case),
+                    "name": case.get("name"),
+                    "jira": self.integration_of(case) or "",
+                    "module_id": self._module_id_of(case),
+                    "module": module_paths.get(self._module_id_of(case)) or "",
+                }
+                for case in test_cases
+            ],
+            "links": links,
+            "links_available": links_available,
+            "rows": rows,
+        }
+
+    def _traceability_row(
+        self,
+        located: dict[str, Any],
+        case_index: dict[Any, dict[str, Any]],
+        module_paths: dict[Any, Any],
+        requirement_index: dict[Any, dict[str, Any]],
+        links: dict[Any, list[Any]],
+    ) -> dict[str, Any]:
+        """One row of the traceability sheet, at test-run grain."""
+        run = located["run"]
+        case_id, case_name = self._test_case_of(run)
+        case = case_index.get(case_id, {})
+        linked = [requirement_index.get(rid, {"id": rid}) for rid in links.get(case_id, [])]
+
+        return {
+            "release_id": located["release_id"],
+            "release": located["release"] or "(no release)",
+            "cycle": located["cycle"],
+            "suite": located["suite"],
+            "run_id": self._key_of(run),
+            "run": run.get("name") or "<no name>",
+            "case_id": case_id or "",
+            "case": case.get("name") or case_name or "",
+            "module": module_paths.get(self._module_id_of(case)) or "",
+            "case_jira": self.integration_of(case) or "",
+            "requirement_ids": ", ".join(str(self._key_of(item)) for item in linked),
+            "requirements": ", ".join(str(item.get("name") or "") for item in linked),
+            "requirement_jira": ", ".join(
+                marker for marker in (self.integration_of(item) for item in linked) if marker
+            ),
+        }
+
+    def fetch_requirement_links(
+        self,
+        project_id: int,
+        test_case_ids: list[Any],
+    ) -> tuple[dict[Any, list[Any]], bool]:
+        """Requirement ids linked to each test case, read in batches.
+
+        Returns the links and whether the endpoint could be read at all. A
+        refusal is reported and treated as "no links known", because the rest
+        of the inventory is still worth producing.
+        """
+        if not test_case_ids:
+            return {}, False
+
+        path = LINKED_ARTIFACTS_PATH.format(project_id=project_id)
+        links: dict[Any, list[Any]] = {}
+
+        for start in range(0, len(test_case_ids), LINK_BATCH_SIZE):
+            batch = test_case_ids[start:start + LINK_BATCH_SIZE]
+            logger.info(
+                "Reading requirement links for test cases %s-%s of %s",
+                start + 1,
+                start + len(batch),
+                len(test_case_ids),
+            )
+            params = {"type": "test-cases", "ids": ",".join(str(item) for item in batch)}
+
+            try:
+                response = self._client.get(path, params=params)
+                entries = self._items_of(self._payload_of(response, "linked artifacts"), "links")
+            except ProjectExportError as error:
+                logger.warning(
+                    "Requirement links unavailable, the requirement columns will be empty: %s",
+                    error,
+                )
+                return {}, False
+
+            for entry in entries:
+                self._collect_links(entry, links)
+
+        logger.info("%s test cases carry a requirement link", len(links))
+        return links, True
+
+    def _collect_links(self, entry: Any, links: dict[Any, list[Any]]) -> None:
+        """Read one linked-artifacts entry into the links map."""
+        if not isinstance(entry, dict):
+            return
+
+        case_id = entry.get("object_id") or entry.get("objectId") or entry.get("id")
+        linked = entry.get("objects") or entry.get("linked_objects") or []
+        if case_id is None or not isinstance(linked, list):
+            return
+
+        for item in linked:
+            if not isinstance(item, dict):
+                continue
+            kind = str(item.get("object_type") or item.get("objectType") or "").lower()
+            if kind.startswith("requirement"):
+                links.setdefault(case_id, []).append(self._key_of(item))
+
+    @staticmethod
+    def _test_case_of(run: dict[str, Any]) -> tuple[Any, str | None]:
+        """Id and name of the test case a run executes, however it is carried."""
+        for key in TEST_CASE_KEYS:
+            nested = run.get(key)
+            if isinstance(nested, dict):
+                return nested.get("id"), nested.get("name")
+
+        for key in TEST_CASE_ID_KEYS:
+            case_id = run.get(key)
+            if case_id is not None:
+                return case_id, None
+
+        return None, None
 
     # -- Jira integration ----------------------------------------------------
 

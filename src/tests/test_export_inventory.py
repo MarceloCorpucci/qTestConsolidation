@@ -13,11 +13,14 @@ inventory has been taken.
 """
 
 import pytest
+from openpyxl import load_workbook
 
 from main.exporter import DataExporter
 from main.exporter.data_exporter import STANDALONE_ENTITIES, TEST_DESIGN_FILE
+from main.writer import ExcelWriter
 
 JIRA_MARK = "[jira:"
+EXPECTED_SHEETS = ["Summary", "Traceability", "Requirements", "Test Design"]
 
 
 def read_entries(path):
@@ -49,3 +52,34 @@ def test_export_inventory_writes_every_entity(source_client, project_id):
 
     for entity, path in written.items():
         print(f"  {entity:<14} -> {path}")
+
+
+@pytest.mark.integration
+def test_export_consolidated_report(source_client, project_id):
+    """The Excel report ties releases to their requirements, cases and runs."""
+    report = DataExporter(source_client).build_traceability(project_id)
+    path = ExcelWriter(report).write()
+
+    assert path.is_file(), f"{path} was not written"
+
+    workbook = load_workbook(path)
+    assert workbook.sheetnames == EXPECTED_SHEETS
+
+    releases = {row["release"] for row in report["rows"]}
+    covered = {row["release"] for row in report["rows"] if row["requirement_ids"]}
+
+    print(f"\nConsolidated report of project {project_id} -> {path}")
+    print(f"  releases in the execution tree : {len(releases)}")
+    print(f"  releases reaching requirements : {len(covered)}")
+    print(f"  requirements in the project    : {len(report['requirements'])}")
+    print(f"  test cases                     : {len(report['test_cases'])}")
+    print(f"  traceability rows (test runs)  : {len(report['rows'])}")
+
+    if not report["links_available"]:
+        print("  NOTE: case-to-requirement links unavailable, requirement columns are empty")
+
+    for row in report["rows"][:5]:
+        print(
+            f"    {row['release']} > {row['cycle']} > {row['suite']} > "
+            f"{row['run']} > case {row['case_id']} > req [{row['requirement_ids']}]"
+        )
