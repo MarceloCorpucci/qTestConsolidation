@@ -325,6 +325,7 @@ class DataExporter:
         subject: str,
         params: dict[str, Any] | None = None,
         paginated: bool = True,
+        refusal_expected: bool = False,
     ) -> list[dict[str, Any]]:
         """Read an endpoint whole, walking its pages when it has them.
 
@@ -339,7 +340,8 @@ class DataExporter:
         if not paginated:
             logger.info("Fetching %s in a single call", subject)
             response = self._client.get(path, params=base_params or None)
-            items = self._items_of(self._payload_of(response, subject), subject)
+            payload = self._payload_of(response, subject, refusal_expected)
+            items = self._items_of(payload, subject)
             logger.info("Collected %s %s", len(items), subject)
             return items
 
@@ -351,7 +353,8 @@ class DataExporter:
             response = self._client.get(
                 path, params={**base_params, "page": page, "pageSize": PAGE_SIZE}
             )
-            items = self._items_of(self._payload_of(response, subject), subject)
+            payload = self._payload_of(response, subject, refusal_expected)
+            items = self._items_of(payload, subject)
 
             if not items:
                 logger.debug("Page %s of %s is empty, stopping", page, subject)
@@ -521,6 +524,7 @@ class DataExporter:
                 paths[child].format(project_id=project_id),
                 subject,
                 params={"parentId": parent_id, "parentType": parent_type},
+                refusal_expected=True,
             )
         except ProjectExportError as error:
             logger.warning("Skipping %s: %s", subject, error)
@@ -997,10 +1001,16 @@ class DataExporter:
 
     # -- response handling ---------------------------------------------------
 
-    def _payload_of(self, response: Any, subject: str) -> Any:
-        """Validate the response and return its decoded body."""
+    def _payload_of(self, response: Any, subject: str, refusal_expected: bool = False) -> Any:
+        """Validate the response and return its decoded body.
+
+        `refusal_expected` keeps a normal refusal out of the error log: not
+        every parent/child combination of the execution tree is valid, and the
+        walk asks anyway rather than hardcoding the API's rules.
+        """
         if response.status_code not in SUCCESS_STATUS_CODES:
-            logger.error(
+            log = logger.info if refusal_expected else logger.error
+            log(
                 "Source instance refused %s with status %s: %s",
                 subject,
                 response.status_code,
