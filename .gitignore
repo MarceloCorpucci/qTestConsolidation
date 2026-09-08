@@ -5,7 +5,7 @@
 /test_cases.txt
 /test_runs.txt
 /qtest_requirements.txt
-/qtest_consolidated.csv
+/qtest_consolidated_fixed.csv
 /qtest_consolidated_notes.txt
 
 # Environment and user configuration: sensitive data, never commit
