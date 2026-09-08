@@ -82,13 +82,21 @@ def test_export_consolidated_report(source_client, project_id):
     assert "Record Type" not in columns, "The table is no longer grouped by record type"
     assert not [name for name in columns if name.endswith("Count")], "A count column is back"
 
-    # The grain is the test case: every case and every run has a row.
+    # Nothing is left out: every artifact of the report has a row, whether or
+    # not a test case reaches it.
     assert_present(consolidated, "Test Case ID", {case["id"] for case in report["test_cases"]})
     assert_present(consolidated, "Test Run ID", {row["run_id"] for row in report["rows"]})
+    assert_present(
+        consolidated, "Requirement ID", {item["id"] for item in report["requirements"]}
+    )
+    assert_present(consolidated, "Release ID", {item["id"] for item in report["releases"]})
+    assert_present(consolidated, "Module ID", {item["id"] for item in report["modules"]})
+
+    # Every row says something: none is entirely empty.
+    for row in consolidated:
+        assert any(row[column] for column in columns), "A row carries no value at all"
 
     # The point of the join: a linked requirement rides on its test case's row.
-    for row in consolidated:
-        assert row["Test Case ID"], "A row carries no test case"
     for case_id, linked in report["links"].items():
         for requirement_id in linked:
             assert any(

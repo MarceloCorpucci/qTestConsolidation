@@ -10,9 +10,10 @@ columns repeated on each. That duplication is the point: every row can be
 followed, and marked off, on its own while the migration runs.
 
 A test case never executed keeps its row, with the execution columns empty.
-Nothing else gets a row: modules, requirements and releases are only ever
-shown as columns of a test case. The inventory text files remain the place to
-count them on their own.
+An entity no test case reaches -- a requirement nothing covers, an empty
+folder, a release with nothing executed -- gets a row of its own with the test
+case columns empty: it has to be migrated all the same, so the file has to
+name it. Which columns a row fills is what says what it is.
 
 It computes nothing about the instance: every relation comes from the report.
 Temporary, like the inventory it presents.
@@ -143,6 +144,11 @@ class CsvWriter:
                     rows.append(self._row(case, run, requirement))
 
         rows.extend(self._runs_without_a_case(runs_by_case))
+        # Everything no test case reaches still has to be migrated, so it is
+        # listed too, with the test case columns empty.
+        rows.extend(self._requirements_without_a_case())
+        rows.extend(self._modules_without_a_case())
+        rows.extend(self._releases_without_a_run())
 
         # Read with get: a row only carries the run and requirement columns
         # when it reaches them.
@@ -215,6 +221,65 @@ class CsvWriter:
             )
         return [self._row({"id": run["case_id"], "name": run["case"]}, run, None) for run in orphans]
 
+    def _requirements_without_a_case(self) -> list[dict[str, Any]]:
+        """Requirements no test case covers, which have to be migrated too."""
+        linked = {
+            str(requirement_id)
+            for requirement_ids in self._report["links"].values()
+            for requirement_id in requirement_ids
+        }
+        alone = [
+            requirement
+            for requirement in self._report["requirements"]
+            if str(requirement.get("id")) not in linked
+        ]
+
+        logger.info(
+            "%s of %s requirements are covered by no test case", len(alone), len(self._report["requirements"])
+        )
+        return [
+            {
+                "Requirement ID": requirement.get("id", ""),
+                "Requirement": requirement.get("name") or "",
+                "Requirement Jira": requirement.get("jira") or "",
+            }
+            for requirement in alone
+        ]
+
+    def _modules_without_a_case(self) -> list[dict[str, Any]]:
+        """Test Design folders holding no test case."""
+        holding = {case.get("module_id") for case in self._report["test_cases"]}
+        alone = [
+            module for module in self._report["modules"] if module.get("id") not in holding
+        ]
+
+        logger.info(
+            "%s of %s modules hold no test case", len(alone), len(self._report["modules"])
+        )
+        return [
+            {"Module ID": module.get("id", ""), "Module": module.get("name") or ""}
+            for module in alone
+        ]
+
+    def _releases_without_a_run(self) -> list[dict[str, Any]]:
+        """Releases with nothing executed under them."""
+        used = {str(run["release_id"]) for run in self._report["rows"] if run["release_id"]}
+        alone = [
+            release
+            for release in self._report["releases"]
+            if str(release.get("id")) not in used
+        ]
+
+        logger.info(
+            "%s of %s releases have nothing executed under them",
+            len(alone),
+            len(self._report["releases"]),
+        )
+        return [
+            {"Release ID": release.get("id", ""), "Release": release.get("name") or ""}
+            for release in alone
+        ]
+
     def _requirements_of(self, case_id: Any) -> list[dict[str, Any] | None]:
         """Requirements linked to a test case, or `[None]` when there are none.
 
@@ -271,16 +336,15 @@ class CsvWriter:
             "columns empty, and one covering no requirement keeps its row with the",
             "requirement columns empty.",
             "",
-            "Requirement Jira carries the evidence that a requirement came from Jira.",
-            "It is empty for every row of this project, and that is a finding rather",
-            "than a gap: the requirements imported from Jira are precisely the ones no",
-            "test case covers, so none of them reaches a row here. Count them in",
-            "qtest_requirements.txt, where every requirement is listed.",
+            "An entity no test case reaches gets a row of its own, with the test case",
+            "columns empty: a requirement nothing covers, a Test Design folder holding",
+            "no case, a release with nothing executed. They have to be migrated all the",
+            "same. Which columns a row fills is what says what it is -- a row carrying",
+            "only Requirement ID and Requirement is a requirement nobody covers.",
             "",
-            "Modules, requirements and releases appear only as columns of a test case.",
-            "A requirement no test case covers, an empty folder or a release with",
-            "nothing executed therefore has no row here: the inventory text files",
-            "written alongside remain the place to count those on their own.",
+            "Requirement Jira carries the evidence that a requirement came from Jira.",
+            "In this project it only ever appears on those rows: the requirements",
+            "imported from Jira are precisely the ones no test case covers.",
             "",
             "qTest has no release-to-requirement relation: the release, cycle and",
             "suite of a row are those of the run, and the requirement is the one",
