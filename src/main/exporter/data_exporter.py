@@ -30,6 +30,11 @@ logger = logging.getLogger(__name__)
 #: qTest Manager endpoint exposing projects.
 PROJECTS_ENDPOINT = "/api/v3/projects"
 
+#: Endpoints of the Test Execution tree.
+TEST_CYCLES_PATH = PROJECTS_ENDPOINT + "/{project_id}/test-cycles"
+TEST_SUITES_PATH = PROJECTS_ENDPOINT + "/{project_id}/test-suites"
+TEST_RUNS_PATH = PROJECTS_ENDPOINT + "/{project_id}/test-runs"
+
 #: File `export_project` writes to when no name is given.
 DEFAULT_PROJECT_FILE = "project.json"
 
@@ -68,15 +73,25 @@ INVENTORY_ENTITIES = {
     # Test runs hang from the containers of the Test Execution tree, never from
     # the project itself: asking without a parent yields nothing. They are
     # collected by walking that tree instead of reading one endpoint.
-    "test_runs": {"path": PROJECTS_ENDPOINT + "/{project_id}/test-runs", "walk": True},
+    "test_runs": {"path": TEST_RUNS_PATH, "walk": True},
 }
-
-#: Endpoints of the Test Execution tree, walked to reach every test run.
-TEST_CYCLES_PATH = PROJECTS_ENDPOINT + "/{project_id}/test-cycles"
-TEST_SUITES_PATH = PROJECTS_ENDPOINT + "/{project_id}/test-suites"
 
 #: Containers that may hold cycles and suites. A suite only holds runs.
 BRANCHING_CONTAINERS = ("root", "release", "test-cycle")
+
+#: Asking from the project root with the descendants expanded returns every
+#: entity of the Test Execution tree in one call, wherever it hangs. Walking
+#: the tree container by container both misses branches and costs one request
+#: per container, so this is the way in; `walk_execution_tree` remains as the
+#: fallback for an instance that does not honour it.
+DESCENDANTS_PARAMS = {"parentId": 0, "parentType": "root", "expand": "descendants"}
+
+#: Keys under which an entity names the container holding it.
+PARENT_ID_KEYS = ("parentId", "parent_id")
+PARENT_TYPE_KEYS = ("parentType", "parent_type")
+
+#: Hard stop while climbing from a run up to its release.
+MAX_CHAIN_DEPTH = 20
 
 #: Endpoint returning what an artifact is linked to. qTest has no direct
 #: release-to-requirement relation, so coverage is derived through the test
@@ -385,10 +400,169 @@ class DataExporter:
 
     def fetch_test_runs(self, project_id: int) -> list[dict[str, Any]]:
         """Every test run of the project, named by the path leading to it."""
-        located = self.walk_execution_tree(project_id)
+        located = self.locate_test_runs(project_id)
         runs = [{**item["run"], "name": self._run_path(item)} for item in located]
         # Sorted by path, so runs of the same cycle or suite read together.
         return sorted(runs, key=lambda run: str(run.get("name")))
+
+    def locate_test_runs(
+        self,
+        project_id: int,
+        releases: list[dict[str, Any]] | None = None,
+    ) -> list[dict[str, Any]]:
+        """Every test run of the project, with the containers holding it.
+
+        Read in a single call with the descendants expanded, which returns runs
+        wherever they hang. Each run names its parent, so the release, cycle and
+        suite are resolved against an index of the tree's containers rather than
+        by visiting each one.
+
+        Falls back to `walk_execution_tree` when the instance does not answer
+        that call: the walk is slower and reaches fewer branches, but it is
+        better than reporting no runs at all.
+        """
+        if releases is None:
+            releases = self.fetch_entities("test_plans", project_id)
+
+        logger.info("Reading the test runs of project %s in one call", project_id)
+        try:
+            runs = self.fetch_all(
+                TEST_RUNS_PATH.format(project_id=project_id),
+                "test_runs",
+                params=DESCENDANTS_PARAMS,
+            )
+        except ProjectExportError as error:
+            logger.warning(
+                "The instance refused the descendants call (%s): walking the tree instead", error
+            )
+            return self.walk_execution_tree(project_id, releases)
+
+        if not runs:
+            logger.warning(
+                "The descendants call reported no runs: walking the tree instead in case the "
+                "instance does not honour it"
+            )
+            return self.walk_execution_tree(project_id, releases)
+
+        containers = self.fetch_container_index(project_id)
+        release_names = {str(self._key_of(item)): item.get("name") for item in releases}
+        located = [self._locate_run(run, containers, release_names) for run in runs]
+
+        logger.info(
+            "Located %s test runs: %s under a release, %s under a named container",
+            len(located),
+            sum(1 for item in located if item["release_id"]),
+            sum(1 for item in located if item["cycle"] or item["suite"]),
+        )
+        return located
+
+    def fetch_container_index(self, project_id: int) -> dict[str, dict[str, Any]]:
+        """Index the cycles and suites of the project by id, in two calls.
+
+        Indexed by id alone: a child of a cycle may be either a cycle or a
+        suite, and the entity's own parent pointer is what the chain is climbed
+        with, so its kind does not need to be known in advance.
+        """
+        index: dict[str, dict[str, Any]] = {}
+
+        for kind, path in (("test-cycle", TEST_CYCLES_PATH), ("test-suite", TEST_SUITES_PATH)):
+            try:
+                items = self.fetch_all(
+                    path.format(project_id=project_id),
+                    f"{kind}s",
+                    params=DESCENDANTS_PARAMS,
+                )
+            except ProjectExportError as error:
+                logger.warning("Cannot list the %ss of the project: %s", kind, error)
+                continue
+            self._index_containers(items, kind, index)
+
+        logger.info("Indexed %s containers of the execution tree", len(index))
+        return index
+
+    def _index_containers(
+        self,
+        items: list[dict[str, Any]],
+        kind: str,
+        index: dict[str, dict[str, Any]],
+    ) -> None:
+        """Record each container and recurse into the ones nested inside it."""
+        for item in items:
+            index.setdefault(
+                str(self._key_of(item)),
+                {
+                    "kind": kind,
+                    "name": item.get("name") or "<no name>",
+                    "parent_id": self._first_of(item, PARENT_ID_KEYS),
+                    "parent_type": self._first_of(item, PARENT_TYPE_KEYS),
+                    "release_id": self._first_of(item, RELEASE_ID_KEYS),
+                },
+            )
+            children = item.get("children")
+            if isinstance(children, list):
+                self._index_containers(children, kind, index)
+
+    def _locate_run(
+        self,
+        run: dict[str, Any],
+        containers: dict[str, dict[str, Any]],
+        release_names: dict[str, Any],
+    ) -> dict[str, Any]:
+        """Climb from a run to its release, collecting the containers on the way."""
+        cycles: list[str] = []
+        suite = ""
+        release_id = self._first_of(run, RELEASE_ID_KEYS) or ""
+
+        current_id = self._first_of(run, PARENT_ID_KEYS)
+        current_type = str(self._first_of(run, PARENT_TYPE_KEYS) or "")
+        seen: set[str] = set()
+
+        for _ in range(MAX_CHAIN_DEPTH):
+            if not current_id or str(current_id) in seen:
+                break
+            seen.add(str(current_id))
+
+            if current_type == "release":
+                release_id = release_id or current_id
+                break
+
+            container = containers.get(str(current_id))
+            if container is None:
+                # Name it by id rather than drop it: an unindexed container
+                # still tells the reader where the run lives.
+                label = f"({current_type or 'container'} {current_id})"
+                if current_type == "test-suite" and not suite:
+                    suite = label
+                else:
+                    cycles.append(label)
+                break
+
+            if container["kind"] == "test-suite" and not suite:
+                suite = container["name"]
+            else:
+                cycles.append(container["name"])
+
+            release_id = release_id or container["release_id"] or ""
+            current_id = container["parent_id"]
+            current_type = str(container["parent_type"] or "")
+
+        return {
+            "run": run,
+            "release_id": release_id,
+            "release": release_names.get(str(release_id)) or ("" if not release_id else f"release {release_id}"),
+            # Collected while climbing, so reversed to read outermost first.
+            "cycle": " / ".join(reversed(cycles)),
+            "suite": suite,
+        }
+
+    @staticmethod
+    def _first_of(entity: dict[str, Any], keys: tuple[str, ...]) -> Any:
+        """First of `keys` the entity carries a value for."""
+        for key in keys:
+            value = entity.get(key)
+            if value not in (None, "", 0):
+                return value
+        return None
 
     def walk_execution_tree(
         self,
@@ -674,7 +848,7 @@ class DataExporter:
         requirements = self.fetch_entities("requirements", project_id)
         modules = self.fetch_entities("test_modules", project_id)
         test_cases = self.fetch_entities("test_cases", project_id)
-        located_runs = self.walk_execution_tree(project_id, releases=releases)
+        located_runs = self.locate_test_runs(project_id, releases=releases)
 
         module_paths = {self._key_of(module): module.get("name") for module in modules}
         requirement_index = {self._key_of(item): item for item in requirements}
