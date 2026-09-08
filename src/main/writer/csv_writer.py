@@ -45,7 +45,8 @@ COLUMNS = (
     "Test Case",
     "Module ID",
     "Module",
-    "Test Case Jira",
+    # No Test Case Jira column: no test case of this project references Jira,
+    # and the integration is only ever recorded on the requirements.
     "Requirement ID",
     "Requirement",
     "Requirement Jira",
@@ -170,7 +171,6 @@ class CsvWriter:
             "Test Case": case.get("name") or "",
             "Module ID": case.get("module_id", ""),
             "Module": case.get("module") or self._missing_module(case),
-            "Test Case Jira": case.get("jira") or "",
         }
 
         if requirement is not None:
@@ -270,6 +270,12 @@ class CsvWriter:
             "its own. A test case never executed keeps its row with the execution",
             "columns empty, and one covering no requirement keeps its row with the",
             "requirement columns empty.",
+            "",
+            "Requirement Jira carries the evidence that a requirement came from Jira.",
+            "It is empty for every row of this project, and that is a finding rather",
+            "than a gap: the requirements imported from Jira are precisely the ones no",
+            "test case covers, so none of them reaches a row here. Count them in",
+            "qtest_requirements.txt, where every requirement is listed.",
             "",
             "Modules, requirements and releases appear only as columns of a test case.",
             "A requirement no test case covers, an empty folder or a release with",
