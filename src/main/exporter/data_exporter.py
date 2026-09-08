@@ -90,6 +90,11 @@ LINK_BATCH_SIZE = 50
 TEST_CASE_KEYS = ("test_case", "testCase")
 TEST_CASE_ID_KEYS = ("test_case_id", "testCaseId", "test_case_version_id")
 
+#: Keys under which a cycle, suite or run may name the release it belongs to.
+#: Cycles often hang from the project root while still pointing at a release,
+#: and reading that pointer is the only way to tie their runs to one.
+RELEASE_ID_KEYS = ("release_id", "releaseId")
+
 #: Entities the inventory writes on their own. Modules and test cases are left
 #: out: they are reported together in the Test Design tree, which is what tells
 #: apart a folder holding cases from an empty one.
@@ -413,6 +418,7 @@ class DataExporter:
                 },
             ))
 
+        release_names = {self._key_of(release): release.get("name") for release in releases}
         located: dict[Any, dict[str, Any]] = {}
         visited: set[tuple[str, Any]] = set()
 
@@ -425,13 +431,16 @@ class DataExporter:
             for run in self._children(project_id, "test-runs", parent_type, parent_id):
                 key = self._key_of(run)
                 if key not in located:
-                    located[key] = {"run": run, **context}
+                    located[key] = {"run": run, **self._with_release(context, run, release_names)}
 
             for suite in self._children(project_id, "test-suites", parent_type, parent_id):
                 pending.append((
                     "test-suite",
                     self._key_of(suite),
-                    {**context, "suite": suite.get("name") or "<no name>"},
+                    {
+                        **self._with_release(context, suite, release_names),
+                        "suite": suite.get("name") or "<no name>",
+                    },
                 ))
 
             if parent_type in BRANCHING_CONTAINERS:
@@ -439,11 +448,40 @@ class DataExporter:
                     pending.append((
                         "test-cycle",
                         self._key_of(cycle),
-                        {**context, "cycle": self._path_join(context["cycle"], cycle.get("name"))},
+                        {
+                            **self._with_release(context, cycle, release_names),
+                            "cycle": self._path_join(context["cycle"], cycle.get("name")),
+                        },
                     ))
 
         logger.info("Reached %s test runs across %s containers", len(located), len(visited))
         return list(located.values())
+
+    @staticmethod
+    def _with_release(
+        context: dict[str, Any],
+        entity: dict[str, Any],
+        release_names: dict[Any, Any],
+    ) -> dict[str, Any]:
+        """Fill the release of a container that names one but hangs elsewhere.
+
+        A cycle reached from the project root carries no release in the walk,
+        yet its payload usually points at one. Reading that pointer is what
+        ties its runs to a release; a release already known from the walk wins.
+        """
+        if context.get("release_id"):
+            return context
+
+        for key in RELEASE_ID_KEYS:
+            release_id = entity.get(key)
+            if release_id:
+                return {
+                    **context,
+                    "release_id": release_id,
+                    "release": release_names.get(release_id) or f"release {release_id}",
+                }
+
+        return context
 
     def _run_path(self, located: dict[str, Any]) -> str:
         """Container path of a located run, ending in the run's own name."""
