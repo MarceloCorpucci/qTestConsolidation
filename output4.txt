@@ -1,0 +1,219 @@
+(.venv) PS C:\Repositories\qTestConsolidation> python -m pytest .\src\tests\test_diagnose_links.py -s
+====================================================================================================== test session starts =======================================================================================================
+platform win32 -- Python 3.14.0, pytest-8.3.3, pluggy-1.6.0
+rootdir: C:\Repositories\qTestConsolidation
+configfile: pytest.ini
+collected 2 items
+
+src\tests\test_diagnose_links.py 2026-09-08 17:01:53 INFO     main.client.rest_client | Loading SOURCE connection settings from C:\Repositories\qTestConsolidation\config\qtest.env
+2026-09-08 17:01:53 INFO     main.client.rest_client | TLS verification delegated to the operating system certificate store
+2026-09-08 17:01:53 INFO     main.client.rest_client | REST client ready for https://healthspring.qtestnet.com:443 (timeout=30s, retries=3)
+2026-09-08 17:01:53 INFO     main.exporter.data_exporter | Fetching requirements, page 1
+2026-09-08 17:01:53 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com:443/api/v3/projects/24901/requirements
+2026-09-08 17:01:54 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com:443/api/v3/projects/24901/requirements -> 200 in 1.30s
+2026-09-08 17:01:54 INFO     main.exporter.data_exporter | Fetching requirements, page 2
+2026-09-08 17:01:54 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com:443/api/v3/projects/24901/requirements
+2026-09-08 17:01:55 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com:443/api/v3/projects/24901/requirements -> 200 in 0.84s
+2026-09-08 17:01:55 INFO     main.exporter.data_exporter | Fetching requirements, page 3
+2026-09-08 17:01:55 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com:443/api/v3/projects/24901/requirements
+2026-09-08 17:01:56 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com:443/api/v3/projects/24901/requirements -> 200 in 0.91s
+2026-09-08 17:01:56 INFO     main.exporter.data_exporter | Fetching requirements, page 4
+2026-09-08 17:01:56 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com:443/api/v3/projects/24901/requirements
+2026-09-08 17:01:56 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com:443/api/v3/projects/24901/requirements -> 200 in 0.92s
+2026-09-08 17:01:56 INFO     main.exporter.data_exporter | Fetching requirements, page 5
+2026-09-08 17:01:56 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com:443/api/v3/projects/24901/requirements
+2026-09-08 17:01:57 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com:443/api/v3/projects/24901/requirements -> 200 in 0.86s
+2026-09-08 17:01:57 INFO     main.exporter.data_exporter | Fetching requirements, page 6
+2026-09-08 17:01:57 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com:443/api/v3/projects/24901/requirements
+2026-09-08 17:01:58 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com:443/api/v3/projects/24901/requirements -> 200 in 0.85s
+2026-09-08 17:01:58 INFO     main.exporter.data_exporter | Fetching requirements, page 7
+2026-09-08 17:01:58 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com:443/api/v3/projects/24901/requirements
+2026-09-08 17:01:59 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com:443/api/v3/projects/24901/requirements -> 200 in 0.87s
+2026-09-08 17:01:59 INFO     main.exporter.data_exporter | Fetching requirements, page 8
+2026-09-08 17:01:59 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com:443/api/v3/projects/24901/requirements
+2026-09-08 17:02:00 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com:443/api/v3/projects/24901/requirements -> 200 in 0.89s
+2026-09-08 17:02:00 INFO     main.exporter.data_exporter | Fetching requirements, page 9
+2026-09-08 17:02:00 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com:443/api/v3/projects/24901/requirements
+2026-09-08 17:02:01 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com:443/api/v3/projects/24901/requirements -> 200 in 0.84s
+2026-09-08 17:02:01 INFO     main.exporter.data_exporter | Fetching requirements, page 10
+2026-09-08 17:02:01 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com:443/api/v3/projects/24901/requirements
+2026-09-08 17:02:02 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com:443/api/v3/projects/24901/requirements -> 200 in 0.77s
+2026-09-08 17:02:02 INFO     main.exporter.data_exporter | Fetching requirements, page 11
+2026-09-08 17:02:02 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com:443/api/v3/projects/24901/requirements
+2026-09-08 17:02:02 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com:443/api/v3/projects/24901/requirements -> 200 in 0.86s
+2026-09-08 17:02:02 INFO     main.exporter.data_exporter | Fetching requirements, page 12
+2026-09-08 17:02:02 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com:443/api/v3/projects/24901/requirements
+2026-09-08 17:02:03 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com:443/api/v3/projects/24901/requirements -> 200 in 0.87s
+2026-09-08 17:02:03 INFO     main.exporter.data_exporter | Fetching requirements, page 13
+2026-09-08 17:02:03 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com:443/api/v3/projects/24901/requirements
+2026-09-08 17:02:04 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com:443/api/v3/projects/24901/requirements -> 200 in 0.78s
+2026-09-08 17:02:04 INFO     main.exporter.data_exporter | Fetching requirements, page 14
+2026-09-08 17:02:04 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com:443/api/v3/projects/24901/requirements
+2026-09-08 17:02:05 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com:443/api/v3/projects/24901/requirements -> 200 in 0.69s
+2026-09-08 17:02:05 INFO     main.exporter.data_exporter | Fetching requirements, page 15
+2026-09-08 17:02:05 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com:443/api/v3/projects/24901/requirements
+2026-09-08 17:02:06 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com:443/api/v3/projects/24901/requirements -> 200 in 0.88s
+2026-09-08 17:02:06 INFO     main.exporter.data_exporter | Fetching requirements, page 16
+2026-09-08 17:02:06 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com:443/api/v3/projects/24901/requirements
+2026-09-08 17:02:06 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com:443/api/v3/projects/24901/requirements -> 200 in 0.80s
+2026-09-08 17:02:06 INFO     main.exporter.data_exporter | Fetching requirements, page 17
+2026-09-08 17:02:06 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com:443/api/v3/projects/24901/requirements
+2026-09-08 17:02:07 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com:443/api/v3/projects/24901/requirements -> 200 in 0.71s
+2026-09-08 17:02:07 INFO     main.exporter.data_exporter | Fetching requirements, page 18
+2026-09-08 17:02:07 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com:443/api/v3/projects/24901/requirements
+2026-09-08 17:02:08 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com:443/api/v3/projects/24901/requirements -> 200 in 0.69s
+2026-09-08 17:02:08 INFO     main.exporter.data_exporter | Fetching requirements, page 19
+2026-09-08 17:02:08 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com:443/api/v3/projects/24901/requirements
+2026-09-08 17:02:09 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com:443/api/v3/projects/24901/requirements -> 200 in 0.69s
+2026-09-08 17:02:09 INFO     main.exporter.data_exporter | Fetching requirements, page 20
+2026-09-08 17:02:09 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com:443/api/v3/projects/24901/requirements
+2026-09-08 17:02:09 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com:443/api/v3/projects/24901/requirements -> 200 in 0.82s
+2026-09-08 17:02:09 INFO     main.exporter.data_exporter | Fetching requirements, page 21
+2026-09-08 17:02:09 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com:443/api/v3/projects/24901/requirements
+2026-09-08 17:02:10 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com:443/api/v3/projects/24901/requirements -> 200 in 0.76s
+2026-09-08 17:02:10 INFO     main.exporter.data_exporter | Fetching requirements, page 22
+2026-09-08 17:02:10 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com:443/api/v3/projects/24901/requirements
+2026-09-08 17:02:11 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com:443/api/v3/projects/24901/requirements -> 200 in 0.83s
+2026-09-08 17:02:11 INFO     main.exporter.data_exporter | Fetching requirements, page 23
+2026-09-08 17:02:11 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com:443/api/v3/projects/24901/requirements
+2026-09-08 17:02:12 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com:443/api/v3/projects/24901/requirements -> 200 in 0.89s
+2026-09-08 17:02:12 INFO     main.exporter.data_exporter | Fetching requirements, page 24
+2026-09-08 17:02:12 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com:443/api/v3/projects/24901/requirements
+2026-09-08 17:02:13 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com:443/api/v3/projects/24901/requirements -> 200 in 0.85s
+2026-09-08 17:02:13 INFO     main.exporter.data_exporter | Fetching requirements, page 25
+2026-09-08 17:02:13 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com:443/api/v3/projects/24901/requirements
+2026-09-08 17:02:14 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com:443/api/v3/projects/24901/requirements -> 200 in 0.85s
+2026-09-08 17:02:14 INFO     main.exporter.data_exporter | Fetching requirements, page 26
+2026-09-08 17:02:14 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com:443/api/v3/projects/24901/requirements
+2026-09-08 17:02:14 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com:443/api/v3/projects/24901/requirements -> 200 in 0.52s
+2026-09-08 17:02:14 INFO     main.exporter.data_exporter | Fetching requirements, page 27
+2026-09-08 17:02:14 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com:443/api/v3/projects/24901/requirements
+2026-09-08 17:02:14 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com:443/api/v3/projects/24901/requirements -> 200 in 0.07s
+2026-09-08 17:02:14 INFO     main.exporter.data_exporter | Collected 510 requirements
+
+Probing requirement 8196920: 'About page'
+
+--- linked-artifacts, type=requirements, ids comma-joined
+    GET /api/v3/projects/24901/linked-artifacts  params={'type': 'requirements', 'ids': '8196920'}
+2026-09-08 17:02:14 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com:443/api/v3/projects/24901/linked-artifacts
+2026-09-08 17:02:14 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com:443/api/v3/projects/24901/linked-artifacts -> 200 in 0.10s
+    status 200, 212 bytes
+    [{"id":8196920,"objects":[{"id":9974415,"pid":"TC-2","link_type":"is_covered_by","self":"http://healthspring.qtestnet.com/api/v3/projects/24901/test-cases/9974415?versionId=23328569&showParamIdentifier=false"}]}]
+
+--- linked-artifacts, type=requirements, ids repeated
+    GET /api/v3/projects/24901/linked-artifacts  params={'type': 'requirements', 'ids': [8196920]}
+2026-09-08 17:02:14 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com:443/api/v3/projects/24901/linked-artifacts
+2026-09-08 17:02:14 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com:443/api/v3/projects/24901/linked-artifacts -> 200 in 0.10s
+    status 200, 212 bytes
+    [{"id":8196920,"objects":[{"id":9974415,"pid":"TC-2","link_type":"is_covered_by","self":"http://healthspring.qtestnet.com/api/v3/projects/24901/test-cases/9974415?versionId=23328569&showParamIdentifier=false"}]}]
+
+--- linked-artifacts, type singular
+    GET /api/v3/projects/24901/linked-artifacts  params={'type': 'requirement', 'ids': [8196920]}
+2026-09-08 17:02:14 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com:443/api/v3/projects/24901/linked-artifacts
+2026-09-08 17:02:14 WARNING  main.client.rest_client | GET https://healthspring.qtestnet.com:443/api/v3/projects/24901/linked-artifacts -> 400 in 0.06s
+    status 400, 159 bytes
+    {"noLogging":null,"message":"Only support get linked object for types:[requirements, test-cases, test-runs, defects, builds, test-steps, test-logs, releases]"}
+
+--- links under the requirement itself
+    GET /api/v3/projects/24901/requirements/8196920/linked-artifacts  params=None
+2026-09-08 17:02:14 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com:443/api/v3/projects/24901/requirements/8196920/linked-artifacts
+2026-09-08 17:02:15 WARNING  main.client.rest_client | GET https://healthspring.qtestnet.com:443/api/v3/projects/24901/requirements/8196920/linked-artifacts -> 405 in 0.09s
+    status 405, 114 bytes
+    {"status":405,"title":"Method Not Allowed","message":"Request method 'GET' is not supported","time":1788897735003}
+
+--- the requirement payload, expanded
+    GET /api/v3/projects/24901/requirements/8196920  params={'expandProps': 'true'}
+2026-09-08 17:02:15 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com:443/api/v3/projects/24901/requirements/8196920
+2026-09-08 17:02:15 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com:443/api/v3/projects/24901/requirements/8196920 -> 200 in 0.17s
+    status 200, 1557 bytes
+    {"links":[{"rel":"self","href":"http://healthspring.qtestnet.com/api/v3/projects/24901/requirements/8196920"},{"rel":"module","href":"http://healthspring.qtestnet.com/api/v3/projects/24901/modules/5299090"}],"id":8196920,"name":"About page","order":1,"pid":"RQ-2","created_date":"2026-01-04T18:22:20+00:00","last_modified_date":"2026-01-04T18:23:01+00:00","properties":[{"field_id":2415118,"field_name":"Status","field_value":"913","field_value_name":"Ready For Baseline"},{"field_id":2415119,"field_name":"Priority","field_value":"901","field_value_name":"Must have"},{"field_id":2415120,"field_name
+    ... (957 more bytes)
+.2026-09-08 17:02:15 INFO     main.exporter.data_exporter | Fetching test_cases, page 1
+2026-09-08 17:02:15 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com:443/api/v3/projects/24901/test-cases
+2026-09-08 17:02:15 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com:443/api/v3/projects/24901/test-cases -> 200 in 0.21s
+2026-09-08 17:02:15 INFO     main.exporter.data_exporter | Fetching test_cases, page 2
+2026-09-08 17:02:15 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com:443/api/v3/projects/24901/test-cases
+2026-09-08 17:02:15 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com:443/api/v3/projects/24901/test-cases -> 200 in 0.21s
+2026-09-08 17:02:15 INFO     main.exporter.data_exporter | Fetching test_cases, page 3
+2026-09-08 17:02:15 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com:443/api/v3/projects/24901/test-cases
+2026-09-08 17:02:15 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com:443/api/v3/projects/24901/test-cases -> 200 in 0.18s
+2026-09-08 17:02:15 INFO     main.exporter.data_exporter | Fetching test_cases, page 4
+2026-09-08 17:02:15 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com:443/api/v3/projects/24901/test-cases
+2026-09-08 17:02:15 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com:443/api/v3/projects/24901/test-cases -> 200 in 0.18s
+2026-09-08 17:02:15 INFO     main.exporter.data_exporter | Fetching test_cases, page 5
+2026-09-08 17:02:15 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com:443/api/v3/projects/24901/test-cases
+2026-09-08 17:02:16 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com:443/api/v3/projects/24901/test-cases -> 200 in 0.19s
+2026-09-08 17:02:16 INFO     main.exporter.data_exporter | Fetching test_cases, page 6
+2026-09-08 17:02:16 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com:443/api/v3/projects/24901/test-cases
+2026-09-08 17:02:16 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com:443/api/v3/projects/24901/test-cases -> 200 in 0.18s
+2026-09-08 17:02:16 INFO     main.exporter.data_exporter | Fetching test_cases, page 7
+2026-09-08 17:02:16 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com:443/api/v3/projects/24901/test-cases
+2026-09-08 17:02:16 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com:443/api/v3/projects/24901/test-cases -> 200 in 0.16s
+2026-09-08 17:02:16 INFO     main.exporter.data_exporter | Fetching test_cases, page 8
+2026-09-08 17:02:16 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com:443/api/v3/projects/24901/test-cases
+2026-09-08 17:02:16 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com:443/api/v3/projects/24901/test-cases -> 200 in 0.18s
+2026-09-08 17:02:16 INFO     main.exporter.data_exporter | Fetching test_cases, page 9
+2026-09-08 17:02:16 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com:443/api/v3/projects/24901/test-cases
+2026-09-08 17:02:16 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com:443/api/v3/projects/24901/test-cases -> 200 in 0.17s
+2026-09-08 17:02:16 INFO     main.exporter.data_exporter | Fetching test_cases, page 10
+2026-09-08 17:02:16 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com:443/api/v3/projects/24901/test-cases
+2026-09-08 17:02:17 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com:443/api/v3/projects/24901/test-cases -> 200 in 0.17s
+2026-09-08 17:02:17 INFO     main.exporter.data_exporter | Fetching test_cases, page 11
+2026-09-08 17:02:17 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com:443/api/v3/projects/24901/test-cases
+2026-09-08 17:02:17 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com:443/api/v3/projects/24901/test-cases -> 200 in 0.19s
+2026-09-08 17:02:17 INFO     main.exporter.data_exporter | Fetching test_cases, page 12
+2026-09-08 17:02:17 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com:443/api/v3/projects/24901/test-cases
+2026-09-08 17:02:17 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com:443/api/v3/projects/24901/test-cases -> 200 in 0.15s
+2026-09-08 17:02:17 INFO     main.exporter.data_exporter | Fetching test_cases, page 13
+2026-09-08 17:02:17 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com:443/api/v3/projects/24901/test-cases
+2026-09-08 17:02:17 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com:443/api/v3/projects/24901/test-cases -> 200 in 0.16s
+2026-09-08 17:02:17 INFO     main.exporter.data_exporter | Fetching test_cases, page 14
+2026-09-08 17:02:17 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com:443/api/v3/projects/24901/test-cases
+2026-09-08 17:02:17 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com:443/api/v3/projects/24901/test-cases -> 200 in 0.14s
+2026-09-08 17:02:17 INFO     main.exporter.data_exporter | Fetching test_cases, page 15
+2026-09-08 17:02:17 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com:443/api/v3/projects/24901/test-cases
+2026-09-08 17:02:17 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com:443/api/v3/projects/24901/test-cases -> 200 in 0.13s
+2026-09-08 17:02:17 INFO     main.exporter.data_exporter | Collected 266 test_cases
+
+Probing test case 9974424: 'Exploratory Testing page'
+
+--- linked-artifacts, type=test-cases, ids repeated
+    GET /api/v3/projects/24901/linked-artifacts  params={'type': 'test-cases', 'ids': [9974424]}
+2026-09-08 17:02:17 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com:443/api/v3/projects/24901/linked-artifacts
+2026-09-08 17:02:17 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com:443/api/v3/projects/24901/linked-artifacts -> 200 in 0.10s
+    status 200, 895 bytes
+    [{"id":9974424,"objects":[{"id":8196928,"pid":"RQ-10","link_type":"covers","self":"http://healthspring.qtestnet.com/api/v3/projects/24901/requirements/8196928?includeExternalProperties=false"},{"id":10063502,"pid":"TR-23","link_type":"is_associated_with","self":"http://healthspring.qtestnet.com/api/v3/projects/24901/test-runs/10063502?includeToscaProperties=false"},{"id":10063503,"pid":"TR-24","link_type":"is_associated_with","self":"http://healthspring.qtestnet.com/api/v3/projects/24901/test-runs/10063503?includeToscaProperties=false"},{"id":12336632,"pid":"TR-54","link_type":"is_associated_w
+    ... (295 more bytes)
+
+--- links under the test case itself
+    GET /api/v3/projects/24901/test-cases/9974424/linked-artifacts  params=None
+2026-09-08 17:02:17 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com:443/api/v3/projects/24901/test-cases/9974424/linked-artifacts
+2026-09-08 17:02:17 WARNING  main.client.rest_client | GET https://healthspring.qtestnet.com:443/api/v3/projects/24901/test-cases/9974424/linked-artifacts -> 405 in 0.07s
+    status 405, 114 bytes
+    {"status":405,"title":"Method Not Allowed","message":"Request method 'GET' is not supported","time":1788897737953}
+2026-09-08 17:02:17 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com:443/api/v3/projects/24901/test-cases/9974424
+2026-09-08 17:02:18 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com:443/api/v3/projects/24901/test-cases/9974424 -> 200 in 0.15s
+
+--- keys of the test case payload
+    ['agent_ids', 'ai_generated', 'ai_generated_source', 'created_date', 'creator_id', 'description', 'id', 'last_modified_date', 'links', 'name', 'order', 'parent_id', 'pid', 'precondition', 'properties', 'test_case_version_id', 'version', 'web_url']
+{
+  "links": [
+    {
+      "rel": "attachments",
+      "href": "http://healthspring.qtestnet.com/api/v3/projects/24901/test-cases/9974424/attachments"
+    },
+    {
+      "rel": "self",
+      "href": "http://healthspring.qtestnet.com/api/v3/projects/24901/test-cases/9974424"
+    },
+    {
+      "rel": "test-steps",
+      "href": "http://healthspring.qtestnet.com/api/v3/projects/24901/test-cases/9974424/versions/17283827/test-steps?expand=&showParamIdentifier=false"
+    }
+  ],
+  "id": 9974424,
+  "name": "Exploratory Testing page",
+  "order": 3,
+  "pid": "TC-11",
+  "created_date": "2025-12-31T18:2
+.
