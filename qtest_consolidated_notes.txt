@@ -1,0 +1,37 @@
+qTest consolidated traceability - project 24901
+Source: https://healthspring.qtestnet.com:443, generated 2026-09-08 13:17
+
+One table, every artifact, the way a SQL UNION ALL would lay them out:
+the Record Type column says what a row is, and the columns that do not
+apply to that type are empty. Rows repeat by design -- a requirement
+covered by twenty cases shows up in twenty TEST_RUN rows.
+
+Record Type:
+  SUMMARY      counts per release, then a distinct total for the project
+  TEST_PLAN    every release, including those with nothing executed
+  REQUIREMENT  every requirement, its Jira link and the releases reaching it
+  MODULE       a Test Design folder holding no test case
+  TEST_CASE    every test case, in its module
+  TEST_RUN     every run, with release, cycle, suite, case and requirements
+
+Columns that change meaning with the row type:
+  Test Runs Count   SUMMARY and TEST_PLAN: runs under that release.
+                    TEST_CASE: runs executing that case; 0 means it was
+                    never scheduled.
+  Requirement IDs   TEST_CASE and TEST_RUN: the requirements linked.
+                    REQUIREMENT: the id of the requirement itself.
+
+qTest has no release-to-requirement relation: coverage is derived along
+Release > Test Cycle > Test Suite > Test Run > Test Case > Requirement.
+A requirement is therefore tied to a release only when a test run
+executes it through that chain.
+Requirement columns come from the test case to requirement links.
+
+Counts are computed values, not formulas: a CSV carries no formulas, so
+they do not follow later edits of the rows. Test cases and requirements
+are counted distinct, as the same one repeats across runs, and the total
+row is distinct over the whole project -- smaller than the sum of the
+column whenever a case or requirement belongs to two releases.
+
+Migration Status, Target ID and Migration Notes are left empty for
+tracking the migration by hand.

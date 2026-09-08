@@ -1,0 +1,20 @@
+qTest consolidated traceability - project 24901
+Source: https://healthspring.qtestnet.com:443, generated 2026-09-07 11:16
+
+qTest has no release-to-requirement relation: coverage is derived along
+Release > Test Cycle > Test Suite > Test Run > Test Case > Requirement.
+A requirement is therefore tied to a release only when a test run
+executes it through that chain.
+Requirement columns come from the test case to requirement links.
+
+Files:
+  _traceability.csv        one row per test run, the whole chain
+  _summary.csv             per release: runs, and distinct cases and requirements
+  _requirements_coverage.csv  per requirement: Jira link and releases reaching it
+  _test_design.csv         the module tree with its cases, empty folders included
+
+Counts in the summary are computed values, not formulas: a CSV carries no
+formulas, so they do not follow later edits of the other files. Test cases
+and requirements are counted distinct, as the same one repeats across runs.
+The total row counts distinct over the whole project, so it is smaller than
+the sum of the column whenever a case or requirement belongs to two releases.

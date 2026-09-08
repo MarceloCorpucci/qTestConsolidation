@@ -1,0 +1,13 @@
+﻿Release ID,Release,Test runs,Test cases,Requirements,Requirements with Jira
+,(no release),9,9,0,0
+126327,Automation Release123 - 2026,1,1,0,0
+126376,Automation Release1235 - 2026,1,1,0,0
+121857,Demo,8,8,0,0
+118627,Fix Version,5,4,0,0
+117456,New Account,1,1,0,0
+121737,Provider Facets Upgrade,3,2,0,0
+111478,Release 2,21,12,0,0
+111479,Release 3,3,3,0,0
+118724,same,2,2,0,0
+127416,test_plan,1,1,0,0
+,Total (distinct),55,28,0,0
