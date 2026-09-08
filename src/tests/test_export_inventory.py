@@ -13,7 +13,6 @@ inventory has been taken.
 """
 
 import csv
-from collections import Counter
 
 import pytest
 
@@ -23,7 +22,6 @@ from main.writer import CsvWriter
 
 JIRA_MARK = "[jira:"
 EXPECTED_FILES = {"consolidated", "notes"}
-RECORD_TYPES = ("SUMMARY", "TEST_PLAN", "REQUIREMENT", "MODULE", "TEST_CASE", "TEST_RUN")
 
 
 def assert_present(rows, column, expected):
@@ -79,25 +77,18 @@ def test_export_consolidated_report(source_client, project_id):
         consolidated = list(reader)
         columns = reader.fieldnames or []
 
-    kinds = Counter(row["Record Type"] for row in consolidated)
     # Every row carries every column, empty where the chain does not reach.
     assert all(set(row) == set(columns) for row in consolidated), "Rows differ in shape"
+    assert "Record Type" not in columns, "The table is no longer grouped by record type"
+    assert not [name for name in columns if name.endswith("Count")], "A count column is back"
 
-    # Nothing is lost: every artifact of the report shows up somewhere.
-    assert_present(consolidated, "Test Run ID", {row["run_id"] for row in report["rows"]})
+    # The grain is the test case: every case and every run has a row.
     assert_present(consolidated, "Test Case ID", {case["id"] for case in report["test_cases"]})
-    assert_present(
-        consolidated, "Requirement ID", {item["id"] for item in report["requirements"]}
-    )
-    assert_present(consolidated, "Release ID", {item["id"] for item in report["releases"]})
+    assert_present(consolidated, "Test Run ID", {row["run_id"] for row in report["rows"]})
 
     # The point of the join: a linked requirement rides on its test case's row.
-    merged = [
-        row
-        for row in consolidated
-        if row["Requirement ID"] and row["Record Type"] in ("TEST_RUN", "TEST_CASE")
-    ]
-    assert all(row["Test Case ID"] for row in merged), "A requirement row has no test case"
+    for row in consolidated:
+        assert row["Test Case ID"], "A row carries no test case"
     for case_id, linked in report["links"].items():
         for requirement_id in linked:
             assert any(
@@ -113,7 +104,7 @@ def test_export_consolidated_report(source_client, project_id):
     for name, path in written.items():
         print(f"  {name:<14} -> {path}")
     print(f"  columns                        : {len(columns)}")
-    print(f"  rows by record type            : {dict(kinds)}")
+    print(f"  rows in the consolidated table : {len(consolidated)}")
     print(f"  releases in the execution tree : {len(releases)}")
     print(f"  releases reaching requirements : {len(covered)}")
     print(f"  requirements in the project    : {len(report['requirements'])}")

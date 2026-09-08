@@ -502,6 +502,9 @@ class DataExporter:
                     path.format(project_id=project_id),
                     f"{kind}s",
                     params=DESCENDANTS_PARAMS,
+                    # A suite cannot hang from the root, so this refusal is
+                    # expected and the containers are read by id instead.
+                    refusal_expected=True,
                 )
             except ProjectExportError as error:
                 logger.warning("Cannot list the %ss of the project: %s", kind, error)
