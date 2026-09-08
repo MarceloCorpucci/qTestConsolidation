@@ -90,6 +90,12 @@ DESCENDANTS_PARAMS = {"parentId": 0, "parentType": "root", "expand": "descendant
 PARENT_ID_KEYS = ("parentId", "parent_id")
 PARENT_TYPE_KEYS = ("parentType", "parent_type")
 
+#: Endpoint of each container kind, to read one by id when the bulk listing
+#: does not report it. A suite cannot hang from the project root, so asking
+#: for every suite in one call is refused and the ones holding runs have to be
+#: fetched on demand.
+CONTAINER_PATHS = {"test-cycle": TEST_CYCLES_PATH, "test-suite": TEST_SUITES_PATH}
+
 #: Hard stop while climbing from a run up to its release.
 MAX_CHAIN_DEPTH = 20
 
@@ -471,7 +477,7 @@ class DataExporter:
 
         containers = self.fetch_container_index(project_id)
         release_names = {str(self._key_of(item)): item.get("name") for item in releases}
-        located = [self._locate_run(run, containers, release_names) for run in runs]
+        located = [self._locate_run(project_id, run, containers, release_names) for run in runs]
 
         logger.info(
             "Located %s test runs: %s under a release, %s under a named container",
@@ -481,14 +487,14 @@ class DataExporter:
         )
         return located
 
-    def fetch_container_index(self, project_id: int) -> dict[str, dict[str, Any]]:
+    def fetch_container_index(self, project_id: int) -> dict[str, Any]:
         """Index the cycles and suites of the project by id, in two calls.
 
         Indexed by id alone: a child of a cycle may be either a cycle or a
         suite, and the entity's own parent pointer is what the chain is climbed
         with, so its kind does not need to be known in advance.
         """
-        index: dict[str, dict[str, Any]] = {}
+        index: dict[str, Any] = {}
 
         for kind, path in (("test-cycle", TEST_CYCLES_PATH), ("test-suite", TEST_SUITES_PATH)):
             try:
@@ -509,7 +515,7 @@ class DataExporter:
         self,
         items: list[dict[str, Any]],
         kind: str,
-        index: dict[str, dict[str, Any]],
+        index: dict[str, Any],
     ) -> None:
         """Record each container and recurse into the ones nested inside it."""
         for item in items:
@@ -529,8 +535,9 @@ class DataExporter:
 
     def _locate_run(
         self,
+        project_id: int,
         run: dict[str, Any],
-        containers: dict[str, dict[str, Any]],
+        containers: dict[str, Any],
         release_names: dict[str, Any],
     ) -> dict[str, Any]:
         """Climb from a run to its release, collecting the containers on the way."""
@@ -551,9 +558,9 @@ class DataExporter:
                 release_id = release_id or current_id
                 break
 
-            container = containers.get(str(current_id))
+            container = self._container(project_id, current_type, current_id, containers)
             if container is None:
-                # Name it by id rather than drop it: an unindexed container
+                # Name it by id rather than drop it: an unreadable container
                 # still tells the reader where the run lives.
                 label = f"({current_type or 'container'} {current_id})"
                 if current_type == "test-suite" and not suite:
@@ -579,6 +586,45 @@ class DataExporter:
             "cycle": " / ".join(reversed(cycles)),
             "suite": suite,
         }
+
+    def _container(
+        self,
+        project_id: int,
+        container_type: str,
+        container_id: Any,
+        containers: dict[str, Any],
+    ) -> dict[str, Any] | None:
+        """A container of the execution tree, read by id when not yet indexed.
+
+        The bulk listings do not report every container -- suites in
+        particular, which cannot be asked for from the project root -- so the
+        few that hold runs are fetched one by one and cached in the index,
+        including the misses, so a container is asked for only once.
+        """
+        key = str(container_id)
+        if key in containers:
+            return containers[key]
+
+        path = CONTAINER_PATHS.get(container_type)
+        if path is None:
+            logger.debug("No endpoint known for a %r container", container_type)
+            return None
+
+        logger.debug("Reading %s %s, absent from the bulk listing", container_type, container_id)
+        try:
+            response = self._client.get(f"{path.format(project_id=project_id)}/{container_id}")
+            payload = self._payload_of(response, f"{container_type} {container_id}", True)
+        except ProjectExportError as error:
+            logger.warning("Cannot read %s %s: %s", container_type, container_id, error)
+            containers[key] = None
+            return None
+
+        if not isinstance(payload, dict):
+            containers[key] = None
+            return None
+
+        self._index_containers([payload], container_type, containers)
+        return containers.get(key)
 
     @staticmethod
     def _first_of(entity: dict[str, Any], keys: tuple[str, ...]) -> Any:
