@@ -1,13 +1,21 @@
 """Consolidated traceability report as a single CSV file.
 
 `CsvWriter` takes the report built by `DataExporter.build_traceability` and
-writes every artifact into one wide table, the way a SQL `UNION ALL` would:
-one row per record, a `Record Type` column saying what the row is, and the
-columns that do not apply to that type left empty.
+writes every artifact into one wide table, joined rather than stacked: each row
+carries the whole chain it belongs to -- Release, Test Cycle, Test Suite, Test
+Run, Test Case, Requirement -- with the ids and names of all of them side by
+side. A requirement linked to a test case appears on that case's row, not on a
+row of its own.
 
-Rows repeat on purpose. A requirement covered by twenty test cases appears in
-twenty test-run rows, and that redundancy is what makes the file usable for
-tracking a migration line by line.
+The grain is the deepest link of the chain: a test case linked to three
+requirements yields three rows. Rows therefore repeat on purpose, and that
+redundancy is what makes the file usable for tracking a migration line by line.
+
+An entity that no chain reaches still gets a row -- a test case never
+executed, a requirement linked to nothing, an empty folder, a release with
+nothing under it -- so the inventory is complete. The `Record Type` column
+names the deepest entity a row reaches, which is how those rows are told
+apart.
 
 It computes nothing about the instance: every relation comes from the report.
 Temporary, like the inventory it presents.
@@ -54,8 +62,9 @@ COLUMNS = (
     "Module ID",
     "Module",
     "Test Case Jira",
-    "Requirement IDs",
-    "Requirements",
+    # One requirement per row, so its id and name sit beside the test case.
+    "Requirement ID",
+    "Requirement",
     "Requirement Jira",
     "Linked Test Cases",
     "Releases Covering",
@@ -82,6 +91,9 @@ class CsvWriter:
         self.report = report
         self._output_dir = Path(output_dir)
         self._delimiter = delimiter
+        # Filled once per build: recomputing them per row would be quadratic.
+        self._requirement_index: dict[Any, dict[str, Any]] = {}
+        self._reach: dict[str, dict[str, Any]] = {}
         logger.debug(
             "CSV writer ready, output folder: %s, delimiter %r", self._output_dir, delimiter
         )
@@ -134,16 +146,22 @@ class CsvWriter:
     def build_rows(self) -> list[dict[str, Any]]:
         """Every record of every kind, in one row shape.
 
-        Ordered from the widest view to the narrowest -- summary, releases,
-        requirements, the design tree, then the runs -- so the file reads top
-        to bottom without sorting it first.
+        The chain rows come first, each holding a complete Release to
+        Requirement path. What no chain reaches follows: requirements linked to
+        nothing, empty folders, releases with nothing executed.
         """
+        self._requirement_index = {
+            requirement.get("id"): requirement for requirement in self._report["requirements"]
+        }
+        self._reach = self._requirement_reach()
+
+        chain_rows = self._chain_rows()
         rows = [
             *self._summary_rows(),
-            *self._test_plan_rows(),
-            *self._requirement_rows(),
-            *self._test_design_rows(),
-            *self._test_run_rows(),
+            *chain_rows,
+            *self._unreached_requirement_rows(chain_rows),
+            *self._empty_module_rows(),
+            *self._unused_release_rows(),
         ]
         logger.info(
             "Consolidated %s rows: %s",
@@ -186,144 +204,173 @@ class CsvWriter:
         })
         return built
 
-    def _test_plan_rows(self) -> list[dict[str, Any]]:
-        """Every release, including those with nothing executed under them."""
-        rows = self._report["rows"]
+    def _chain_rows(self) -> list[dict[str, Any]]:
+        """One row per link of the chain, everything it reaches on the same row.
+
+        A run is written once per requirement of the case it executes, so the
+        requirement sits beside the case. A case no run executes keeps its own
+        rows, with the execution columns empty.
+        """
+        case_index = {case.get("id"): case for case in self._report["test_cases"]}
+        runs_per_case = self._runs_per_case()
+        built = []
+
+        executed: set[Any] = set()
+        for run in self._report["rows"]:
+            executed.add(run["case_id"])
+            case = case_index.get(run["case_id"], {})
+            for requirement in self._requirements_of(run["case_id"]):
+                built.append(self._chain_row(TEST_RUN, run, case, requirement, runs_per_case))
+
+        for case in self._report["test_cases"]:
+            if case.get("id") in executed:
+                continue
+            for requirement in self._requirements_of(case.get("id")):
+                built.append(self._chain_row(TEST_CASE, None, case, requirement, runs_per_case))
+
+        return built
+
+    def _chain_row(
+        self,
+        record_type: str,
+        run: dict[str, Any] | None,
+        case: dict[str, Any],
+        requirement: dict[str, Any] | None,
+        runs_per_case: dict[Any, int],
+    ) -> dict[str, Any]:
+        """One row of the chain, as complete as what it reaches."""
+        row = {
+            "Record Type": record_type,
+            "Test Case ID": case.get("id", ""),
+            "Test Case": case.get("name") or "",
+            "Module ID": case.get("module_id", ""),
+            "Module": case.get("module") or self._missing_module(case),
+            "Test Case Jira": case.get("jira") or "",
+            # Zero means the case was never scheduled, which is worth knowing
+            # before migrating it.
+            "Test Runs Count": runs_per_case.get(case.get("id"), 0),
+        }
+
+        if run is not None:
+            row.update({
+                "Release ID": run["release_id"],
+                "Release": run["release"],
+                "Test Cycle": run["cycle"],
+                "Test Suite": run["suite"],
+                "Test Run ID": run["run_id"],
+                "Test Run": run["run"],
+                # Kept from the run when the case itself was not resolved.
+                "Test Case ID": case.get("id", run["case_id"]),
+                "Test Case": case.get("name") or run["case"],
+                "Module": case.get("module") or run["module"],
+                "Test Case Jira": case.get("jira") or run["case_jira"],
+            })
+
+        if requirement is not None:
+            row.update(self._requirement_columns(requirement))
+
+        return row
+
+    def _requirement_columns(self, requirement: dict[str, Any]) -> dict[str, Any]:
+        """The requirement side of a row: its id, name, Jira link and reach."""
+        requirement_id = requirement.get("id")
+        reach = self._reach.get(str(requirement_id), {})
+
+        return {
+            "Requirement ID": requirement_id,
+            "Requirement": requirement.get("name") or "",
+            "Requirement Jira": requirement.get("jira") or "",
+            "Linked Test Cases": reach.get("cases", 0),
+            "Releases Covering": ", ".join(sorted(reach.get("releases", ()))),
+        }
+
+    def _requirement_reach(self) -> dict[str, dict[str, Any]]:
+        """Per requirement, how many cases link to it and which releases reach it."""
+        reach: dict[str, dict[str, Any]] = {}
+
+        for row in self._report["rows"]:
+            for requirement_id in self._split(row["requirement_ids"]):
+                entry = reach.setdefault(requirement_id, {"cases": 0, "releases": set()})
+                entry["releases"].add(row["release"])
+
+        for linked in self._report["links"].values():
+            for requirement_id in linked:
+                entry = reach.setdefault(str(requirement_id), {"cases": 0, "releases": set()})
+                entry["cases"] += 1
+
+        return reach
+
+    def _unreached_requirement_rows(
+        self,
+        chain_rows: list[dict[str, Any]],
+    ) -> list[dict[str, Any]]:
+        """Requirements no test case links to, which no chain row can carry."""
+        reached = {str(row.get("Requirement ID")) for row in chain_rows}
+        unreached = [
+            requirement
+            for requirement in self._report["requirements"]
+            if str(requirement.get("id")) not in reached
+        ]
+
+        if unreached:
+            logger.info(
+                "%s of %s requirements are linked to no test case",
+                len(unreached),
+                len(self._report["requirements"]),
+            )
+        return [
+            {"Record Type": REQUIREMENT, **self._requirement_columns(requirement)}
+            for requirement in unreached
+        ]
+
+    def _empty_module_rows(self) -> list[dict[str, Any]]:
+        """Test Design folders holding no test case."""
+        holding = {case.get("module_id") for case in self._report["test_cases"]}
+        return [
+            {
+                "Record Type": MODULE,
+                "Module ID": module.get("id"),
+                "Module": module.get("name") or "",
+                "Test Cases Count": 0,
+            }
+            for module in self._report["modules"]
+            if module.get("id") not in holding
+        ]
+
+    def _unused_release_rows(self) -> list[dict[str, Any]]:
+        """Releases with nothing executed under them, absent from every chain."""
+        used = {str(row["release_id"]) for row in self._report["rows"]}
         return [
             {
                 "Record Type": TEST_PLAN,
                 "Release ID": release.get("id"),
                 "Release": release.get("name") or "",
-                "Test Runs Count": sum(
-                    1 for row in rows if str(row["release_id"]) == str(release.get("id"))
-                ),
+                "Test Runs Count": 0,
             }
             for release in self._report["releases"]
+            if str(release.get("id")) not in used
         ]
 
-    def _requirement_rows(self) -> list[dict[str, Any]]:
-        """Every requirement, its Jira link and the releases reaching it."""
-        links = self._report["links"]
-        rows = self._report["rows"]
-        built = []
+    def _requirements_of(self, case_id: Any) -> list[dict[str, Any] | None]:
+        """Requirements linked to a test case, or `[None]` when there are none.
 
-        for requirement in self._report["requirements"]:
-            requirement_id = requirement.get("id")
-            covering = sorted(
-                {
-                    row["release"]
-                    for row in rows
-                    if str(requirement_id) in self._split(row["requirement_ids"])
-                }
-            )
-            built.append({
-                "Record Type": REQUIREMENT,
-                "Requirement IDs": requirement_id,
-                "Requirements": requirement.get("name") or "",
-                "Requirement Jira": requirement.get("jira") or "",
-                "Linked Test Cases": sum(
-                    1 for linked in links.values() if requirement_id in linked
-                ),
-                "Releases Covering": ", ".join(covering),
-            })
-
-        return built
-
-    def _test_design_rows(self) -> list[dict[str, Any]]:
-        """The module tree: one row per test case, one per empty folder."""
-        by_module: dict[Any, list[dict[str, Any]]] = {}
-        for case in self._report["test_cases"]:
-            by_module.setdefault(case.get("module_id"), []).append(case)
-
-        runs_per_case = self._runs_per_case()
-        built = []
-
-        for module in self._report["modules"]:
-            module_id = module.get("id")
-            held = by_module.get(module_id, [])
-
-            if not held:
-                built.append({
-                    "Record Type": MODULE,
-                    "Module ID": module_id,
-                    "Module": module.get("name") or "",
-                    "Test Cases Count": 0,
-                })
-                continue
-
-            built.extend(
-                self._case_row(case, module_id, module.get("name") or "", runs_per_case)
-                for case in held
-            )
-
-        # A case whose module is missing from the tree still belongs in the
-        # file: dropping it would silently shrink the inventory.
-        known = {module.get("id") for module in self._report["modules"]}
-        for module_id, held in by_module.items():
-            if module_id in known:
-                continue
-            logger.warning(
-                "%s test cases hang from module %s, which is not in the tree",
-                len(held),
-                module_id,
-            )
-            built.extend(
-                self._case_row(
-                    case, module_id, f"(module {module_id} not in the tree)", runs_per_case
-                )
-                for case in held
-            )
-
-        return built
-
-    def _case_row(
-        self,
-        case: dict[str, Any],
-        module_id: Any,
-        module_name: str,
-        runs_per_case: dict[Any, int],
-    ) -> dict[str, Any]:
-        """One TEST_CASE row."""
-        return {
-            "Record Type": TEST_CASE,
-            "Test Case ID": case.get("id"),
-            "Test Case": case.get("name") or "",
-            "Module ID": module_id,
-            "Module": module_name,
-            "Test Case Jira": case.get("jira") or "",
-            "Requirement IDs": ", ".join(
-                str(item) for item in self._report["links"].get(case.get("id"), [])
-            ),
-            # How many runs execute this case: zero means it was never
-            # scheduled, which is worth knowing before migrating it.
-            "Test Runs Count": runs_per_case.get(case.get("id"), 0),
-        }
-
-    def _test_run_rows(self) -> list[dict[str, Any]]:
-        """Every test run, with the whole chain from its release to a requirement."""
-        module_ids = {
-            case.get("id"): case.get("module_id") for case in self._report["test_cases"]
-        }
-        return [
-            {
-                "Record Type": TEST_RUN,
-                "Release ID": row["release_id"],
-                "Release": row["release"],
-                "Test Cycle": row["cycle"],
-                "Test Suite": row["suite"],
-                "Test Run ID": row["run_id"],
-                "Test Run": row["run"],
-                "Test Case ID": row["case_id"],
-                "Test Case": row["case"],
-                "Module ID": module_ids.get(row["case_id"], ""),
-                "Module": row["module"],
-                "Test Case Jira": row["case_jira"],
-                "Requirement IDs": row["requirement_ids"],
-                "Requirements": row["requirements"],
-                "Requirement Jira": row["requirement_jira"],
-            }
-            for row in self._report["rows"]
+        The single `None` is what keeps a case without requirements on a row of
+        its own instead of dropping it.
+        """
+        linked = [
+            self._requirement_index.get(requirement_id, {"id": requirement_id})
+            for requirement_id in self._report["links"].get(case_id, [])
         ]
+        return linked or [None]
+
+    def _missing_module(self, case: dict[str, Any]) -> str:
+        """Label for a case whose module is not in the tree."""
+        module_id = case.get("module_id")
+        if module_id is None:
+            return ""
+        if module_id in {module.get("id") for module in self._report["modules"]}:
+            return ""
+        return f"(module {module_id} not in the tree)"
 
     # -- notes ---------------------------------------------------------------
 
@@ -351,25 +398,30 @@ class CsvWriter:
             f"Source: {self._report['base_url']}, "
             f"generated {datetime.now().strftime('%Y-%m-%d %H:%M')}",
             "",
-            "One table, every artifact, the way a SQL UNION ALL would lay them out:",
-            "the Record Type column says what a row is, and the columns that do not",
-            "apply to that type are empty. Rows repeat by design -- a requirement",
-            "covered by twenty cases shows up in twenty TEST_RUN rows.",
+            "One table, every artifact, joined rather than stacked: each row carries",
+            "the whole chain it belongs to -- Release, Test Cycle, Test Suite, Test Run,",
+            "Test Case, Requirement -- with the ids and names side by side. A",
+            "requirement linked to a test case is on that case's row, never on a row",
+            "of its own.",
             "",
-            "Record Type:",
-            "  SUMMARY      counts per release, then a distinct total for the project",
-            "  TEST_PLAN    every release, including those with nothing executed",
-            "  REQUIREMENT  every requirement, its Jira link and the releases reaching it",
+            "The grain is the deepest link: a case linked to three requirements yields",
+            "three rows, and a run executing it yields one row per requirement. Rows",
+            "repeat by design, which is what makes the file trackable line by line.",
+            "",
+            "Record Type names the deepest entity a row reaches:",
+            "  TEST_RUN     the full chain, release through requirement",
+            "  TEST_CASE    a case no run executes; the execution columns are empty",
+            "  REQUIREMENT  a requirement no test case links to",
             "  MODULE       a Test Design folder holding no test case",
-            "  TEST_CASE    every test case, in its module",
-            "  TEST_RUN     every run, with release, cycle, suite, case and requirements",
+            "  TEST_PLAN    a release with nothing executed under it",
+            "  SUMMARY      counts per release, then a distinct total for the project",
             "",
-            "Columns that change meaning with the row type:",
-            "  Test Runs Count   SUMMARY and TEST_PLAN: runs under that release.",
-            "                    TEST_CASE: runs executing that case; 0 means it was",
-            "                    never scheduled.",
-            "  Requirement IDs   TEST_CASE and TEST_RUN: the requirements linked.",
-            "                    REQUIREMENT: the id of the requirement itself.",
+            "So an entity appears on its own row only when no chain reaches it. Reading",
+            "the file by Record Type therefore never double counts.",
+            "",
+            "Test Runs Count changes meaning with the row type: on SUMMARY and",
+            "TEST_PLAN it counts the runs under that release; on a chain row it counts",
+            "the runs executing that test case, and 0 means it was never scheduled.",
             "",
             "qTest has no release-to-requirement relation: coverage is derived along",
             "Release > Test Cycle > Test Suite > Test Run > Test Case > Requirement.",

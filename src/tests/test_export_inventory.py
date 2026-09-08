@@ -26,6 +26,13 @@ EXPECTED_FILES = {"consolidated", "notes"}
 RECORD_TYPES = ("SUMMARY", "TEST_PLAN", "REQUIREMENT", "MODULE", "TEST_CASE", "TEST_RUN")
 
 
+def assert_present(rows, column, expected):
+    """Every id of `expected` appears in `column` of some row."""
+    found = {row[column] for row in rows if row[column]}
+    missing = {str(item) for item in expected if item not in ("", None)} - found
+    assert not missing, f"{column} missing from the CSV: {sorted(missing)[:10]}"
+
+
 def read_entries(path):
     """Inventory lines of a file, ignoring headers and blank lines."""
     lines = path.read_text(encoding="utf-8").splitlines()
@@ -73,12 +80,31 @@ def test_export_consolidated_report(source_client, project_id):
         columns = reader.fieldnames or []
 
     kinds = Counter(row["Record Type"] for row in consolidated)
-    assert kinds["TEST_RUN"] == len(report["rows"]), "The CSV lost test run rows"
-    assert kinds["REQUIREMENT"] == len(report["requirements"]), "The CSV lost requirements"
-    assert kinds["TEST_PLAN"] == len(report["releases"]), "The CSV lost releases"
-    assert kinds["TEST_CASE"] == len(report["test_cases"]), "The CSV lost test cases"
-    # Every row carries every column, empty where the type does not use it.
+    # Every row carries every column, empty where the chain does not reach.
     assert all(set(row) == set(columns) for row in consolidated), "Rows differ in shape"
+
+    # Nothing is lost: every artifact of the report shows up somewhere.
+    assert_present(consolidated, "Test Run ID", {row["run_id"] for row in report["rows"]})
+    assert_present(consolidated, "Test Case ID", {case["id"] for case in report["test_cases"]})
+    assert_present(
+        consolidated, "Requirement ID", {item["id"] for item in report["requirements"]}
+    )
+    assert_present(consolidated, "Release ID", {item["id"] for item in report["releases"]})
+
+    # The point of the join: a linked requirement rides on its test case's row.
+    merged = [
+        row
+        for row in consolidated
+        if row["Requirement ID"] and row["Record Type"] in ("TEST_RUN", "TEST_CASE")
+    ]
+    assert all(row["Test Case ID"] for row in merged), "A requirement row has no test case"
+    for case_id, linked in report["links"].items():
+        for requirement_id in linked:
+            assert any(
+                row["Test Case ID"] == str(case_id)
+                and row["Requirement ID"] == str(requirement_id)
+                for row in consolidated
+            ), f"Requirement {requirement_id} is not on the row of case {case_id}"
 
     releases = {row["release"] for row in report["rows"]}
     covered = {row["release"] for row in report["rows"] if row["requirement_ids"]}
