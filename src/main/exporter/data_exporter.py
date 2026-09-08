@@ -101,6 +101,31 @@ LINKED_ARTIFACTS_PATH = PROJECTS_ENDPOINT + "/{project_id}/linked-artifacts"
 #: Test case ids asked for per linked-artifacts call.
 LINK_BATCH_SIZE = 50
 
+#: Types the linked-artifacts endpoint accepts, as it reports them itself when
+#: given an invalid one.
+LINKABLE_TYPES = (
+    "requirements",
+    "test-cases",
+    "test-runs",
+    "defects",
+    "builds",
+    "test-steps",
+    "test-logs",
+    "releases",
+)
+
+#: A linked object carries no type of its own: only its id, its `pid` and a
+#: `self` URL. Its kind is read from the collection segment of that URL, and
+#: from the `pid` prefix as a fallback.
+PID_PREFIXES = {
+    "RQ": "requirements",
+    "TC": "test-cases",
+    "TR": "test-runs",
+    "DF": "defects",
+    "BD": "builds",
+    "RL": "releases",
+}
+
 #: Keys under which a test run may carry the test case it executes.
 TEST_CASE_KEYS = ("test_case", "testCase")
 TEST_CASE_ID_KEYS = ("test_case_id", "testCaseId", "test_case_version_id")
@@ -1057,9 +1082,30 @@ class DataExporter:
         for item in linked:
             if not isinstance(item, dict):
                 continue
-            kind = str(item.get("object_type") or item.get("objectType") or "").lower()
-            if kind.startswith(linked_prefix):
+            if self._linked_kind(item).startswith(linked_prefix):
                 links.setdefault(source_id, []).append(self._key_of(item))
+
+    @staticmethod
+    def _linked_kind(item: dict[str, Any]) -> str:
+        """Kind of a linked object, which the endpoint never states outright.
+
+        The entry carries an id, a `pid` such as "RQ-10" and a `self` URL such
+        as ".../projects/1/requirements/8196928". The URL is read first, the
+        `pid` prefix second; an explicit type is honoured if a version of the
+        API ever sends one.
+        """
+        stated = item.get("object_type") or item.get("objectType")
+        if stated:
+            return str(stated).lower()
+
+        url = str(item.get("self") or item.get("href") or "").lower()
+        for kind in LINKABLE_TYPES:
+            if f"/{kind}/" in url:
+                return kind
+
+        pid = str(item.get("pid") or "")
+        prefix = pid.split("-")[0].upper()
+        return PID_PREFIXES.get(prefix, "")
 
     @staticmethod
     def _test_case_of(run: dict[str, Any]) -> tuple[Any, str | None]:
