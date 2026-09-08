@@ -431,12 +431,12 @@ class DataExporter:
                 continue
             visited.add((parent_type, parent_id))
 
-            for run in self._children(project_id, "test-runs", parent_type, parent_id):
+            for run in self.fetch_children(project_id, "test-runs", parent_type, parent_id):
                 key = self._key_of(run)
                 if key not in located:
                     located[key] = {"run": run, **self._with_release(context, run, release_names)}
 
-            for suite in self._children(project_id, "test-suites", parent_type, parent_id):
+            for suite in self.fetch_children(project_id, "test-suites", parent_type, parent_id):
                 pending.append((
                     "test-suite",
                     self._key_of(suite),
@@ -447,7 +447,7 @@ class DataExporter:
                 ))
 
             if parent_type in BRANCHING_CONTAINERS:
-                for cycle in self._children(project_id, "test-cycles", parent_type, parent_id):
+                for cycle in self.fetch_children(project_id, "test-cycles", parent_type, parent_id):
                     pending.append((
                         "test-cycle",
                         self._key_of(cycle),
@@ -499,7 +499,7 @@ class DataExporter:
                 path = self._path_join(path, part)
         return path or "<no name>"
 
-    def _children(
+    def fetch_children(
         self,
         project_id: int,
         child: str,

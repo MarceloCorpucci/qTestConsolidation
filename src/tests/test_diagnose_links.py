@@ -19,6 +19,7 @@ import json
 import os
 
 import pytest
+import requests
 from dotenv import dotenv_values
 
 from main.client import DEFAULT_ENV_FILE
@@ -29,12 +30,21 @@ BODY_PREVIEW = 600
 
 
 def probe(client, label, path, params=None):
-    """Issue one request and print what came back, without interpreting it."""
-    response = client.get(path, params=params)
-    body = response.text or ""
+    """Issue one request and print what came back, without interpreting it.
 
+    A request that fails outright is reported like any other answer: a
+    diagnostic that raises tells us less than one that prints.
+    """
     print(f"\n--- {label}")
     print(f"    GET {path}  params={params}")
+
+    try:
+        response = client.get(path, params=params)
+    except requests.RequestException as error:
+        print(f"    request failed: {type(error).__name__}: {error}")
+        return
+
+    body = response.text or ""
     print(f"    status {response.status_code}, {len(body)} bytes")
     print(f"    {body[:BODY_PREVIEW]}")
     if len(body) > BODY_PREVIEW:
