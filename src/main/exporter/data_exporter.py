@@ -19,6 +19,7 @@ been taken.
 from __future__ import annotations
 
 import logging
+import re
 from pathlib import Path
 from typing import Any
 
@@ -155,11 +156,16 @@ INTEGRATION_KEYS = (
     "jira_key",
 )
 
-#: Substrings that mark a custom field or a link as belonging to Jira. Any
-#: field naming an external reference is reported too: which one an instance
-#: actually uses depends on how its integration was set up, so the evidence
-#: found is written next to the entity instead of being assumed.
+#: Substrings that mark a custom field as holding an external reference. Which
+#: field an instance actually uses depends on how its integration was set up,
+#: so the evidence found is written next to the entity instead of being assumed.
 INTEGRATION_HINTS = ("jira", "external")
+
+#: A Jira URL inside the value of a field. Only a link counts: prose that
+#: merely mentions Jira -- "migrated from the Jira ticket", and the like --
+#: says nothing about the requirement being tied to an issue, and reporting it
+#: filled the column with descriptions instead of references.
+JIRA_LINK = re.compile(r"https?://[^\s\"']*jira[^\s\"']*", re.IGNORECASE)
 
 #: File holding the modules and their test cases.
 TEST_DESIGN_FILE = "test_design"
@@ -1326,10 +1332,15 @@ class DataExporter:
             value = prop.get("field_value_name") or prop.get("field_value")
             if not value:
                 continue
+
             if any(hint in field.lower() for hint in INTEGRATION_HINTS):
                 return f"{field}={value}"
-            if isinstance(value, str) and "jira" in value.lower():
-                return f"{field}={value}"
+
+            # Elsewhere only a link counts, and only the link is reported: the
+            # field may be a description that happens to mention Jira.
+            link = JIRA_LINK.search(str(value))
+            if link:
+                return f"{field}={link.group(0)}"
 
         return None
 
