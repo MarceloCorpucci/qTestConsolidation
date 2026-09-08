@@ -1,0 +1,38 @@
+(.venv) PS C:\Repositories\qTestConsolidation> python -m pytest .\src\tests\test_diagnose_execution_tree.py::test_probe_all_test_runs -s
+====================================================================================================== test session starts =======================================================================================================
+platform win32 -- Python 3.14.0, pytest-8.3.3, pluggy-1.6.0
+rootdir: C:\Repositories\qTestConsolidation
+configfile: pytest.ini
+collected 1 item
+
+src\tests\test_diagnose_execution_tree.py 2026-09-08 16:57:39 INFO     main.client.rest_client | Loading SOURCE connection settings from C:\Repositories\qTestConsolidation\config\qtest.env
+2026-09-08 16:57:39 INFO     main.client.rest_client | TLS verification delegated to the operating system certificate store
+2026-09-08 16:57:39 INFO     main.client.rest_client | REST client ready for https://healthspring.qtestnet.com:443 (timeout=30s, retries=3)
+
+--- test-runs, no parent
+    GET /api/v3/projects/24901/test-runs
+2026-09-08 16:57:39 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com:443/api/v3/projects/24901/test-runs
+2026-09-08 16:57:40 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com:443/api/v3/projects/24901/test-runs -> 200 in 0.42s
+    status 200, 0 items, total reported 0
+    {"links":[],"page":1,"page_size":100,"total":0,"items":[]}
+
+--- test-runs, explicit root
+    GET /api/v3/projects/24901/test-runs  {'parentId': 0, 'parentType': 'root'}
+2026-09-08 16:57:40 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com:443/api/v3/projects/24901/test-runs
+2026-09-08 16:57:40 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com:443/api/v3/projects/24901/test-runs -> 200 in 0.16s
+    status 200, 0 items, total reported 0
+    {"links":[],"page":1,"page_size":100,"total":0,"items":[]}
+
+--- test-runs, descendants expanded
+    GET /api/v3/projects/24901/test-runs  {'parentId': 0, 'parentType': 'root', 'expand': 'descendants'}
+2026-09-08 16:57:40 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com:443/api/v3/projects/24901/test-runs
+2026-09-08 16:57:41 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com:443/api/v3/projects/24901/test-runs -> 200 in 0.93s
+    status 200, 75 items, total reported 75
+    {"links":[],"page":1,"page_size":100,"total":75,"items":[{"parentId":1213644,"parentType":"test-suite","automation":"Yes","testCaseId":9974416,"links":[{"rel":"test-case","href":"http://healthspring.qtestnet.com/api/v3/projects/24901/test-cases/9974416?versionId=17283804&showParamIdentifier=false"},
+
+--- search for test runs
+    POST /api/v3/projects/24901/search  {'pageSize': 100}
+2026-09-08 16:57:41 INFO     main.client.rest_client | POST https://healthspring.qtestnet.com:443/api/v3/projects/24901/search
+2026-09-08 16:57:41 WARNING  main.client.rest_client | POST https://healthspring.qtestnet.com:443/api/v3/projects/24901/search -> 400 in 0.11s
+    status 400
+    {"status":400,"title":"Bad Request","message":"query statement must not be null!","time":1788897461581}
