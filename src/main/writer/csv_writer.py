@@ -148,6 +148,7 @@ class CsvWriter:
         # listed too, with the test case columns empty.
         rows.extend(self._requirements_without_a_case())
         rows.extend(self._modules_without_a_case())
+        rows.extend(self._containers_without_a_run())
         rows.extend(self._releases_without_a_run())
 
         # Read with get: a row only carries the run and requirement columns
@@ -261,9 +262,36 @@ class CsvWriter:
             for module in alone
         ]
 
+    def _containers_without_a_run(self) -> list[dict[str, Any]]:
+        """Test cycles and suites holding no run, which are migrated all the same."""
+        containers = self._report.get("containers") or []
+        alone = [container for container in containers if not container.get("holds_runs")]
+
+        logger.info(
+            "%s of %s cycles and suites hold no test run", len(alone), len(containers)
+        )
+        return [
+            {
+                "Release ID": container["release_id"],
+                "Release": container["release"],
+                "Test Cycle": container["cycle"],
+                "Test Suite": container["suite"],
+            }
+            for container in alone
+        ]
+
     def _releases_without_a_run(self) -> list[dict[str, Any]]:
-        """Releases with nothing executed under them."""
+        """Releases nothing at all hangs from.
+
+        A release named by a run or by a cycle already appears on that row, so
+        only the ones nothing points at need one of their own.
+        """
         used = {str(run["release_id"]) for run in self._report["rows"] if run["release_id"]}
+        used.update(
+            str(container["release_id"])
+            for container in self._report.get("containers") or []
+            if container["release_id"]
+        )
         alone = [
             release
             for release in self._report["releases"]
@@ -336,11 +364,14 @@ class CsvWriter:
             "columns empty, and one covering no requirement keeps its row with the",
             "requirement columns empty.",
             "",
-            "An entity no test case reaches gets a row of its own, with the test case",
-            "columns empty: a requirement nothing covers, a Test Design folder holding",
-            "no case, a release with nothing executed. They have to be migrated all the",
-            "same. Which columns a row fills is what says what it is -- a row carrying",
-            "only Requirement ID and Requirement is a requirement nobody covers.",
+            "Every artifact of the project has a row, whether or not a test case",
+            "reaches it, because the migration has to carry all of them across:",
+            "  a requirement no test case covers    -> only the requirement columns",
+            "  a Test Design folder holding no case -> only the module columns",
+            "  a test cycle or suite holding no run -> the release, cycle and suite",
+            "  a release nothing hangs from         -> only the release columns",
+            "Which columns a row fills is what says what it is; there is no record",
+            "type column to read.",
             "",
             "Requirement Jira carries the evidence that a requirement came from Jira.",
             "In this project it only ever appears on those rows: the requirements",

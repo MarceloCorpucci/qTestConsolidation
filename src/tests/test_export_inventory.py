@@ -91,6 +91,16 @@ def test_export_consolidated_report(source_client, project_id):
     )
     assert_present(consolidated, "Release ID", {item["id"] for item in report["releases"]})
     assert_present(consolidated, "Module ID", {item["id"] for item in report["modules"]})
+    assert_present(
+        consolidated,
+        "Test Suite",
+        {item["suite"] for item in report["containers"] if item["kind"] == "test-suite"},
+    )
+    assert_present(
+        consolidated,
+        "Test Cycle",
+        {item["cycle"] for item in report["containers"] if item["kind"] == "test-cycle"},
+    )
 
     # Every row says something: none is entirely empty.
     for row in consolidated:

@@ -440,6 +440,7 @@ class DataExporter:
         self,
         project_id: int,
         releases: list[dict[str, Any]] | None = None,
+        containers: list[dict[str, Any]] | None = None,
     ) -> list[dict[str, Any]]:
         """Every test run of the project, with the containers holding it.
 
@@ -475,9 +476,15 @@ class DataExporter:
             )
             return self.walk_execution_tree(project_id, releases)
 
-        containers = self.fetch_container_index(project_id)
+        # An enumeration already in hand serves as the index; otherwise the
+        # containers holding a run are read on the way.
+        index = (
+            {str(container["id"]): container for container in containers}
+            if containers is not None
+            else self.fetch_container_index(project_id)
+        )
         release_names = {str(self._key_of(item)): item.get("name") for item in releases}
-        located = [self._locate_run(project_id, run, containers, release_names) for run in runs]
+        located = [self._locate_run(project_id, run, index, release_names) for run in runs]
 
         logger.info(
             "Located %s test runs: %s under a release, %s under a named container",
@@ -486,6 +493,108 @@ class DataExporter:
             sum(1 for item in located if item["cycle"] or item["suite"]),
         )
         return located
+
+    def enumerate_containers(
+        self,
+        project_id: int,
+        releases: list[dict[str, Any]],
+    ) -> list[dict[str, Any]]:
+        """Every test cycle and test suite of the project, with the path to it.
+
+        The bulk calls do not reach them all -- a suite cannot be asked for
+        from the project root -- so the tree is walked for the containers
+        themselves. Runs are not asked for here: they are read separately in a
+        single call, which is both complete and far cheaper.
+
+        Each record doubles as an index entry: it carries the parent pointer
+        the run chain is climbed with, and the release, cycle and suite the
+        report shows.
+        """
+        logger.info("Enumerating the containers of the execution tree")
+
+        root = {"release_id": "", "release": "", "cycle": "", "suite": ""}
+        pending: list[tuple[str, Any, dict[str, Any]]] = [("root", 0, root)]
+        for release in releases:
+            pending.append((
+                "release",
+                self._key_of(release),
+                {
+                    **root,
+                    "release_id": self._key_of(release),
+                    "release": release.get("name") or "<no name>",
+                },
+            ))
+
+        release_names = {self._key_of(item): item.get("name") for item in releases}
+        found: dict[str, dict[str, Any]] = {}
+        visited: set[tuple[str, Any]] = set()
+
+        while pending:
+            parent_type, parent_id, context = pending.pop()
+            if (parent_type, parent_id) in visited:
+                continue
+            visited.add((parent_type, parent_id))
+
+            for suite in self.fetch_children(project_id, "test-suites", parent_type, parent_id):
+                # A suite holds no container, so it is recorded and not walked.
+                found.setdefault(
+                    str(self._key_of(suite)),
+                    self._container_record(suite, "test-suite", context, release_names),
+                )
+
+            if parent_type not in BRANCHING_CONTAINERS:
+                continue
+
+            for cycle in self.fetch_children(project_id, "test-cycles", parent_type, parent_id):
+                record = self._container_record(cycle, "test-cycle", context, release_names)
+                found.setdefault(str(self._key_of(cycle)), record)
+                pending.append(("test-cycle", self._key_of(cycle), record))
+
+        logger.info(
+            "Enumerated %s containers: %s cycles, %s suites",
+            len(found),
+            sum(1 for item in found.values() if item["kind"] == "test-cycle"),
+            sum(1 for item in found.values() if item["kind"] == "test-suite"),
+        )
+        return list(found.values())
+
+    def _mark_containers_holding_runs(
+        self,
+        containers: list[dict[str, Any]],
+        located_runs: list[dict[str, Any]],
+    ) -> None:
+        """Record which containers hold a run, so the rest can be reported."""
+        holding = {
+            str(self._first_of(item["run"], PARENT_ID_KEYS)) for item in located_runs
+        }
+        for container in containers:
+            container["holds_runs"] = str(container["id"]) in holding
+
+        empty = sum(1 for container in containers if not container["holds_runs"])
+        logger.info("%s of %s containers hold no test run", empty, len(containers))
+
+    def _container_record(
+        self,
+        container: dict[str, Any],
+        kind: str,
+        context: dict[str, Any],
+        release_names: dict[Any, Any],
+    ) -> dict[str, Any]:
+        """A container as both an index entry and a row of the report."""
+        name = container.get("name") or "<no name>"
+        located = self._with_release(context, container, release_names)
+
+        return {
+            "kind": kind,
+            "id": self._key_of(container),
+            "name": name,
+            "parent_id": self._first_of(container, PARENT_ID_KEYS),
+            "parent_type": self._first_of(container, PARENT_TYPE_KEYS),
+            "release_id": located["release_id"],
+            "release": located["release"],
+            "cycle": located["cycle"] if kind == "test-suite" else self._path_join(context["cycle"], name),
+            "suite": name if kind == "test-suite" else "",
+        }
 
     def fetch_container_index(self, project_id: int) -> dict[str, Any]:
         """Index the cycles and suites of the project by id, in two calls.
@@ -922,7 +1031,9 @@ class DataExporter:
         requirements = self.fetch_entities("requirements", project_id)
         modules = self.fetch_entities("test_modules", project_id)
         test_cases = self.fetch_entities("test_cases", project_id)
-        located_runs = self.locate_test_runs(project_id, releases=releases)
+        containers = self.enumerate_containers(project_id, releases)
+        located_runs = self.locate_test_runs(project_id, releases, containers)
+        self._mark_containers_holding_runs(containers, located_runs)
 
         module_paths = {self._key_of(module): module.get("name") for module in modules}
         requirement_index = {self._key_of(item): item for item in requirements}
@@ -982,6 +1093,7 @@ class DataExporter:
             "modules": [
                 {"id": self._key_of(module), "name": module.get("name")} for module in modules
             ],
+            "containers": containers,
             "test_cases": [
                 {
                     "id": self._key_of(case),
