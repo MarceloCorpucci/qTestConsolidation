@@ -19,7 +19,7 @@ from main.exporter import DataExporter
 from main.exporter.data_exporter import BRANCHING_CONTAINERS, PROJECTS_ENDPOINT
 
 BODY_PREVIEW = 300
-
+### .venv\Scripts\python -m pytest src/tests/test_diagnose_execution_tree.py -s
 
 def describe(client, label, method, path, **kwargs):
     """Issue one request and print what came back, without interpreting it.
