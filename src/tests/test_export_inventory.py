@@ -13,6 +13,7 @@ inventory has been taken.
 """
 
 import csv
+from collections import Counter
 
 import pytest
 
@@ -21,7 +22,8 @@ from main.exporter.data_exporter import STANDALONE_ENTITIES, TEST_DESIGN_FILE
 from main.writer import CsvWriter
 
 JIRA_MARK = "[jira:"
-EXPECTED_TABLES = {"traceability", "summary", "requirements", "test_design", "notes"}
+EXPECTED_FILES = {"consolidated", "notes"}
+RECORD_TYPES = ("SUMMARY", "TEST_PLAN", "REQUIREMENT", "MODULE", "TEST_CASE", "TEST_RUN")
 
 
 def read_entries(path):
@@ -61,20 +63,31 @@ def test_export_consolidated_report(source_client, project_id):
     report = DataExporter(source_client).build_traceability(project_id)
     written = CsvWriter(report).write()
 
-    assert set(written) == EXPECTED_TABLES, "Some table was not written"
-    for table, path in written.items():
+    assert set(written) == EXPECTED_FILES, "Some file was not written"
+    for name, path in written.items():
         assert path.is_file(), f"{path} was not written"
 
-    with written["traceability"].open(encoding="utf-8-sig", newline="") as csv_file:
-        traceability = list(csv.DictReader(csv_file))
-    assert len(traceability) == len(report["rows"]), "The CSV lost rows"
+    with written["consolidated"].open(encoding="utf-8-sig", newline="") as csv_file:
+        reader = csv.DictReader(csv_file)
+        consolidated = list(reader)
+        columns = reader.fieldnames or []
+
+    kinds = Counter(row["Record Type"] for row in consolidated)
+    assert kinds["TEST_RUN"] == len(report["rows"]), "The CSV lost test run rows"
+    assert kinds["REQUIREMENT"] == len(report["requirements"]), "The CSV lost requirements"
+    assert kinds["TEST_PLAN"] == len(report["releases"]), "The CSV lost releases"
+    assert kinds["TEST_CASE"] == len(report["test_cases"]), "The CSV lost test cases"
+    # Every row carries every column, empty where the type does not use it.
+    assert all(set(row) == set(columns) for row in consolidated), "Rows differ in shape"
 
     releases = {row["release"] for row in report["rows"]}
     covered = {row["release"] for row in report["rows"] if row["requirement_ids"]}
 
     print(f"\nConsolidated report of project {project_id}")
-    for table, path in written.items():
-        print(f"  {table:<14} -> {path}")
+    for name, path in written.items():
+        print(f"  {name:<14} -> {path}")
+    print(f"  columns                        : {len(columns)}")
+    print(f"  rows by record type            : {dict(kinds)}")
     print(f"  releases in the execution tree : {len(releases)}")
     print(f"  releases reaching requirements : {len(covered)}")
     print(f"  requirements in the project    : {len(report['requirements'])}")
