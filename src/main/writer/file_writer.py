@@ -18,6 +18,9 @@ logger = logging.getLogger(__name__)
 #: Project folder holding payloads pending injection into the target instance.
 IMPORTED_DIR = Path(__file__).resolve().parents[3] / "migration" / "imported"
 
+#: Project folder holding what has been read out of the source instance.
+EXPORTED_DIR = Path(__file__).resolve().parents[3] / "migration" / "exported"
+
 JSON_EXTENSION = ".json"
 JSON_INDENT = 2
 

@@ -4,6 +4,11 @@
 endpoints to call and how to read the responses, while the client only carries
 the request.
 
+`export_standalone` reads one artifact of any kind on its own -- a
+requirement, a test case, a release -- and writes it to `migration/exported/`
+as the source instance holds it, following nothing it points at. It is the
+starting point of the migration: one artifact across, then the relations.
+
 `export_project` retrieves a project from the source instance and persists it
 as JSON under `migration/imported/`, where it waits to be injected into the
 target instance. The steps are kept as separate public methods so they can be
@@ -11,7 +16,7 @@ moved into dedicated collaborator objects as the migration grows.
 
 The `export_inventory` family lists the ids and names of the project's modules
 (the Test Design folders), test plans, requirements, test cases and test runs
-into text files under `tests_output/inventory`, to size and track the
+into text files under `src/tests/output/inventory`, to size and track the
 migration. It is not part of the migration flow, and it is kept in case the
 inventory has to be taken again.
 """
@@ -24,7 +29,7 @@ from pathlib import Path
 from typing import Any
 
 from main.client import RestClient
-from main.writer import IMPORTED_DIR, FileWriter
+from main.writer import EXPORTED_DIR, IMPORTED_DIR, FileWriter
 
 logger = logging.getLogger(__name__)
 
@@ -44,7 +49,7 @@ SUCCESS_STATUS_CODES = (200,)
 #: Where the inventory files are written. Committed on purpose: the migration
 #: is tracked against them, and the screenshots of each request will join them
 #: in the same folder.
-INVENTORY_DIR = Path(__file__).resolve().parents[3] / "tests_output" / "inventory"
+INVENTORY_DIR = Path(__file__).resolve().parents[3] / "src" / "tests" / "output" / "inventory"
 
 #: Endpoints backing the inventory, by entity, with how each must be read.
 #: qTest Manager has no "test plans" endpoint: the Test Plan module is made of
@@ -88,6 +93,22 @@ BRANCHING_CONTAINERS = ("root", "release", "test-cycle")
 #: per container, so this is the way in; `walk_execution_tree` remains as the
 #: fallback for an instance that does not honour it.
 DESCENDANTS_PARAMS = {"parentId": 0, "parentType": "root", "expand": "descendants"}
+
+#: Endpoint of every artifact that can be read on its own, by the name the
+#: migration calls it. Both singular and plural are accepted, and either
+#: separator, so "test-case", "test_cases" and "testCase" all resolve.
+STANDALONE_PATHS = {
+    "requirement": PROJECTS_ENDPOINT + "/{project_id}/requirements/{artifact_id}",
+    "test-case": PROJECTS_ENDPOINT + "/{project_id}/test-cases/{artifact_id}",
+    "test-run": PROJECTS_ENDPOINT + "/{project_id}/test-runs/{artifact_id}",
+    "test-cycle": PROJECTS_ENDPOINT + "/{project_id}/test-cycles/{artifact_id}",
+    "test-suite": PROJECTS_ENDPOINT + "/{project_id}/test-suites/{artifact_id}",
+    "release": PROJECTS_ENDPOINT + "/{project_id}/releases/{artifact_id}",
+    "module": PROJECTS_ENDPOINT + "/{project_id}/modules/{artifact_id}",
+}
+
+#: Suffix of the file a stand-alone export is written to.
+STANDALONE_SUFFIX = "stand-alone"
 
 #: Keys under which an entity names the container holding it.
 PARENT_ID_KEYS = ("parentId", "parent_id")
@@ -233,6 +254,91 @@ class DataExporter:
 
         logger.info("Project export finished, payload written to %s", written)
         return written
+
+    # -- one artifact on its own ---------------------------------------------
+
+    def export_standalone(
+        self,
+        artifact_type: str,
+        artifact_id: Any,
+        project_id: int,
+    ) -> Path:
+        """Read one artifact on its own and write it to `migration/exported`.
+
+        Nothing it points at is followed: what the endpoint returns for that
+        one artifact is what gets written, so the file is the artifact as the
+        source instance holds it.
+
+        The file is named `<Artifact>_<id>_stand-alone.json` and is rewritten
+        on every call, so it always reflects the source as it is now.
+        """
+        artifact = self.fetch_standalone(artifact_type, artifact_id, project_id)
+        return self.write_standalone(artifact, artifact_type, artifact_id)
+
+    def fetch_standalone(
+        self,
+        artifact_type: str,
+        artifact_id: Any,
+        project_id: int,
+    ) -> dict[str, Any]:
+        """Read one artifact of any kind from the source instance."""
+        kind = self.resolve_artifact_type(artifact_type)
+        path = STANDALONE_PATHS[kind].format(project_id=project_id, artifact_id=artifact_id)
+        logger.info("Fetching %s %s on its own", kind, artifact_id)
+
+        response = self._client.get(path)
+        artifact = self._payload_of(response, f"{kind} {artifact_id}")
+
+        if not isinstance(artifact, dict):
+            logger.error(
+                "Expected a JSON object for %s %s, got %s",
+                kind,
+                artifact_id,
+                type(artifact).__name__,
+            )
+            raise ProjectExportError(
+                f"{kind} {artifact_id} came back as {type(artifact).__name__}, expected an object"
+            )
+
+        logger.info(
+            "Fetched %s %s: %r (%s fields)", kind, artifact_id, artifact.get("name"), len(artifact)
+        )
+        return artifact
+
+    def write_standalone(
+        self,
+        artifact: dict[str, Any],
+        artifact_type: str,
+        artifact_id: Any,
+    ) -> Path:
+        """Persist one artifact as `<Artifact>_<id>_stand-alone.json`."""
+        kind = self.resolve_artifact_type(artifact_type)
+        file_name = f"{self._file_label(kind)}_{artifact_id}_{STANDALONE_SUFFIX}"
+
+        written = FileWriter(artifact, output_dir=EXPORTED_DIR).write(file_name)
+        logger.info("Exported %s %s to %s", kind, artifact_id, written)
+        return written
+
+    @staticmethod
+    def resolve_artifact_type(artifact_type: str) -> str:
+        """The known artifact type behind whatever spelling was given."""
+        # Split camelCase first: once lowercased there is no case left to read.
+        spelled = re.sub(r"(?<=[a-z])(?=[A-Z])", "-", str(artifact_type or "").strip())
+        wanted = re.sub(r"[\s_]+", "-", spelled).lower().rstrip("s")
+
+        for kind in STANDALONE_PATHS:
+            if wanted == kind or wanted == kind.rstrip("s"):
+                return kind
+
+        logger.error("Unknown artifact type %r", artifact_type)
+        raise ProjectExportError(
+            f"Unknown artifact type {artifact_type!r}, expected one of {sorted(STANDALONE_PATHS)}"
+        )
+
+    @staticmethod
+    def _file_label(kind: str) -> str:
+        """The artifact type as it reads in a file name: "test-case" -> TestCase."""
+        return "".join(part.capitalize() for part in kind.split("-"))
 
     # -- steps ---------------------------------------------------------------
 

@@ -15,7 +15,7 @@ folder, a release with nothing executed -- gets a row of its own with the test
 case columns empty: it has to be migrated all the same, so the file has to
 name it. Which columns a row fills is what says what it is.
 
-Written under `tests_output/inventory`, alongside the inventory text files.
+Written under `src/tests/output/inventory`, alongside the inventory text files.
 
 It computes nothing about the instance: every relation comes from the report.
 Temporary, like the inventory it presents.
@@ -33,7 +33,7 @@ logger = logging.getLogger(__name__)
 
 #: Where the report is written, alongside the inventory text files. Committed
 #: on purpose: the migration is tracked against it.
-INVENTORY_DIR = Path(__file__).resolve().parents[3] / "tests_output" / "inventory"
+INVENTORY_DIR = Path(__file__).resolve().parents[3] / "src" / "tests" / "output" / "inventory"
 
 DEFAULT_REPORT_FILE = "qtest_consolidated"
 CSV_EXTENSION = ".csv"
