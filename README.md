@@ -12,9 +12,13 @@ qTestConsolidation/
 ├── src/
 │   ├── main/         # production code (API clients, extraction, injection)
 │   └── tests/        # validation tests (pytest)
-└── migration/        # migration payloads in transit
-    ├── imported/     # plain-text files pending injection into the target
-    └── exported/     # plain-text files already injected successfully
+│       └── inventory/    # the tests that took stock of the source instance
+├── migration/        # migration payloads in transit
+│   ├── imported/     # plain-text files pending injection into the target
+│   └── exported/     # plain-text files already injected successfully
+└── tests_output/
+    └── inventory/    # what those tests produced: the reference the migration
+                      # is tracked against, committed on purpose
 ```
 
 ## Setup

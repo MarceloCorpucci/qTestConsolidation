@@ -5,7 +5,7 @@ exporter asks returns none. This test puts the same question several ways and
 prints the raw answer of each, so the call that works can be read off the
 output:
 
-    pytest src/tests/test_diagnose_links.py -s
+    pytest src/tests/inventory/test_diagnose_links.py -s
 
 It asserts nothing about the links -- it is here to be read, not to pass or
 fail. Throwaway, like the rest of the inventory code: delete it once the right

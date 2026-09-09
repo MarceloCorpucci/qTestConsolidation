@@ -9,11 +9,11 @@ as JSON under `migration/imported/`, where it waits to be injected into the
 target instance. The steps are kept as separate public methods so they can be
 moved into dedicated collaborator objects as the migration grows.
 
-The `export_inventory` family is temporary: it lists the ids and names of the
-project's modules (the Test Design folders), test plans, test cases and test
-runs into text files at the project root, to size and track the migration. It
-is not part of the migration flow and should be removed once the inventory has
-been taken.
+The `export_inventory` family lists the ids and names of the project's modules
+(the Test Design folders), test plans, requirements, test cases and test runs
+into text files under `tests_output/inventory`, to size and track the
+migration. It is not part of the migration flow, and it is kept in case the
+inventory has to be taken again.
 """
 
 from __future__ import annotations
@@ -41,8 +41,10 @@ DEFAULT_PROJECT_FILE = "project.json"
 
 SUCCESS_STATUS_CODES = (200,)
 
-#: Project root, where the one-off inventory files are written.
-PROJECT_ROOT = Path(__file__).resolve().parents[3]
+#: Where the inventory files are written. Committed on purpose: the migration
+#: is tracked against them, and the screenshots of each request will join them
+#: in the same folder.
+INVENTORY_DIR = Path(__file__).resolve().parents[3] / "tests_output" / "inventory"
 
 #: Endpoints backing the inventory, by entity, with how each must be read.
 #: qTest Manager has no "test plans" endpoint: the Test Plan module is made of
@@ -59,8 +61,8 @@ INVENTORY_ENTITIES = {
         "tree": True,
     },
     "test_plans": {"path": PROJECTS_ENDPOINT + "/{project_id}/releases"},
-    # Written as qtest_requirements.txt: "requirements.txt" at the project root
-    # is pip's dependency file and must not be overwritten.
+    # Written as qtest_requirements.txt, to keep it apart from pip's
+    # requirements.txt at a glance.
     "requirements": {
         "path": PROJECTS_ENDPOINT + "/{project_id}/requirements",
         "file": "qtest_requirements",
@@ -918,8 +920,9 @@ class DataExporter:
         project_id: int,
         file_name: str | None = None,
     ) -> Path:
-        """Write the id and name of each entity to a text file in the project root."""
-        target = PROJECT_ROOT / f"{file_name or subject}.txt"
+        """Write the id and name of each entity to a text file of the inventory."""
+        target = INVENTORY_DIR / f"{file_name or subject}.txt"
+        INVENTORY_DIR.mkdir(parents=True, exist_ok=True)
         logger.info("Writing %s %s to %s", len(entities), subject, target)
 
         integrated = self._integration_count(entities)
@@ -949,7 +952,8 @@ class DataExporter:
         project_id: int,
     ) -> Path:
         """Write each module with the test cases it holds, empty ones included."""
-        target = PROJECT_ROOT / f"{TEST_DESIGN_FILE}.txt"
+        target = INVENTORY_DIR / f"{TEST_DESIGN_FILE}.txt"
+        INVENTORY_DIR.mkdir(parents=True, exist_ok=True)
 
         by_module: dict[Any, list[dict[str, Any]]] = {}
         for test_case in test_cases:

@@ -1,12 +1,5 @@
-# One-off inventory of the source instance: customer data, keep it local
-/test_design.txt
-/test_modules.txt
-/test_plans.txt
-/test_cases.txt
-/test_runs.txt
-/qtest_requirements.txt
-/qtest_consolidated_fixed.csv
-/qtest_consolidated_notes.txt
+# The inventory of the source instance lives in tests_output/inventory and is
+# committed on purpose: the migration is tracked against it.
 
 # Environment and user configuration: sensitive data, never commit
 .env

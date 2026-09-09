@@ -6,7 +6,7 @@ describes it -- every container with its id, and how many runs hang from it --
 and then asks for the project's runs in the ways that do not depend on
 traversing the tree at all, so the two counts can be compared:
 
-    pytest src/tests/test_diagnose_execution_tree.py -s
+    pytest src/tests/inventory/test_diagnose_execution_tree.py -s
 
 It asserts nothing: it is here to be read. Throwaway, like the rest of the
 inventory code.
@@ -19,7 +19,7 @@ from main.exporter import DataExporter
 from main.exporter.data_exporter import BRANCHING_CONTAINERS, PROJECTS_ENDPOINT
 
 BODY_PREVIEW = 300
-### .venv\Scripts\python -m pytest src/tests/test_diagnose_execution_tree.py -s
+### .venv\Scripts\python -m pytest src/tests/inventory/test_diagnose_execution_tree.py -s
 
 def describe(client, label, method, path, **kwargs):
     """Issue one request and print what came back, without interpreting it.

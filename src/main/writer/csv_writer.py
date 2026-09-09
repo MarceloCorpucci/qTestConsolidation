@@ -15,6 +15,8 @@ folder, a release with nothing executed -- gets a row of its own with the test
 case columns empty: it has to be migrated all the same, so the file has to
 name it. Which columns a row fills is what says what it is.
 
+Written under `tests_output/inventory`, alongside the inventory text files.
+
 It computes nothing about the instance: every relation comes from the report.
 Temporary, like the inventory it presents.
 """
@@ -29,8 +31,9 @@ from typing import Any
 
 logger = logging.getLogger(__name__)
 
-#: Project root, where the report is written.
-PROJECT_ROOT = Path(__file__).resolve().parents[3]
+#: Where the report is written, alongside the inventory text files. Committed
+#: on purpose: the migration is tracked against it.
+INVENTORY_DIR = Path(__file__).resolve().parents[3] / "tests_output" / "inventory"
 
 DEFAULT_REPORT_FILE = "qtest_consolidated"
 CSV_EXTENSION = ".csv"
@@ -70,7 +73,7 @@ class CsvWriter:
     def __init__(
         self,
         report: dict[str, Any],
-        output_dir: Path | str = PROJECT_ROOT,
+        output_dir: Path | str = INVENTORY_DIR,
         delimiter: str = ",",
     ) -> None:
         self.report = report

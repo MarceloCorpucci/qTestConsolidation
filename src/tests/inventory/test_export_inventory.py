@@ -5,7 +5,7 @@ project root -- it exercises every inventory function in one go: the Test
 Design tree (modules and their test cases), test plans, requirements and test
 runs, reporting how many of each carry a Jira link.
 
-    pytest src/tests/test_export_inventory.py -s
+    pytest src/tests/inventory/test_export_inventory.py -s
 
 Like the other integration tests it is skipped when `config/qtest.env` has no
 credentials. Temporary, same as the code it drives: both go away once the
