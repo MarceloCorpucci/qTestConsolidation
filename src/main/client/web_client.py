@@ -6,8 +6,8 @@ it, so every migrated artifact has a before in HS and an after in HCSC.
 
 Nothing about an instance is written here. The address of each artifact's page
 differs between qTest versions and modules, so the URL of every kind is a
-setting in `config/qtest.env`, alongside how to reach the browser and how to
-sign in.
+setting in `config/qtest.env`, alongside the login page, the credentials and
+how to run the browser.
 
 A capture is evidence, not the migration itself: when the browser cannot
 start, or the page cannot be reached, the failure is reported and the
@@ -47,13 +47,13 @@ CAPTURE_EXTENSION = ".png"
 DEFAULT_WINDOW_SIZE = "1920,1080"
 DEFAULT_PAGE_WAIT = 5
 
-#: Seconds allowed after submitting the credentials, for single sign-on to
-#: redirect and for a person to approve a second factor if one is asked for.
-DEFAULT_LOGIN_WAIT = 30
+#: Seconds allowed after submitting the credentials, for the instance to let
+#: the browser in and draw its first page.
+DEFAULT_LOGIN_WAIT = 15
 
-#: How the sign-in fields are found. An identity provider names them as it
-#: pleases, so they are found by what they are: the box that takes an address
-#: or a name, and the one that hides what is typed.
+#: How the sign-in fields are found. Their names change between qTest
+#: versions, so they are found by what they are: the box that takes a name or
+#: an address, and the one that hides what is typed.
 DEFAULT_USER_SELECTOR = (
     "input[type='email'], input[name*='user' i], input[id*='user' i], input[type='text']"
 )
@@ -76,6 +76,7 @@ class WebClient:
         project_id: Any = "",
         username: str | None = None,
         password: str | None = None,
+        login_url: str = "",
         user_selector: str = DEFAULT_USER_SELECTOR,
         password_selector: str = DEFAULT_PASSWORD_SELECTOR,
         profile_dir: str | None = None,
@@ -92,6 +93,7 @@ class WebClient:
         self._screenshot_dir = Path(screenshot_dir)
         self._username = username
         self._password = password
+        self._login_url = (login_url or "").strip()
         self._user_selector = user_selector
         self._password_selector = password_selector
         self._profile_dir = profile_dir
@@ -149,6 +151,7 @@ class WebClient:
             project_id=setting("PROJECT_ID"),
             username=setting("WEB_USERNAME") or None,
             password=setting("WEB_PASSWORD") or None,
+            login_url=setting("WEB_LOGIN_URL"),
             user_selector=setting("WEB_USER_SELECTOR") or DEFAULT_USER_SELECTOR,
             password_selector=setting("WEB_PASSWORD_SELECTOR") or DEFAULT_PASSWORD_SELECTOR,
             profile_dir=setting("BROWSER_PROFILE") or None,
@@ -255,27 +258,29 @@ class WebClient:
         return self._driver
 
     def _sign_in(self, driver: Any) -> None:
-        """Sign in with the configured credentials, through single sign-on.
+        """Sign in on the instance's own login page.
 
-        Single sign-on sends the browser to an identity provider whose form is
-        not qTest's, and typically asks for the user on one page and the
-        password on the next. So the fields are found by what they are rather
-        than by name -- the first text or email box, then the password box --
-        and each is submitted with Enter, which every such form accepts.
-        `WEB_USER_SELECTOR` and `WEB_PASSWORD_SELECTOR` override that when a
-        provider needs it.
+        Both instances ask for a network user and a password on one page, with
+        no redirect to an identity provider and no second factor, so the two
+        fields are filled and the form submitted from the password box.
 
-        A second factor cannot be answered from here. When the account asks
-        for one, run with `BROWSER_HEADLESS=false` and approve it while the
-        browser waits `WEB_LOGIN_WAIT` seconds -- or sign in by hand once into
-        the profile named by `BROWSER_PROFILE`, and the session is reused from
-        then on.
+        The fields are found by what they are -- the box that takes a name,
+        then the one that hides what is typed -- rather than by names that
+        change between qTest versions; `WEB_USER_SELECTOR` and
+        `WEB_PASSWORD_SELECTOR` override that if ever needed. A form that
+        asks for the password on a second page is handled too.
+
+        Failing to sign in is reported, not raised: the session may already be
+        open in the browser profile, and a capture that lands on a login page
+        shows that plainly enough.
         """
-        logger.info("Signing in to the %s instance as %s", self.side, self._username)
-        driver.get(self.base_url)
-        self._settle(driver)
+        login_url = self._login_url or self.base_url
+        logger.info("Signing in to the %s instance at %s as %s", self.side, login_url, self._username)
 
         try:
+            driver.get(login_url)
+            self._settle(driver)
+
             if not self._fill(driver, self._user_selector, self._username, "user name"):
                 logger.info(
                     "No sign-in form on the %s instance: the session looks to be open already",
@@ -283,17 +288,16 @@ class WebClient:
                 )
                 return
 
-            # The password lives on the next page of most providers.
-            self._settle(driver)
-            self._fill(driver, self._password_selector, self._password, "password")
+            if not self._fill(driver, self._password_selector, self._password, "password", True):
+                # Some forms only show the password once the user is submitted.
+                logger.debug("No password field yet: submitting the user name first")
+                self._press_enter(driver, self._user_selector)
+                self._settle(driver)
+                self._fill(driver, self._password_selector, self._password, "password", True)
 
-            logger.info(
-                "Waiting up to %ss for %s to complete the sign-in",
-                self._login_wait,
-                self.side,
-            )
             self._wait(self._login_wait)
-        except Exception as error:  # noqa: BLE001 - a provider can present anything
+            logger.info("Signed in to the %s instance, now at %s", self.side, driver.current_url)
+        except Exception as error:  # noqa: BLE001 - a login page can present anything
             logger.warning(
                 "Could not sign in to the %s instance (%s: %s). Carrying on: the session may "
                 "already be open, and a capture that fails says so on its own.",
@@ -302,24 +306,46 @@ class WebClient:
                 error,
             )
 
-    def _fill(self, driver: Any, selector: str, value: str, what: str) -> bool:
-        """Type a value into the first field the selector finds, and submit it."""
-        from selenium.webdriver.common.by import By
-        from selenium.webdriver.common.keys import Keys
-
-        fields = [
-            field
-            for field in driver.find_elements(By.CSS_SELECTOR, selector)
-            if field.is_displayed() and field.is_enabled()
-        ]
-        if not fields:
+    def _fill(
+        self,
+        driver: Any,
+        selector: str,
+        value: str,
+        what: str,
+        submit: bool = False,
+    ) -> bool:
+        """Type a value into the first field the selector finds."""
+        field = self._field(driver, selector)
+        if field is None:
             logger.debug("No %s field matching %r on this page", what, selector)
             return False
 
+        from selenium.webdriver.common.keys import Keys
+
         logger.debug("Entering the %s", what)
-        fields[0].send_keys(value)
-        fields[0].send_keys(Keys.ENTER)
+        field.clear()
+        field.send_keys(value)
+        if submit:
+            field.send_keys(Keys.ENTER)
         return True
+
+    def _press_enter(self, driver: Any, selector: str) -> None:
+        """Submit the form from the field the selector finds."""
+        from selenium.webdriver.common.keys import Keys
+
+        field = self._field(driver, selector)
+        if field is not None:
+            field.send_keys(Keys.ENTER)
+
+    @staticmethod
+    def _field(driver: Any, selector: str) -> Any:
+        """The first field a person could actually type into, or None."""
+        from selenium.webdriver.common.by import By
+
+        for field in driver.find_elements(By.CSS_SELECTOR, selector):
+            if field.is_displayed() and field.is_enabled():
+                return field
+        return None
 
     def _settle(self, driver: Any) -> None:
         """Give the page the configured moment to finish drawing itself."""
