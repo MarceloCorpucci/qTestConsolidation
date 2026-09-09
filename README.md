@@ -19,7 +19,8 @@ qTestConsolidation/
 │                             # against, committed on purpose
 └── migration/        # migration payloads in transit
     ├── exported/     # artifacts read out of the source instance
-    └── imported/     # payloads pending injection into the target
+    ├── imported/     # payloads pending injection into the target
+    └── id_map.json   # what each source artifact became in the target
 ```
 
 ## Setup

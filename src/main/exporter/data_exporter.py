@@ -28,6 +28,12 @@ import re
 from pathlib import Path
 from typing import Any
 
+from main.artifacts import (
+    STANDALONE_SUFFIX,
+    UnknownArtifactError,
+    resolve_artifact_type,
+    standalone_file_name,
+)
 from main.client import RestClient
 from main.writer import EXPORTED_DIR, IMPORTED_DIR, FileWriter
 
@@ -106,9 +112,6 @@ STANDALONE_PATHS = {
     "release": PROJECTS_ENDPOINT + "/{project_id}/releases/{artifact_id}",
     "module": PROJECTS_ENDPOINT + "/{project_id}/modules/{artifact_id}",
 }
-
-#: Suffix of the file a stand-alone export is written to.
-STANDALONE_SUFFIX = "stand-alone"
 
 #: Keys under which an entity names the container holding it.
 PARENT_ID_KEYS = ("parentId", "parent_id")
@@ -313,7 +316,7 @@ class DataExporter:
     ) -> Path:
         """Persist one artifact as `<Artifact>_<id>_stand-alone.json`."""
         kind = self.resolve_artifact_type(artifact_type)
-        file_name = f"{self._file_label(kind)}_{artifact_id}_{STANDALONE_SUFFIX}"
+        file_name = standalone_file_name(kind, artifact_id)
 
         written = FileWriter(artifact, output_dir=EXPORTED_DIR).write(file_name)
         logger.info("Exported %s %s to %s", kind, artifact_id, written)
@@ -322,23 +325,10 @@ class DataExporter:
     @staticmethod
     def resolve_artifact_type(artifact_type: str) -> str:
         """The known artifact type behind whatever spelling was given."""
-        # Split camelCase first: once lowercased there is no case left to read.
-        spelled = re.sub(r"(?<=[a-z])(?=[A-Z])", "-", str(artifact_type or "").strip())
-        wanted = re.sub(r"[\s_]+", "-", spelled).lower().rstrip("s")
-
-        for kind in STANDALONE_PATHS:
-            if wanted == kind or wanted == kind.rstrip("s"):
-                return kind
-
-        logger.error("Unknown artifact type %r", artifact_type)
-        raise ProjectExportError(
-            f"Unknown artifact type {artifact_type!r}, expected one of {sorted(STANDALONE_PATHS)}"
-        )
-
-    @staticmethod
-    def _file_label(kind: str) -> str:
-        """The artifact type as it reads in a file name: "test-case" -> TestCase."""
-        return "".join(part.capitalize() for part in kind.split("-"))
+        try:
+            return resolve_artifact_type(artifact_type)
+        except UnknownArtifactError as error:
+            raise ProjectExportError(str(error)) from error
 
     # -- steps ---------------------------------------------------------------
 
