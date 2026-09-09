@@ -34,7 +34,7 @@ from main.artifacts import (
     resolve_artifact_type,
     standalone_file_name,
 )
-from main.client import RestClient
+from main.client import RestClient, WebClient
 from main.writer import EXPORTED_DIR, IMPORTED_DIR, FileWriter
 
 logger = logging.getLogger(__name__)
@@ -216,9 +216,15 @@ class ProjectExportError(RuntimeError):
 class DataExporter:
     """Entry point for extracting artifacts from the source instance."""
 
-    def __init__(self, client: RestClient, output_dir: Path | str = IMPORTED_DIR) -> None:
+    def __init__(
+        self,
+        client: RestClient,
+        output_dir: Path | str = IMPORTED_DIR,
+        web_client: WebClient | None = None,
+    ) -> None:
         self._client = client
         self._output_dir = Path(output_dir)
+        self._web_client = web_client
         logger.debug(
             "Exporter ready against %s, writing to %s", client.base_url, self._output_dir
         )
@@ -227,6 +233,11 @@ class DataExporter:
     def client(self) -> RestClient:
         """The REST client used to reach the source instance."""
         return self._client
+
+    @property
+    def web_client(self) -> WebClient | None:
+        """The browser client that captures the source pages, if there is one."""
+        return self._web_client
 
     @property
     def output_dir(self) -> Path:
@@ -272,11 +283,27 @@ class DataExporter:
         one artifact is what gets written, so the file is the artifact as the
         source instance holds it.
 
-        The file is named `<Artifact>_<id>_stand-alone.json` and is rewritten
-        on every call, so it always reflects the source as it is now.
+        The steps are orchestrated here: read it, write it, and capture what
+        the source instance shows for it. The file is named
+        `<Artifact>_<id>_stand-alone.json` and is rewritten on every call, so
+        running the migration again always reflects the source as it is now.
         """
         artifact = self.fetch_standalone(artifact_type, artifact_id, project_id)
-        return self.write_standalone(artifact, artifact_type, artifact_id)
+        written = self.write_standalone(artifact, artifact_type, artifact_id)
+        self.capture_standalone(artifact_type, artifact_id)
+        return written
+
+    def capture_standalone(self, artifact_type: str, artifact_id: Any) -> Path | None:
+        """Capture what the source instance shows for one artifact.
+
+        Only when a browser client was given: the export is complete without
+        one, and the capture is evidence beside it.
+        """
+        if self._web_client is None:
+            logger.debug("No browser client: nothing to capture on the source side")
+            return None
+
+        return self._web_client.capture(artifact_type, artifact_id)
 
     def fetch_standalone(
         self,

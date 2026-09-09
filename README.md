@@ -15,11 +15,13 @@ qTestConsolidation/
 │       ├── inventory/    # the tests that took stock of the source instance
 │       ├── input/        # what the tests read: which artifacts to work on
 │       └── output/       # what they produce
-│           └── inventory/    # the reference the migration is tracked
-│                             # against, committed on purpose
-└── migration/        # migration payloads in transit
-    ├── exported/     # artifacts read out of the source instance
-    ├── imported/     # payloads pending injection into the target
+│           ├── inventory/    # the reference the migration is tracked
+│           │                 # against, committed on purpose
+│           └── screenshots/  # each instance as a person would see it,
+│                             # before in HS and after in HCSC
+└── migration/        # where each artifact has got to
+    ├── exported/     # read out of the source, waiting to be injected
+    ├── imported/     # already injected into the target: it crossed
     └── id_map.json   # what each source artifact became in the target
 ```
 

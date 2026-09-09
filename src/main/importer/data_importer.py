@@ -4,12 +4,20 @@
 endpoints to call and how to build the payloads, while the client only carries
 the request.
 
-`import_standalone` is the mirror of the exporter's `export_standalone`: it
-reads the file that export wrote to `migration/exported/`, strips what the
-target will not accept, creates the artifact in HCSC and records the id the
-target assigned next to the id it had in HS. That record -- `migration/
-id_map.json` -- is what later lets the relations be rebuilt, and what fills
-the Target ID column of the consolidated report.
+`import_standalone` is the mirror of the exporter's `export_standalone`, and
+orchestrates the steps of getting one artifact across: read the file the
+export wrote, delete whatever an earlier run left in the target, strip what
+the target will not accept, create it, record the id HCSC assigned next to the
+id it had in HS, move the file to `migration/imported/`, and capture the
+target's page.
+
+Two of those exist so the migration can be run again and end in the same
+place: the deletion, which is what keeps a second run from duplicating, and
+the move, since which folder holds a file is the record of where its artifact
+got to.
+
+The id map -- `migration/id_map.json` -- is what later lets the relations be
+rebuilt, and what fills the Target ID column of the consolidated report.
 """
 
 from __future__ import annotations
@@ -25,8 +33,8 @@ from main.artifacts import (
     resolve_artifact_type,
     standalone_file_name,
 )
-from main.client import RestClient
-from main.writer import EXPORTED_DIR
+from main.client import RestClient, WebClient
+from main.writer import EXPORTED_DIR, IMPORTED_DIR
 
 logger = logging.getLogger(__name__)
 
@@ -68,6 +76,17 @@ NEVER_FORWARDED = ("id", "pid", "parent_id", "parentId", "properties", "links", 
 ID_MAP_FILE = Path(__file__).resolve().parents[3] / "migration" / "id_map.json"
 
 SUCCESS_STATUS_CODES = (200, 201)
+DELETED_STATUS_CODES = (200, 202, 204)
+NOT_FOUND = 404
+
+#: Artifacts asked for per page while looking for one already in the target.
+PAGE_SIZE = 100
+
+#: Hard stop for that search, so a misbehaving endpoint cannot spin.
+MAX_PAGES = 100
+
+#: Keys under which a listing may nest its page of results.
+ITEM_KEYS = ("items", "data", "results")
 
 
 class ArtifactImportError(RuntimeError):
@@ -81,11 +100,15 @@ class DataImporter:
         self,
         client: RestClient,
         exported_dir: Path | str = EXPORTED_DIR,
+        imported_dir: Path | str = IMPORTED_DIR,
         id_map_file: Path | str = ID_MAP_FILE,
+        web_client: WebClient | None = None,
     ) -> None:
         self._client = client
         self._exported_dir = Path(exported_dir)
+        self._imported_dir = Path(imported_dir)
         self._id_map_file = Path(id_map_file)
+        self._web_client = web_client
         logger.debug(
             "Importer ready against %s, reading from %s", client.base_url, self._exported_dir
         )
@@ -96,9 +119,19 @@ class DataImporter:
         return self._client
 
     @property
+    def web_client(self) -> WebClient | None:
+        """The browser client that captures the target pages, if there is one."""
+        return self._web_client
+
+    @property
     def exported_dir(self) -> Path:
         """Folder holding what the export read out of the source instance."""
         return self._exported_dir
+
+    @property
+    def imported_dir(self) -> Path:
+        """Folder holding what has been injected into the target."""
+        return self._imported_dir
 
     @property
     def id_map_file(self) -> Path:
@@ -120,6 +153,13 @@ class DataImporter:
         belongs is settled later, once the artifacts it refers to have been
         migrated and the id map can say what they became.
 
+        The steps are orchestrated here, so the migration can be run again
+        over the same artifact and end in the same place: whatever an earlier
+        run left in the target is deleted first, the artifact is created, the
+        id it was given is recorded, its file moves from `exported` to
+        `imported` -- which is what says it crossed -- and the target's page
+        is captured.
+
         Returns the artifact as the target created it.
         """
         kind = self.resolve_artifact_type(artifact_type)
@@ -127,13 +167,52 @@ class DataImporter:
 
         artifact = self.read_exported(kind, artifact_id)
         body = self.build_body(artifact, kind)
+
+        self.delete_existing(kind, artifact_id, project_id, body["name"])
         created = self.create_artifact(body, kind, project_id)
 
         self.record_mapping(kind, artifact_id, created)
+        self.archive_exported(kind, artifact_id)
+        self.capture_standalone(kind, artifact_id)
+
         logger.info(
             "Imported %s %s: it is %s in the target", kind, artifact_id, created.get("id")
         )
         return created
+
+    def capture_standalone(self, artifact_type: str, artifact_id: Any) -> Path | None:
+        """Capture what the target instance shows for one artifact.
+
+        Only when a browser client was given: the injection is complete
+        without one, and the capture is evidence beside it.
+        """
+        if self._web_client is None:
+            logger.debug("No browser client: nothing to capture on the target side")
+            return None
+
+        return self._web_client.capture(artifact_type, artifact_id)
+
+    def archive_exported(self, artifact_type: str, artifact_id: Any) -> Path:
+        """Move the artifact's file from `exported` to `imported`.
+
+        Which folder holds the file is the record of where the artifact got
+        to: still in `exported` means read but not injected, in `imported`
+        means it crossed. An earlier copy in `imported` is replaced, so
+        running the migration again leaves one file, not two.
+        """
+        kind = self.resolve_artifact_type(artifact_type)
+        name = f"{standalone_file_name(kind, artifact_id)}.json"
+        source_file = self._exported_dir / name
+        target_file = self._imported_dir / name
+
+        if not source_file.is_file():
+            logger.warning("%s is gone: nothing to move to %s", source_file, self._imported_dir)
+            return target_file
+
+        self._imported_dir.mkdir(parents=True, exist_ok=True)
+        source_file.replace(target_file)
+        logger.info("Moved %s to %s: the %s has crossed", name, self._imported_dir, kind)
+        return target_file
 
     def read_exported(self, artifact_type: str, artifact_id: Any) -> dict[str, Any]:
         """Read the artifact the export wrote, by kind and source id."""
@@ -142,6 +221,14 @@ class DataImporter:
         logger.info("Reading %s", source_file)
 
         if not source_file.is_file():
+            already = self._imported_dir / source_file.name
+            if already.is_file():
+                logger.error("%s has already been imported: it is in %s", kind, already)
+                raise FileNotFoundError(
+                    f"{source_file} does not exist because the {kind} has already been "
+                    f"imported: its file is now {already}. Export it again to import it again."
+                )
+
             logger.error("%s has not been exported yet", source_file)
             raise FileNotFoundError(
                 f"{source_file} does not exist: export the {kind} before importing it"
@@ -220,6 +307,158 @@ class DataImporter:
                 f"Target instance returned no id for the {kind} {body['name']!r}"
             )
         return created
+
+    # -- what an earlier run left behind -------------------------------------
+
+    def delete_existing(
+        self,
+        artifact_type: str,
+        source_id: Any,
+        project_id: int,
+        name: str,
+    ) -> list[Any]:
+        """Delete what the target already holds for this artifact, if anything.
+
+        Two ways of finding it, because either can be the one that knows:
+        the id map, which says what an earlier run created, and the target's
+        own listing by name, for a copy the map never recorded -- a run whose
+        map was lost, or an artifact put there by hand.
+
+        Returns the ids deleted.
+        """
+        kind = self.resolve_artifact_type(artifact_type)
+        deleted = []
+
+        for target_id in self.find_existing(kind, source_id, project_id, name):
+            if self.delete_artifact(kind, target_id, project_id):
+                deleted.append(target_id)
+
+        if deleted:
+            logger.warning(
+                "Deleted %s %s already in the target (%s) before importing %s again",
+                len(deleted),
+                f"{kind}s" if len(deleted) > 1 else kind,
+                ", ".join(str(item) for item in deleted),
+                source_id,
+            )
+        else:
+            logger.info("Nothing to delete: the target holds no %s %r yet", kind, name)
+        return deleted
+
+    def find_existing(
+        self,
+        artifact_type: str,
+        source_id: Any,
+        project_id: int,
+        name: str,
+    ) -> list[Any]:
+        """Ids the target already holds for this artifact, by map then by name."""
+        kind = self.resolve_artifact_type(artifact_type)
+        found: list[Any] = []
+
+        recorded = self.target_id_of(kind, source_id)
+        if recorded is not None and self.artifact_exists(kind, recorded, project_id):
+            logger.info("The id map says %s %s is %s in the target", kind, source_id, recorded)
+            found.append(recorded)
+
+        for artifact in self.find_by_name(kind, name, project_id):
+            artifact_id = artifact.get("id")
+            if artifact_id is not None and artifact_id not in found:
+                logger.info("The target already holds a %s named %r: %s", kind, name, artifact_id)
+                found.append(artifact_id)
+
+        return found
+
+    def artifact_exists(self, artifact_type: str, target_id: Any, project_id: int) -> bool:
+        """Whether the target still holds that artifact: it may have been removed."""
+        kind = self.resolve_artifact_type(artifact_type)
+        path = f"{CREATE_PATHS[kind].format(project_id=project_id)}/{target_id}"
+
+        response = self._client.get(path)
+        if response.status_code == NOT_FOUND:
+            logger.info("The %s %s recorded in the id map is gone from the target", kind, target_id)
+            return False
+        if not response.ok:
+            logger.warning(
+                "Could not check whether %s %s is still in the target: %s %s",
+                kind,
+                target_id,
+                response.status_code,
+                response.text,
+            )
+            return False
+        return True
+
+    def find_by_name(self, artifact_type: str, name: str, project_id: int) -> list[dict[str, Any]]:
+        """Artifacts of a kind the target holds under exactly that name."""
+        kind = self.resolve_artifact_type(artifact_type)
+        if not name:
+            return []
+
+        path = CREATE_PATHS[kind].format(project_id=project_id)
+        matches = []
+        seen: set[Any] = set()
+
+        for page in range(1, MAX_PAGES + 1):
+            response = self._client.get(path, params={"page": page, "pageSize": PAGE_SIZE})
+            if not response.ok:
+                logger.warning(
+                    "Could not list the %ss of the target to look for %r: %s %s",
+                    kind,
+                    name,
+                    response.status_code,
+                    response.text,
+                )
+                return matches
+
+            items = self._items_of(response)
+            fresh = [item for item in items if item.get("id") not in seen]
+            if not fresh:
+                break
+
+            seen.update(item.get("id") for item in fresh)
+            matches.extend(item for item in fresh if item.get("name") == name)
+
+        return matches
+
+    def delete_artifact(self, artifact_type: str, target_id: Any, project_id: int) -> bool:
+        """Remove one artifact from the target instance."""
+        kind = self.resolve_artifact_type(artifact_type)
+        path = f"{CREATE_PATHS[kind].format(project_id=project_id)}/{target_id}"
+        logger.info("Deleting %s %s from the target", kind, target_id)
+
+        response = self._client.delete(path)
+        if response.status_code in DELETED_STATUS_CODES:
+            return True
+
+        logger.error(
+            "Could not delete %s %s from the target: %s %s",
+            kind,
+            target_id,
+            response.status_code,
+            response.text,
+        )
+        raise ArtifactImportError(
+            f"Could not delete the {kind} {target_id} already in the target: "
+            f"{response.status_code} {response.text}. Importing again would duplicate it."
+        )
+
+    @staticmethod
+    def _items_of(response: Any) -> list[dict[str, Any]]:
+        """The artifacts of a listing, whichever shape the endpoint answers in."""
+        try:
+            payload = response.json()
+        except ValueError:
+            return []
+
+        if isinstance(payload, list):
+            return [item for item in payload if isinstance(item, dict)]
+        if isinstance(payload, dict):
+            for key in ITEM_KEYS:
+                items = payload.get(key)
+                if isinstance(items, list):
+                    return [item for item in items if isinstance(item, dict)]
+        return []
 
     # -- what the target called it -------------------------------------------
 

@@ -8,12 +8,16 @@ from main.client.rest_client import (
     RestClient,
     use_system_certificates,
 )
+from main.client.web_client import SCREENSHOT_DIR, WebCaptureError, WebClient
 
 __all__ = [
     "DEFAULT_ENV_FILE",
     "MissingConfigurationError",
     "RestClient",
+    "SCREENSHOT_DIR",
     "SOURCE_PREFIX",
     "TARGET_PREFIX",
+    "WebCaptureError",
+    "WebClient",
     "use_system_certificates",
 ]
