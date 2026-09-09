@@ -13,11 +13,12 @@ A capture is evidence, not the migration itself: when the browser cannot
 start, or the page cannot be reached, the failure is reported and the
 migration carries on. Set `<PREFIX>_QTEST_WEB_REQUIRED=true` to make it fatal
 instead.
+
+Captures are saved as PNG, which is what the browser hands over.
 """
 
 from __future__ import annotations
 
-import io
 import logging
 import os
 from pathlib import Path
@@ -39,9 +40,24 @@ DEFAULT_ENV_FILE = Path(__file__).resolve().parents[3] / "config" / "qtest.env"
 #: evidences are named after the same artifact.
 STANDALONE_SUFFIX = "stand-alone"
 
-JPEG_QUALITY = 85
+#: PNG, because that is what the browser hands over. Converting to anything
+#: else would buy a smaller file at the cost of a dependency.
+CAPTURE_EXTENSION = ".png"
+
 DEFAULT_WINDOW_SIZE = "1920,1080"
 DEFAULT_PAGE_WAIT = 5
+
+#: Seconds allowed after submitting the credentials, for single sign-on to
+#: redirect and for a person to approve a second factor if one is asked for.
+DEFAULT_LOGIN_WAIT = 30
+
+#: How the sign-in fields are found. An identity provider names them as it
+#: pleases, so they are found by what they are: the box that takes an address
+#: or a name, and the one that hides what is typed.
+DEFAULT_USER_SELECTOR = (
+    "input[type='email'], input[name*='user' i], input[id*='user' i], input[type='text']"
+)
+DEFAULT_PASSWORD_SELECTOR = "input[type='password']"
 
 
 class WebCaptureError(RuntimeError):
@@ -60,10 +76,13 @@ class WebClient:
         project_id: Any = "",
         username: str | None = None,
         password: str | None = None,
+        user_selector: str = DEFAULT_USER_SELECTOR,
+        password_selector: str = DEFAULT_PASSWORD_SELECTOR,
         profile_dir: str | None = None,
         headless: bool = True,
         window_size: str = DEFAULT_WINDOW_SIZE,
         page_wait: int = DEFAULT_PAGE_WAIT,
+        login_wait: int = DEFAULT_LOGIN_WAIT,
         required: bool = False,
     ) -> None:
         self.base_url = (base_url or "").rstrip("/")
@@ -73,10 +92,13 @@ class WebClient:
         self._screenshot_dir = Path(screenshot_dir)
         self._username = username
         self._password = password
+        self._user_selector = user_selector
+        self._password_selector = password_selector
         self._profile_dir = profile_dir
         self._headless = headless
         self._window_size = window_size
         self._page_wait = page_wait
+        self._login_wait = login_wait
         self._required = required
         # Started on the first capture: a migration that captures nothing
         # should not pay for a browser.
@@ -127,10 +149,13 @@ class WebClient:
             project_id=setting("PROJECT_ID"),
             username=setting("WEB_USERNAME") or None,
             password=setting("WEB_PASSWORD") or None,
+            user_selector=setting("WEB_USER_SELECTOR") or DEFAULT_USER_SELECTOR,
+            password_selector=setting("WEB_PASSWORD_SELECTOR") or DEFAULT_PASSWORD_SELECTOR,
             profile_dir=setting("BROWSER_PROFILE") or None,
             headless=setting("BROWSER_HEADLESS", "true").lower() != "false",
             window_size=setting("BROWSER_WINDOW_SIZE", DEFAULT_WINDOW_SIZE),
             page_wait=int(setting("WEB_PAGE_WAIT", str(DEFAULT_PAGE_WAIT)) or DEFAULT_PAGE_WAIT),
+            login_wait=int(setting("WEB_LOGIN_WAIT", str(DEFAULT_LOGIN_WAIT)) or DEFAULT_LOGIN_WAIT),
             required=setting("WEB_REQUIRED", "false").lower() == "true",
             **overrides,
         )
@@ -163,14 +188,17 @@ class WebClient:
         except Exception as error:  # noqa: BLE001 - any browser failure is the same to us
             return self._give_up(f"{type(error).__name__}: {error}")
 
-        self._save_jpeg(image, target)
+        # Written over any earlier capture: the migration runs more than once.
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_bytes(image)
+
         logger.info("Captured the %s %s %s to %s", self.side, kind, artifact_id, target)
         return target
 
     def capture_path(self, artifact_type: str, artifact_id: Any) -> Path:
         """Where the capture of one artifact goes, named after the artifact."""
         kind = resolve_artifact_type(artifact_type)
-        name = f"{self.side}_{file_label(kind)}_{artifact_id}_{STANDALONE_SUFFIX}.jpg"
+        name = f"{self.side}_{file_label(kind)}_{artifact_id}_{STANDALONE_SUFFIX}{CAPTURE_EXTENSION}"
         return self._screenshot_dir / name
 
     def artifact_url(self, artifact_type: str, artifact_id: Any) -> str:
@@ -186,14 +214,6 @@ class WebClient:
             artifact_id=artifact_id,
             artifact_type=kind,
         )
-
-    def _save_jpeg(self, image: bytes, target: Path) -> None:
-        """Write the capture as JPEG, replacing any earlier one."""
-        from PIL import Image
-
-        target.parent.mkdir(parents=True, exist_ok=True)
-        with Image.open(io.BytesIO(image)) as capture:
-            capture.convert("RGB").save(target, "JPEG", quality=JPEG_QUALITY)
 
     def _give_up(self, reason: str) -> None:
         """Report a capture that could not be taken, or raise if it was required."""
@@ -235,35 +255,81 @@ class WebClient:
         return self._driver
 
     def _sign_in(self, driver: Any) -> None:
-        """Sign in with the configured credentials, when the form is the plain one.
+        """Sign in with the configured credentials, through single sign-on.
 
-        An instance behind single sign-on will not show these fields; there,
-        point `<PREFIX>_QTEST_BROWSER_PROFILE` at a profile already signed in.
+        Single sign-on sends the browser to an identity provider whose form is
+        not qTest's, and typically asks for the user on one page and the
+        password on the next. So the fields are found by what they are rather
+        than by name -- the first text or email box, then the password box --
+        and each is submitted with Enter, which every such form accepts.
+        `WEB_USER_SELECTOR` and `WEB_PASSWORD_SELECTOR` override that when a
+        provider needs it.
+
+        A second factor cannot be answered from here. When the account asks
+        for one, run with `BROWSER_HEADLESS=false` and approve it while the
+        browser waits `WEB_LOGIN_WAIT` seconds -- or sign in by hand once into
+        the profile named by `BROWSER_PROFILE`, and the session is reused from
+        then on.
         """
-        from selenium.webdriver.common.by import By
-
         logger.info("Signing in to the %s instance as %s", self.side, self._username)
         driver.get(self.base_url)
         self._settle(driver)
 
         try:
-            driver.find_element(By.ID, "username").send_keys(self._username)
-            driver.find_element(By.ID, "password").send_keys(self._password)
-            driver.find_element(By.ID, "loginButton").click()
+            if not self._fill(driver, self._user_selector, self._username, "user name"):
+                logger.info(
+                    "No sign-in form on the %s instance: the session looks to be open already",
+                    self.side,
+                )
+                return
+
+            # The password lives on the next page of most providers.
             self._settle(driver)
-        except Exception as error:  # noqa: BLE001 - the form may not be there at all
-            logger.warning(
-                "Could not sign in to the %s instance (%s). Carrying on: the session may "
-                "already be open in the browser profile.",
+            self._fill(driver, self._password_selector, self._password, "password")
+
+            logger.info(
+                "Waiting up to %ss for %s to complete the sign-in",
+                self._login_wait,
                 self.side,
+            )
+            self._wait(self._login_wait)
+        except Exception as error:  # noqa: BLE001 - a provider can present anything
+            logger.warning(
+                "Could not sign in to the %s instance (%s: %s). Carrying on: the session may "
+                "already be open, and a capture that fails says so on its own.",
+                self.side,
+                type(error).__name__,
                 error,
             )
 
+    def _fill(self, driver: Any, selector: str, value: str, what: str) -> bool:
+        """Type a value into the first field the selector finds, and submit it."""
+        from selenium.webdriver.common.by import By
+        from selenium.webdriver.common.keys import Keys
+
+        fields = [
+            field
+            for field in driver.find_elements(By.CSS_SELECTOR, selector)
+            if field.is_displayed() and field.is_enabled()
+        ]
+        if not fields:
+            logger.debug("No %s field matching %r on this page", what, selector)
+            return False
+
+        logger.debug("Entering the %s", what)
+        fields[0].send_keys(value)
+        fields[0].send_keys(Keys.ENTER)
+        return True
+
     def _settle(self, driver: Any) -> None:
         """Give the page the configured moment to finish drawing itself."""
+        self._wait(self._page_wait)
+
+    @staticmethod
+    def _wait(seconds: int) -> None:
         import time
 
-        time.sleep(self._page_wait)
+        time.sleep(seconds)
 
     # -- lifetime ------------------------------------------------------------
 
