@@ -80,6 +80,41 @@ def test_cases(source_client, project_id):
     return cases
 
 
+@pytest.fixture(scope="module")
+def test_runs(source_client, project_id):
+    """Every test run of the project, wherever it hangs in the execution tree."""
+    runs = DataExporter(source_client).fetch_entities("test_runs", project_id)
+    if not runs:
+        pytest.skip("The project returned no test runs")
+    return runs
+
+
+def links_by_kind(source_client, project_id, artifact_type, ids):
+    """What a set of artifacts is linked to, counted by kind.
+
+    Returns the counts and, separately, the defects found: a defect is the
+    one link that carries a Jira issue, so it is what this is looking for.
+    """
+    path = f"{PROJECTS_ENDPOINT}/{project_id}/linked-artifacts"
+    kinds = Counter()
+    defects = {}
+
+    for start in range(0, len(ids), LINK_BATCH_SIZE):
+        batch = ids[start:start + LINK_BATCH_SIZE]
+        response = source_client.get(path, params={"type": artifact_type, "ids": batch})
+        if not response.ok:
+            pytest.skip(f"linked-artifacts refused {artifact_type}: {response.status_code}")
+
+        for entry in response.json():
+            for linked in entry.get("objects") or []:
+                kind = DataExporter._linked_kind(linked) or "unknown"
+                kinds[kind] += 1
+                if kind.startswith("defect"):
+                    defects[entry.get("id")] = linked
+
+    return kinds, defects
+
+
 @pytest.mark.integration
 def test_no_structured_integration_on_test_cases(source_client, test_cases):
     """1. No test case carries a field an integration would have written."""
@@ -135,32 +170,41 @@ def test_report_jira_in_the_free_text_of_test_cases(test_cases):
 
 @pytest.mark.integration
 def test_no_test_case_is_linked_to_a_defect(source_client, project_id, test_cases):
-    """3. What the test cases are linked to, defects above all."""
-    path = f"{PROJECTS_ENDPOINT}/{project_id}/linked-artifacts"
+    """3. What the test cases are linked to."""
     ids = [case["id"] for case in test_cases]
-    kinds = Counter()
-    defects = {}
-
-    for start in range(0, len(ids), LINK_BATCH_SIZE):
-        batch = ids[start:start + LINK_BATCH_SIZE]
-        response = source_client.get(path, params={"type": "test-cases", "ids": batch})
-        if not response.ok:
-            pytest.skip(f"linked-artifacts refused the request: {response.status_code}")
-
-        for entry in response.json():
-            for linked in entry.get("objects") or []:
-                kind = DataExporter._linked_kind(linked) or "unknown"
-                kinds[kind] += 1
-                if kind.startswith("defect"):
-                    defects[entry.get("id")] = linked
+    kinds, defects = links_by_kind(source_client, project_id, "test-cases", ids)
 
     print(f"\n3. What {len(ids)} test cases are linked to")
     for kind, count in kinds.most_common():
         print(f"     {kind:<16} {count}")
     if not kinds:
         print("     nothing at all")
+    print("   -> a defect would not normally hang here: see 3b")
 
     assert not defects, f"{len(defects)} test cases are linked to a defect: {list(defects)[:5]}"
+
+
+@pytest.mark.integration
+def test_no_test_run_is_linked_to_a_defect(source_client, project_id, test_runs):
+    """3b. What the executions are linked to — where a defect actually hangs.
+
+    Reporting a defect is done from a test run, not from a test case, and the
+    defect is linked to the execution. This is therefore the place that
+    answers whether the qTest-to-Jira direction was ever used.
+    """
+    ids = [run["id"] for run in test_runs]
+    kinds, defects = links_by_kind(source_client, project_id, "test-runs", ids)
+
+    print(f"\n3b. What {len(ids)} test runs are linked to")
+    for kind, count in kinds.most_common():
+        print(f"     {kind:<16} {count}")
+    if not kinds:
+        print("     nothing at all")
+    for run_id, defect in list(defects.items())[:10]:
+        print(f"     run {run_id} -> defect {defect.get('id')} {defect.get('pid')}")
+    print("   -> a defect may also hang from a test log; section 4 covers those too")
+
+    assert not defects, f"{len(defects)} test runs are linked to a defect: {list(defects)[:5]}"
 
 
 @pytest.mark.integration
