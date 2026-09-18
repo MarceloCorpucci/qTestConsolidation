@@ -431,6 +431,14 @@ class DataImporter:
         if response.status_code in DELETED_STATUS_CODES:
             return True
 
+        if response.status_code == NOT_FOUND:
+            # Already gone: the id map can outlive what it points at, and
+            # nothing left to delete is the outcome this was after.
+            logger.info(
+                "The %s %s was already gone from the target, nothing to delete", kind, target_id
+            )
+            return False
+
         logger.error(
             "Could not delete %s %s from the target: %s %s",
             kind,
