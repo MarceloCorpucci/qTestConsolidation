@@ -1,0 +1,128 @@
+C:\Repositories\qTestConsolidation\.venv\Scripts\python.exe "C:/Program Files/JetBrains/PyCharm 2025.3.1/plugins/python-ce/helpers/pycharm/_jb_pytest_runner.py" --path C:\Repositories\qTestConsolidation\src\tests\inventory\test_diagnose_jira_references.py
+Testing started at 2:40 PM ...
+Launching pytest with arguments C:\Repositories\qTestConsolidation\src\tests\inventory\test_diagnose_jira_references.py --no-header --no-summary -q in C:\Repositories\qTestConsolidation
+
+============================= test session starts =============================
+collecting ... collected 6 items
+
+src/tests/inventory/test_diagnose_jira_references.py::test_no_structured_integration_on_test_cases
+src/tests/inventory/test_diagnose_jira_references.py::test_report_jira_in_the_free_text_of_test_cases
+src/tests/inventory/test_diagnose_jira_references.py::test_no_test_case_is_linked_to_a_defect
+src/tests/inventory/test_diagnose_jira_references.py::test_report_the_defects_the_project_holds
+src/tests/inventory/test_diagnose_jira_references.py::test_report_jira_in_the_steps_of_a_sample
+src/tests/inventory/test_diagnose_jira_references.py::test_report_what_the_listing_leaves_out
+
+============================== 6 passed in 7.45s ==============================
+2026-09-18 14:40:58 INFO     main.client.rest_client | Loading SOURCE connection settings from C:\Repositories\qTestConsolidation\config\qtest.env
+2026-09-18 14:40:58 INFO     main.client.rest_client | TLS verification delegated to the operating system certificate store
+2026-09-18 14:40:58 INFO     main.client.rest_client | REST client ready for https://healthspring.qtestnet.com (timeout=30s, retries=3)
+2026-09-18 14:40:58 INFO     main.exporter.data_exporter | Fetching test_cases, page 1
+2026-09-18 14:40:58 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com/api/v3/projects/24901/test-cases
+2026-09-18 14:40:58 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com/api/v3/projects/24901/test-cases -> 200 in 0.56s
+2026-09-18 14:40:58 INFO     main.exporter.data_exporter | Fetching test_cases, page 2
+2026-09-18 14:40:58 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com/api/v3/projects/24901/test-cases
+2026-09-18 14:40:58 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com/api/v3/projects/24901/test-cases -> 200 in 0.33s
+2026-09-18 14:40:58 INFO     main.exporter.data_exporter | Fetching test_cases, page 3
+2026-09-18 14:40:58 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com/api/v3/projects/24901/test-cases
+2026-09-18 14:40:59 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com/api/v3/projects/24901/test-cases -> 200 in 0.32s
+2026-09-18 14:40:59 INFO     main.exporter.data_exporter | Fetching test_cases, page 4
+2026-09-18 14:40:59 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com/api/v3/projects/24901/test-cases
+2026-09-18 14:40:59 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com/api/v3/projects/24901/test-cases -> 200 in 0.26s
+2026-09-18 14:40:59 INFO     main.exporter.data_exporter | Fetching test_cases, page 5
+2026-09-18 14:40:59 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com/api/v3/projects/24901/test-cases
+2026-09-18 14:40:59 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com/api/v3/projects/24901/test-cases -> 200 in 0.24s
+2026-09-18 14:40:59 INFO     main.exporter.data_exporter | Fetching test_cases, page 6
+2026-09-18 14:40:59 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com/api/v3/projects/24901/test-cases
+2026-09-18 14:41:00 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com/api/v3/projects/24901/test-cases -> 200 in 0.35s
+2026-09-18 14:41:00 INFO     main.exporter.data_exporter | Fetching test_cases, page 7
+2026-09-18 14:41:00 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com/api/v3/projects/24901/test-cases
+2026-09-18 14:41:00 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com/api/v3/projects/24901/test-cases -> 200 in 0.28s
+2026-09-18 14:41:00 INFO     main.exporter.data_exporter | Fetching test_cases, page 8
+2026-09-18 14:41:00 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com/api/v3/projects/24901/test-cases
+2026-09-18 14:41:00 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com/api/v3/projects/24901/test-cases -> 200 in 0.34s
+2026-09-18 14:41:00 INFO     main.exporter.data_exporter | Fetching test_cases, page 9
+2026-09-18 14:41:00 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com/api/v3/projects/24901/test-cases
+2026-09-18 14:41:01 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com/api/v3/projects/24901/test-cases -> 200 in 0.33s
+2026-09-18 14:41:01 INFO     main.exporter.data_exporter | Fetching test_cases, page 10
+2026-09-18 14:41:01 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com/api/v3/projects/24901/test-cases
+2026-09-18 14:41:01 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com/api/v3/projects/24901/test-cases -> 200 in 0.33s
+2026-09-18 14:41:01 INFO     main.exporter.data_exporter | Fetching test_cases, page 11
+2026-09-18 14:41:01 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com/api/v3/projects/24901/test-cases
+2026-09-18 14:41:01 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com/api/v3/projects/24901/test-cases -> 200 in 0.25s
+2026-09-18 14:41:01 INFO     main.exporter.data_exporter | Fetching test_cases, page 12
+2026-09-18 14:41:01 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com/api/v3/projects/24901/test-cases
+2026-09-18 14:41:01 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com/api/v3/projects/24901/test-cases -> 200 in 0.25s
+2026-09-18 14:41:01 INFO     main.exporter.data_exporter | Fetching test_cases, page 13
+2026-09-18 14:41:01 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com/api/v3/projects/24901/test-cases
+2026-09-18 14:41:02 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com/api/v3/projects/24901/test-cases -> 200 in 0.22s
+2026-09-18 14:41:02 INFO     main.exporter.data_exporter | Fetching test_cases, page 14
+2026-09-18 14:41:02 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com/api/v3/projects/24901/test-cases
+2026-09-18 14:41:02 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com/api/v3/projects/24901/test-cases -> 200 in 0.16s
+2026-09-18 14:41:02 INFO     main.exporter.data_exporter | Fetching test_cases, page 15
+2026-09-18 14:41:02 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com/api/v3/projects/24901/test-cases
+2026-09-18 14:41:02 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com/api/v3/projects/24901/test-cases -> 200 in 0.21s
+2026-09-18 14:41:02 INFO     main.exporter.data_exporter | Collected 266 test_cases
+PASSED [ 16%]
+1. Structured integration fields, across 266 test cases
+   keys looked for : ['external_id', 'external_system', 'external_system_id', 'jira_id', 'jira_key'], custom fields, web_url
+   carrying one    : 0
+PASSED [ 33%]
+2. Free text of 266 test cases
+   with a Jira URL : 0
+   tokens shaped like an issue key, by prefix:
+   -> nothing that looks like a Jira reference
+PASSED [ 50%]2026-09-18 14:41:02 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com/api/v3/projects/24901/linked-artifacts
+2026-09-18 14:41:02 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com/api/v3/projects/24901/linked-artifacts -> 200 in 0.34s
+2026-09-18 14:41:02 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com/api/v3/projects/24901/linked-artifacts
+2026-09-18 14:41:02 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com/api/v3/projects/24901/linked-artifacts -> 200 in 0.13s
+2026-09-18 14:41:02 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com/api/v3/projects/24901/linked-artifacts
+2026-09-18 14:41:03 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com/api/v3/projects/24901/linked-artifacts -> 200 in 0.11s
+2026-09-18 14:41:03 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com/api/v3/projects/24901/linked-artifacts
+2026-09-18 14:41:03 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com/api/v3/projects/24901/linked-artifacts -> 200 in 0.11s
+2026-09-18 14:41:03 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com/api/v3/projects/24901/linked-artifacts
+2026-09-18 14:41:03 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com/api/v3/projects/24901/linked-artifacts -> 200 in 0.12s
+2026-09-18 14:41:03 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com/api/v3/projects/24901/linked-artifacts
+2026-09-18 14:41:03 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com/api/v3/projects/24901/linked-artifacts -> 200 in 0.10s
+
+3. What 266 test cases are linked to
+     test-runs        75
+     requirements     43
+PASSED [ 66%]2026-09-18 14:41:03 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com/api/v3/projects/24901/defects
+2026-09-18 14:41:03 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com/api/v3/projects/24901/defects -> 200 in 0.54s
+
+4. Defects in the project
+   defects returned : 0
+PASSED [ 83%]
+5. Test steps of 10 of the 266 test cases
+2026-09-18 14:41:03 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com/api/v3/projects/24901/test-cases/9974424/versions/17283827/test-steps?expand=&showParamIdentifier=false
+2026-09-18 14:41:04 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com/api/v3/projects/24901/test-cases/9974424/versions/17283827/test-steps?expand=&showParamIdentifier=false -> 200 in 0.11s
+2026-09-18 14:41:04 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com/api/v3/projects/24901/test-cases/9974425/versions/17283830/test-steps?expand=&showParamIdentifier=false
+2026-09-18 14:41:04 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com/api/v3/projects/24901/test-cases/9974425/versions/17283830/test-steps?expand=&showParamIdentifier=false -> 200 in 0.15s
+2026-09-18 14:41:04 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com/api/v3/projects/24901/test-cases/9974426/versions/17283834/test-steps?expand=&showParamIdentifier=false
+2026-09-18 14:41:04 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com/api/v3/projects/24901/test-cases/9974426/versions/17283834/test-steps?expand=&showParamIdentifier=false -> 200 in 0.12s
+2026-09-18 14:41:04 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com/api/v3/projects/24901/test-cases/9974427/versions/17283837/test-steps?expand=&showParamIdentifier=false
+2026-09-18 14:41:04 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com/api/v3/projects/24901/test-cases/9974427/versions/17283837/test-steps?expand=&showParamIdentifier=false -> 200 in 0.14s
+2026-09-18 14:41:04 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com/api/v3/projects/24901/test-cases/9974428/versions/17283793/test-steps?expand=&showParamIdentifier=false
+2026-09-18 14:41:04 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com/api/v3/projects/24901/test-cases/9974428/versions/17283793/test-steps?expand=&showParamIdentifier=false -> 200 in 0.14s
+2026-09-18 14:41:04 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com/api/v3/projects/24901/test-cases/9974429/versions/17283841/test-steps?expand=&showParamIdentifier=false
+2026-09-18 14:41:04 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com/api/v3/projects/24901/test-cases/9974429/versions/17283841/test-steps?expand=&showParamIdentifier=false -> 200 in 0.10s
+2026-09-18 14:41:04 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com/api/v3/projects/24901/test-cases/9974430/versions/17283844/test-steps?expand=&showParamIdentifier=false
+2026-09-18 14:41:04 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com/api/v3/projects/24901/test-cases/9974430/versions/17283844/test-steps?expand=&showParamIdentifier=false -> 200 in 0.14s
+     9974430: 17 steps, urls=['http://www.qasymphony.com/platform/jira-integration.html'] keys=set()
+2026-09-18 14:41:04 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com/api/v3/projects/24901/test-cases/9974431/versions/17283848/test-steps?expand=&showParamIdentifier=false
+2026-09-18 14:41:04 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com/api/v3/projects/24901/test-cases/9974431/versions/17283848/test-steps?expand=&showParamIdentifier=false -> 200 in 0.10s
+2026-09-18 14:41:04 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com/api/v3/projects/24901/test-cases/9974416/versions/17283801/test-steps?expand=&showParamIdentifier=false
+2026-09-18 14:41:05 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com/api/v3/projects/24901/test-cases/9974416/versions/17283801/test-steps?expand=&showParamIdentifier=false -> 200 in 0.12s
+2026-09-18 14:41:05 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com/api/v3/projects/24901/test-cases/9974417/versions/23328893/test-steps?expand=&showParamIdentifier=false
+2026-09-18 14:41:05 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com/api/v3/projects/24901/test-cases/9974417/versions/23328893/test-steps?expand=&showParamIdentifier=false -> 200 in 0.10s
+   cases whose steps mention Jira: 1 of 10
+   -> a sample only: raise STEP_SAMPLE to read all 266
+PASSED [100%]2026-09-18 14:41:05 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com/api/v3/projects/24901/test-cases/9974424
+2026-09-18 14:41:05 INFO     main.client.rest_client | GET https://healthspring.qtestnet.com/api/v3/projects/24901/test-cases/9974424 -> 200 in 0.17s
+
+6. The listing against one case fetched on its own (9974424)
+   fields from the listing   : 17
+   fields on its own         : 18
+   only when fetched alone   : ['agent_ids']
+   only in the listing       : none
+   -> the listing hides fields: section 1 should be re-read against these
