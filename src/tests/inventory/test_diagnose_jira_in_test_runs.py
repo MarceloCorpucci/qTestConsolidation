@@ -54,6 +54,17 @@ def issue_keys(text):
     return ISSUE_KEY.findall(str(text or "")) if text else []
 
 
+def is_internal(defect):
+    """Whether a defect belongs to qTest's own tracker rather than Jira.
+
+    qTest marks its own with `is_internal`, and one raised in an external
+    tracker names the connection that reaches it. Either says enough.
+    """
+    if defect.get("is_internal") is not None:
+        return bool(defect["is_internal"])
+    return not defect.get("connection_id")
+
+
 def text_of(entity):
     """All the free text of an entity, its custom field values included."""
     pieces = [entity.get(field) for field in TEXT_FIELDS]
@@ -132,8 +143,15 @@ def test_report_jira_in_the_free_text_of_test_runs(test_runs):
 
 
 @pytest.mark.integration
-def test_no_test_run_is_linked_to_a_defect(source_client, project_id, test_runs):
-    """3. What the executions are linked to — where a defect hangs."""
+def test_no_test_run_is_linked_to_a_jira_defect(source_client, project_id, test_runs):
+    """3. What the executions are linked to — where a defect hangs.
+
+    A defect linked here is not necessarily a Jira issue. qTest has a defect
+    tracker of its own, and a defect it raised itself carries `is_internal`
+    and no connection to an external system. Only an external one means the
+    qTest-to-Jira direction was used, so that is what this asserts; internal
+    ones are counted and reported.
+    """
     path = f"{PROJECTS_ENDPOINT}/{project_id}/linked-artifacts"
     ids = [run["id"] for run in test_runs]
     kinds = Counter()
@@ -152,15 +170,25 @@ def test_no_test_run_is_linked_to_a_defect(source_client, project_id, test_runs)
                 if kind.startswith("defect"):
                     defects[entry.get("id")] = linked
 
+    internal = {run: defect for run, defect in defects.items() if is_internal(defect)}
+    external = {run: defect for run, defect in defects.items() if not is_internal(defect)}
+
     print(f"\n3. What {len(ids)} test runs are linked to")
     for kind, count in kinds.most_common():
         print(f"     {kind:<16} {count}")
     if not kinds:
         print("     nothing at all")
-    for run_id, defect in list(defects.items())[:10]:
-        print(f"     run {run_id} -> defect {defect.get('id')} {defect.get('pid')}")
 
-    assert not defects, f"{len(defects)} test runs are linked to a defect: {list(defects)[:5]}"
+    print(f"   defects raised inside qTest : {len(internal)}")
+    for run_id, defect in list(internal.items())[:10]:
+        print(f"     run {run_id} -> {defect.get('pid')} (id {defect.get('id')})")
+    print(f"   defects in an external tracker : {len(external)}")
+    for run_id, defect in list(external.items())[:10]:
+        print(f"     run {run_id} -> {defect.get('pid')} (id {defect.get('id')}) {defect}")
+
+    assert not external, (
+        f"{len(external)} test runs are linked to a defect outside qTest: {list(external)[:5]}"
+    )
 
 
 @pytest.mark.integration
@@ -195,11 +223,20 @@ def test_report_the_logs_of_each_run(source_client, project_id, test_runs):
             if urls:
                 with_jira[run["id"]] = urls[0]
 
+    external = {
+        run_id: [defect for defect in defects if not is_internal(defect)]
+        for run_id, defects in with_defects.items()
+    }
+    external = {run_id: defects for run_id, defects in external.items() if defects}
+
     print(f"   logs read            : {total_logs}")
     print(f"   runs whose logs were refused : {refused}")
-    print(f"   logs naming a defect : {len(with_defects)}")
+    print(f"   logs naming a defect : {len(with_defects)}, of which outside qTest: {len(external)}")
     for run_id, defects in list(with_defects.items())[:10]:
-        print(f"     run {run_id}: {defects}")
+        summary = ", ".join(
+            f"{defect.get('pid')} {str(defect.get('summary'))[:40]!r}" for defect in defects
+        )
+        print(f"     run {run_id}: {summary}")
     print(f"   logs with a Jira URL : {len(with_jira)}")
     for run_id, url in list(with_jira.items())[:10]:
         print(f"     run {run_id}: {url}")
